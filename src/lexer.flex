@@ -64,7 +64,7 @@ extern "C" int fileno(FILE *stream);
 [,]             { return PUN_COMMA;}
 [:]             { return PUN_COLON;}
 [=]             { return PUN_EQUALS;}
-(...)           { return PUN_ELLIPSIS;}
+"..."           { return PUN_ELLIPSIS;}
 (\#)            { return HASHTAG;}
 (\#\#)          { return DOUBLE_HASHTAG;}
 

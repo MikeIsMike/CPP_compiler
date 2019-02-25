@@ -1,0 +1,15 @@
+MilestoneID,             Dependencies, EstimatedEffort, Lead,  Completed, Description
+FamiliariseWithSpec,,,,100%,"Read the given specification, find C specification materials for references when programming"
+InitialProjectStructuring,FamiliariseWithSpec,,Rudolfs,60%,"Start creating the lex, parser and codegen files as a guide for future development"
+,,,,,
+DefineInitialMilestones,"FamiliariseWithSpec, InitialProjectStructuring",1,Rudolfs,Ongoing Throughout,Come up with initial milestones for getting started
+KeepMilestonesUpToDate,DefineInitialMilestones,0.1*N,Rudolfs,0%,Update the progress on the milestones
+,,,,,
+DefineLexerTokens,InitialProjectStructuring,6,Rudolfs,70%,Create the lexer to lex the tokens used by the parser
+ParseTreeRules,,,Mike,10%,White rules for the parser to use
+ParseTreeAST_Subclasses,ParseTreeRules,,Rudolfs,0%,Write classes to be created once a parse rule is passed
+ParseTreeIntegration,ParseTreeAST_Subclasses,,,0%,Create classes once rule is passed
+,,,,,
+,,,,,
+PythonTranslator,ParseTreeIntegration,,,0%,"Create a Python code from the input, TODO: separate task"
+CodeGenMIPS,PythonTranslator,,,0%,"Create a MIPS assembly from the input, TODO: separate task"

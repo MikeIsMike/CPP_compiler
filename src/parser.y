@@ -1,3 +1,5 @@
+
+
 %code requires{
   #include "ast.hpp"
 
@@ -45,42 +47,117 @@
    broken anything while you added it.
 */
 
-// ROOT : EXPR { g_root = $1; }
-//
-// SENTENCE : SOMETHING T_EOL                        { $$ = $1;}
-//
-//
-// EXPR  : TERM                                      { $$ = $1; }
-//       | EXPR T_PLUS TERM                          { $$ = new AddOperator($1, $3);}
-//       | EXPR T_MINUS TERM                         { $$ = new SubOperator($1, $3);}
-//
-//
-// TERM  : FACTOR                                    { $$ = $1; }
-//       | TERM T_TIMES FACTOR                       { $$ = new MulOperator($1, $3);}
-//       | TERM T_DIVIDE FACTOR                      { $$ = new DivOperator($1, $3);}
-//       | TERM T_EXPONENT FACTOR                    { $$ = new ExpOperator($1, $3);}
-//
-//
-//
-// FACTOR : T_NUMBER                                 { $$ = new Number( $1 );}
-//        | T_VARIABLE                               { $$ = new Variable( *$1 ); }
-//        | T_LBRACKET EXPR T_RBRACKET               { $$ = $2; }
-//        | FUNCTION_NAME T_LBRACKET EXPR T_RBRACKET { if(*$1=="log"){
-//                                                       $$ = new LogFunction($3);
-//                                                     }
-//                                                     else if(*$1=="exp"){
-//                                                       $$ = new ExpFunction($3);
-//                                                     }
-//                                                     else if(*$1=="sqrt"){
-//                                                       $$ = new SqrtFunction($3);
-//                                                     }
-//
-//                                                   }
-//
-//
-// FUNCTION_NAME : T_LOG                             { $$ = new std::string("log"); }
-//               | T_EXP                             { $$ = new std::string("exp"); }
-//               | T_SQRT                            { $$ = new std::string("sqrt");}
+
+/*
+ ROOT : EXPR { g_root = $1; }
+
+ SENTENCE : SOMETHING T_EOL                        { $$ = $1;}
+
+
+ EXPR  : TERM                                      { $$ = $1; }
+       | EXPR T_PLUS TERM                          { $$ = new AddOperator($1, $3);}
+       | EXPR T_MINUS TERM                         { $$ = new SubOperator($1, $3);}
+
+
+ TERM  : FACTOR                                    { $$ = $1; }
+       | TERM T_TIMES FACTOR                       { $$ = new MulOperator($1, $3);}
+       | TERM T_DIVIDE FACTOR                      { $$ = new DivOperator($1, $3);}
+       | TERM T_EXPONENT FACTOR                    { $$ = new ExpOperator($1, $3);}
+
+
+
+ FACTOR : T_NUMBER                                 { $$ = new Number( $1 );}
+        | T_VARIABLE                               { $$ = new Variable( *$1 ); }
+        | T_LBRACKET EXPR T_RBRACKET               { $$ = $2; }
+        | FUNCTION_NAME T_LBRACKET EXPR T_RBRACKET { if(*$1=="log"){
+                                                       $$ = new LogFunction($3);
+                                                     }
+                                                     else if(*$1=="exp"){
+                                                       $$ = new ExpFunction($3);
+                                                     }
+                                                     else if(*$1=="sqrt"){
+                                                       $$ = new SqrtFunction($3);
+                                                     }
+
+                                                   }
+
+
+ FUNCTION_NAME : T_LOG                             { $$ = new std::string("log"); }
+               | T_EXP                             { $$ = new std::string("exp"); }
+               | T_SQRT                            { $$ = new std::string("sqrt");}
+*/
+
+
+primary_expression : IDENTIFIER///change
+                | CONSTANT///change
+                | STRING_LITERAL///change
+                | PUN_L_BRACKET expression PUN_R_BRACKET
+                ;
+
+postfix_expression : primary_expression
+                | postfix_expression PUN_SL_BRACKET expression PUN_SR_BRACKET
+                | postfix_expression PUN_L_BRACKET PUN_R_BRACKET
+                | postfix_expression PUN_L_BRACKET argument_expression_list PUN_R_BRACKET
+                | postfix_expression OP_DOT IDENTIFIER///change
+                | postfix_expression OP_POINTER IDENTIFIER///change
+                | postfix_expression OP_INCREM ///may need to separate increment and decrement??
+                ;
+
+argument_expression_list : assignment_expression
+                | argument_expression_list PUN_COMMA assignment_expression
+                ;
+
+unary_expression : postfix_expression
+                | OP_INCREM unary_expression ///may need to separate incre and decrement
+                | unary_operator cast_expression
+                | sizeof unary_expression
+                | sizeof PUN_L_BRACKET type_name PUN_R_BRACKET
+                ;
+
+unary_operator : OP_AND
+                | OP_TIMES
+                | OP_PLUS
+                | OP_MINUS
+                | OP_DESTRUCTOR
+                | OP_NOT
+                ;
+
+cast_expression : unary_expression
+                | PUN_L_BRACKET type_name PUN_R_BRACKET cast_expression
+                ;
+
+multiplicative_expression : cast_expression
+            	| multiplicative_expression OP_TIMES cast_expression
+            	| multiplicative_expression OP_DIV cast_expression
+            	| multiplicative_expression OP_REMAINDER cast_expression
+            	;
+
+additive_expression : multiplicative_expression
+            	| additive_expression OP_PLUS multiplicative_expression
+            	| additive_expression OP_MINUS multiplicative_expression
+            	;
+
+shift_expression : additive_expression
+            	| shift_expression OP_SHIFT additive_expression ///maybe better to split left and right shift?
+            	| shift_expression OP_SHIFT additive_expression ///maybe better to split left and right
+            	;
+
+relational_expression : shift_expression
+            	| relational_expression '<' shift_expression ///< and > tokens
+            	| relational_expression '>' shift_expression ///< and > tokens
+            	| relational_expression OP_COMPARE shift_expression ///maybe better to have token for <=
+            	| relational_expression OP_COMPARE shift_expression ///maybe better to have token for >=
+            	;
+
+
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 declaration : declaration_specifiers ';'
 	            | declaration_specifiers init_declarator_list ';'
@@ -132,6 +209,7 @@ function_definition : declaration_specifiers declarator declaration_list compoun
                | declarator compound_statement
                ;
 
+///IDENTIFIER
 
 %%
 

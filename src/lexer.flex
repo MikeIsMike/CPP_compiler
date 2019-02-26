@@ -42,7 +42,7 @@ extern "C" int fileno(FILE *stream);
 (>>)|(<<)		{ return OP_SHIFT; }
 
 "++"|"--"		{ return OP_INCREM; }
-(->)			{ return OP_POINT; }
+(->)			{ return OP_POINTER; }
 
 "*=" | "/=" | "+=" | "%=" | ">>=" | "-=" | "<<=" | "&=" | "^=" | "|="		{ return OP_ASSIGNS; }
 [!]             { return OP_NOT; }

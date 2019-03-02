@@ -1,5 +1,3 @@
-
-
 %code requires{
   #include "ast.hpp"
 
@@ -16,8 +14,8 @@
 
 
 
-// Represents the value associated with any kind of
-// AST node.
+/* // Represents the value associated with any kind of
+// AST node. */
 %union{
   /* const Expression *expr; */
   const translation_unit *t_u;

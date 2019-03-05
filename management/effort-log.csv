@@ -1,7 +1,8 @@
 Date,Effort,Developers,Milestones
-"24/02",8,Rudolfs,"FamiliariseWithSpec, InitialProjectStructuring, DefineLexerTokens"
-"24/02",8,Mike,
-"25/02",1,Rudolfs,DefineInitialMilestones
-"02/03",7,Rudolfs,"ParseTreeAST_Subclasses & ParseTreeRules"
-"02/03",7,Mike,"ParseTreeAST_Subclasses & ParseTreeRules"
-"05/03",8,Rudolfs,"ParseTreeAST_Subclasses"
+24-Feb,8,Rudolfs,"FamiliariseWithSpec, InitialProjectStructuring, DefineLexerTokens"
+24-Feb,8,Mike,
+25-Feb,1,Rudolfs,DefineInitialMilestones
+02-Mar,7,Rudolfs,ParseTreeAST_Subclasses & ParseTreeRules
+02-Mar,7,Mike,ParseTreeAST_Subclasses & ParseTreeRules
+05-Mar,8,Rudolfs,ParseTreeAST_Subclasses
+05-Mar,4,Mike,DefineLexerTokens

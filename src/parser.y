@@ -48,34 +48,34 @@ primary_expression : IDENTIFIER
                 | PUN_L_BRACKET expression PUN_R_BRACKET
                 ;
 
-postfix_expression : primary_expression
-                | postfix_expression PUN_SL_BRACKET expression PUN_SR_BRACKET
-                | postfix_expression PUN_L_BRACKET PUN_R_BRACKET
-                | postfix_expression PUN_L_BRACKET argument_expression_list PUN_R_BRACKET
-                | postfix_expression OP_DOT IDENTIFIER
-                | postfix_expression OP_POINTER IDENTIFIER
-                | postfix_expression OP_INCREM
-                | postfix_expression OP_DECREM
+postfix_expression : primary_expression                                                     {$$ = new Postfix_expression($1, NULL, NULL, NULL, NULL, NULL);}
+                | postfix_expression PUN_SL_BRACKET expression PUN_SR_BRACKET               {$$ = new Postfix_expression(NULL, $1, $3, NULL, NULL, NULL);}
+                | postfix_expression PUN_L_BRACKET PUN_R_BRACKET                            {$$ = new Postfix_expression(NULL, $1, NULL, NULL, NULL, NULL);}
+                | postfix_expression PUN_L_BRACKET argument_expression_list PUN_R_BRACKET   {$$ = new Postfix_expression(NULL, $1, NULL, $3, NULL, NULL);}
+                | postfix_expression OP_DOT IDENTIFIER                                      {$$ = new Postfix_expression(NULL, $1, NULL, NULL, $2, $3);}
+                | postfix_expression OP_POINTER IDENTIFIER                                  {$$ = new Postfix_expression(NULL, $1, NULL, NULL, $2, $3);}
+                | postfix_expression OP_INCREM                                              {$$ = new Postfix_expression(NULL, $1, NULL, NULL, $2, NULL);}
+                | postfix_expression OP_DECREM                                              {$$ = new Postfix_expression(NULL, $1, NULL, NULL, $2, NULL);}
                 ;
 
-argument_expression_list : assignment_expression
-                | argument_expression_list PUN_COMMA assignment_expression
+argument_expression_list : assignment_expression                                {$$ = new Argument_expression_list($1, NULL);}
+                | argument_expression_list PUN_COMMA assignment_expression      {$$ = new Argument_expression_list($1, $3);}
                 ;
 
-unary_expression : postfix_expression
-                | OP_INCREM unary_expression
-                | OP_DECREM unary_expression
-                | unary_operator cast_expression
-                | sizeof unary_expression
-                | sizeof PUN_L_BRACKET type_name PUN_R_BRACKET
+unary_expression : postfix_expression                           {$$ = new Unary_expression($1, NULL, NULL, NULL, NULL, NULL);}
+                | OP_INCREM unary_expression                    {$$ = new Unary_expression(NULL, $1, $2, NULL, NULL, NULL);}
+                | OP_DECREM unary_expression                    {$$ = new Unary_expression(NULL, $1, $2, NULL, NULL, NULL);}
+                | unary_operator cast_expression                {$$ = new Unary_expression(NULL, NULL, NULL, $1, $2, NULL);}
+                | sizeof unary_expression                       {$$ = new Unary_expression(NULL, $1, $2, NULL, NULL, NULL);}
+                | sizeof PUN_L_BRACKET type_name PUN_R_BRACKET  {$$ = new Unary_expression(NULL, $1, NULL, NULL, NULL, $3);}
                 ;
 
-unary_operator : OP_AND
-                | OP_ASTERISK
-                | OP_PLUS
-                | OP_MINUS
-                | OP_DESTRUCTOR
-                | OP_NOT
+unary_operator : OP_AND             {$$ = $1;}
+                | OP_ASTERISK       {$$ = $1;}
+                | OP_PLUS           {$$ = $1;}
+                | OP_MINUS          {$$ = $1;}
+                | OP_DESTRUCTOR     {$$ = $1;}
+                | OP_NOT            {$$ = $1;}
                 ;
 
 cast_expression : unary_expression
@@ -130,76 +130,73 @@ logical_or_expression : logical_and_expression
             	| logical_or_expression OP_OROR logical_and_expression
             	;
 
-conditional_expression : logical_or_expression
-            	| logical_or_expression OP_CONDITIONAL expression PUN_COLON conditional_expression
+conditional_expression : logical_or_expression                                                          {$$ = new Conditional_expression($1, NULL, NULL);}
+            	| logical_or_expression OP_CONDITIONAL expression PUN_COLON conditional_expression      {$$ = new Conditional_expression($1, $3, $5);}
             	;
 
-assignment_expression : conditional_expression
-            	| unary_expression assignment_operator assignment_expression
+assignment_expression : conditional_expression                                                          {$$ = new Assignment_expression($1, NULL, NULL, NULL);}
+            	| unary_expression assignment_operator assignment_expression                            {$$ = new Assignment_expression(NULL, $1, $2, $3);}
             	;
 
-assignment_operator : PUN_EQUALS
-            	| OP_MUL_ASSIGN
-            	| OP_DIV_ASSIGN
-            	| OP_MOD_ASSIGN
-            	| OP_PLUS_ASSIGN
-            	| OP_MINUS_ASSIGN
-            	| OP_LEFT_ASSIGN
-            	| OP_RIGHT_ASSIGN
-            	| OP_AND_ASSIGN
-            	| OP_XOR_ASSIGN
-            	| OP_OR_ASSIGN
+assignment_operator : PUN_EQUALS           {$$ = $1;}
+            	| OP_MUL_ASSIGN            {$$ = $1;}
+            	| OP_DIV_ASSIGN            {$$ = $1;}
+            	| OP_MOD_ASSIGN            {$$ = $1;}
+            	| OP_PLUS_ASSIGN           {$$ = $1;}
+            	| OP_MINUS_ASSIGN          {$$ = $1;}
+            	| OP_LEFT_ASSIGN           {$$ = $1;}
+            	| OP_RIGHT_ASSIGN          {$$ = $1;}
+            	| OP_AND_ASSIGN            {$$ = $1;}
+            	| OP_XOR_ASSIGN            {$$ = $1;}
+            	| OP_OR_ASSIGN             {$$ = $1;}
             	;
 
-expression : assignment_expression
-            	| expression PUN_COMMA assignment_expression
+expression :      assignment_expression                                     {$$ = new Expression($1, NULL);}
+            	| expression PUN_COMMA assignment_expression                {$$ = new Expression($1, $3);}
             	;
 
-constant_expression : conditional_expression
+constant_expression : conditional_expression                                {$$ = new Constant_expression($1);}
             	;
 
-declaration : declaration_specifiers PUN_SEMIC
-	            | declaration_specifiers init_declarator_list PUN_SEMIC {
-
-
-                }
+declaration :     declaration_specifiers PUN_SEMIC                          {$$ = new Declaration($1, NULL);}
+	            | declaration_specifiers init_declarator_list PUN_SEMIC     {$$ = new Declaration($1, $2);}
 	            ;
 
-declaration_specifiers : storage_class_specifier
-                | storage_class_specifier declaration_specifiers
-                | type_specifier
-                | type_specifier declaration_specifiers
-                | type_qualifier
-                | type_qualifier declaration_specifiers
+declaration_specifiers : storage_class_specifier                            {$$ = new Declaration_specifiers($1, NULL, NULL, NULL);}
+                | storage_class_specifier declaration_specifiers            {$$ = new Declaration_specifiers($1, NULL, NULL, $2);
+                | type_specifier                                            {$$ = new Declaration_specifiers(NULL, $1, NULL, NULL);
+                | type_specifier declaration_specifiers                     {$$ = new Declaration_specifiers(NULL, $1, NULL, $2);
+                | type_qualifier                                            {$$ = new Declaration_specifiers(NULL, NULL, $1, NULL);
+                | type_qualifier declaration_specifiers                     {$$ = new Declaration_specifiers(NULL, NULL, $1, $2);
                 ;
 
-init_declarator_list : init_declarator
-            	| init_declarator_list PUN_COMMA init_declarator
+init_declarator_list : init_declarator                                      {$$ = new Init_declarator_list($1, NULL);
+            	| init_declarator_list PUN_COMMA init_declarator            {$$ = new Init_declarator_list($1, $3);
             	;
 
-init_declarator: declarator
-            	| declarator PUN_EQUALS initializer
+init_declarator: declarator                                                 {$$ = new Init_declarator($1, NULL);
+            	| declarator PUN_EQUALS initializer                         {$$ = new Init_declarator($1, $3);
             	;
 
-storage_class_specifier : KEYW_TYPEDEF
-                | KEYW_EXTERN
-                | KEYW_STATIC
-                | KEYW_AUTO
-                | KEYW_REGISTER
+storage_class_specifier : KEYW_TYPEDEF                                      {$$ = new Storage_class_specifier($1);}
+                | KEYW_EXTERN                                               {$$ = new Storage_class_specifier($1);}
+                | KEYW_STATIC                                               {$$ = new Storage_class_specifier($1);}
+                | KEYW_AUTO                                                 {$$ = new Storage_class_specifier($1);}
+                | KEYW_REGISTER                                             {$$ = new Storage_class_specifier($1);}
                 ;
 
-type_specifier : TYPE_VOID
-                | TYPE_CHAR
-                | TYPE_SHORT
-                | TYPE_INT
-                | TYPE_LONG
-                | TYPE_FLOAT
-                | TYPE_DOUBLE
-                | TYPE_SIGNED
-                | TYPE_UNSIGNED
-                | struct_or_union_specifier
-                | enum_specifier
-                | typedef_name
+type_specifier : TYPE_VOID                                                  {$$ = new Type_specifier($1, NULL, NULL, NULL);}
+                | TYPE_CHAR                                                 {$$ = new Type_specifier($1, NULL, NULL, NULL);}
+                | TYPE_SHORT                                                {$$ = new Type_specifier($1, NULL, NULL, NULL);}
+                | TYPE_INT                                                  {$$ = new Type_specifier($1, NULL, NULL, NULL);}
+                | TYPE_LONG                                                 {$$ = new Type_specifier($1, NULL, NULL, NULL);}
+                | TYPE_FLOAT                                                {$$ = new Type_specifier($1, NULL, NULL, NULL);}
+                | TYPE_DOUBLE                                               {$$ = new Type_specifier($1, NULL, NULL, NULL);}
+                | TYPE_SIGNED                                               {$$ = new Type_specifier($1, NULL, NULL, NULL);}
+                | TYPE_UNSIGNED                                             {$$ = new Type_specifier($1, NULL, NULL, NULL);}
+                | struct_or_union_specifier                                 {$$ = new Type_specifier(NULL, $1, NULL, NULL);}
+                | enum_specifier                                            {$$ = new Type_specifier(NULL, NULL, $1, NULL);}
+                | typedef_name                                              {$$ = new Type_specifier(NULL, NULL, NULL, $1);}
                 ;
 
 struct_or_union_specifier : struct_or_union IDENTIFIER PUN_CL_BRACKET struct_declaration_list PUN_CR_BRACKET
@@ -245,21 +242,21 @@ enumerator : enumeration_constant
             	| enumeration_constant PUN_EQUALS constant_expression
             	;
 
-type_qualifier : KEYW_CONST
-            	| KEYW_VOLATILE
+type_qualifier : KEYW_CONST                                                 {$$ = new Type_qualifier($1);}
+            	| KEYW_VOLATILE                                             {$$ = new Type_qualifier($1);}
             	;
 
-declarator : pointer direct_declarator
-            	| direct_declarator
+declarator : pointer direct_declarator                                      {$$ = new Declarator($1, $2);}
+            	| direct_declarator                                         {$$ = new Declarator(NULL, $2);}
             	;
 
-direct_declarator : IDENTIFIER
-            	| PUN_L_BRACKET declarator PUN_R_BRACKET
-            	| direct_declarator PUN_SL_BRACKET constant_expression PUN_SR_BRACKET
-            	| direct_declarator PUN_SL_BRACKET PUN_SR_BRACKET
-            	| direct_declarator PUN_L_BRACKET parameter_type_list PUN_R_BRACKET
-            	| direct_declarator PUN_L_BRACKET identifier_list PUN_R_BRACKET
-            	| direct_declarator PUN_L_BRACKET PUN_R_BRACKET
+direct_declarator : IDENTIFIER                                                             {$$ = new Direct_declarator($1, NULL, NULL, NULL, NULL, NULL, 1)}
+            	| PUN_L_BRACKET declarator PUN_R_BRACKET                                   {$$ = new Direct_declarator(NULL, $2, NULL, NULL, NULL, NULL, 2)}
+            	| direct_declarator PUN_SL_BRACKET constant_expression PUN_SR_BRACKET      {$$ = new Direct_declarator(NULL, NULL, $1, $3, NULL, NULL, 3)}
+            	| direct_declarator PUN_SL_BRACKET PUN_SR_BRACKET                          {$$ = new Direct_declarator(NULL, NULL, $1, NULL, NULL, NULL, 4)}
+            	| direct_declarator PUN_L_BRACKET parameter_type_list PUN_R_BRACKET        {$$ = new Direct_declarator(NULL, NULL, $1, NULL, $3, NULL, 5)}
+            	| direct_declarator PUN_L_BRACKET identifier_list PUN_R_BRACKET            {$$ = new Direct_declarator(NULL, NULL, $1, NULL, NULL, $3, 6)}
+            	| direct_declarator PUN_L_BRACKET PUN_R_BRACKET                            {$$ = new Direct_declarator(NULL, NULL, $1, NULL, NULL, NULL, 7)}
             	;
 
 pointer : OP_ASTERISK
@@ -310,7 +307,7 @@ direct_abstract_declarator : PUN_L_BRACKET abstract_declarator PUN_R_BRACKET
             	| direct_abstract_declarator PUN_L_BRACKET parameter_type_list PUN_R_BRACKET
             	;
 
-typedef_name: IDENTIFIER
+typedef_name: IDENTIFIER                                                    { $$ = new Typedef_name($1); }
                 ;
 
 initializer : assignment_expression
@@ -370,13 +367,12 @@ jump_statement : KEYW_CONTINUE PUN_SEMIC
             	| KEYW_RETURN expression PUN_SEMIC
             	;
 
-translation_unit : external_declaration { $$ = new Translation_Unit($1); }
-                | translation_unit external_declaration
-                    { $$ -> add_declaration($2); }
+translation_unit : external_declaration                     { $$ = new Translation_unit($1, NULL); }
+                | translation_unit external_declaration     { $$ = new Translation_unit($2, $1); }
                 ;
 
-external_declaration : function_definition
-                | declaration { $$ = $1; }
+external_declaration : function_definition                  { $$ = new External_declaration($1, NULL); }
+                | declaration                               { $$ = new External_declaration(NULL, $1); }
                 ;
 
 function_definition : declarator

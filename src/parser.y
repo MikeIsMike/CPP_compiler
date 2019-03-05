@@ -50,9 +50,11 @@
        PUN_SR_BRACKET PUN_SEMIC PUN_COMMA PUN_COLON PUN_EQUALS PUN_ELLIPSIS
        HASHTAG DOUBLE_HASHTAG
 
-%start translation_unit
+%start root
 
 %%
+
+root: translation_unit { g_root = $1;}
 
 enumeration_constant : IDENTIFIER
                 ;
@@ -416,9 +418,9 @@ function_definition : declarator
 
 %%
 
-const Expression *g_root; // Definition of variable (to match declaration earlier)
+const Translation_unit *g_root; // Definition of variable (to match declaration earlier)
 
-const Expression *parseAST()
+const Translation_unit *parseAST()
 {
   g_root=0;
   yyparse();

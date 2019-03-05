@@ -3,5 +3,8 @@ Date,Effort,Developers,Milestones
 24,8,Rudolfs,"FamiliariseWithSpec, InitialProjectStructuring, DefineLexerTokens"
 24,8,Mike,
 25,1,Rudolfs,DefineInitialMilestones
-,,,
-,,,
+26-Feb,1,Mike,ParseTreeRules
+28-Feb,3,Mike,"ParseTreeRules, DefineLexerTokens"
+01-Mar,1.5,Mike,"ParseTreeRules, ParseTreeAST_Subclasses"
+02-Mar,6,Mike,"ParseTreeRules, ParseTreeAST_Subclasses"
+02-Mar,6,Rudolfs,"ParseTreeRules, ParseTreeAST_Subclasses"

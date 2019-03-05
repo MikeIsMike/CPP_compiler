@@ -65,7 +65,8 @@ FS                [fFlL]
 
 
 L?\'(\\.|[^\\'])+\'	{ yylval.string = new std::string(yytext); return CONSTANT; }  /*char constant*/
-L?\"(\\.|[^\\"])+\"	{ yylval.string = new std::string(yytext); return CONSTANT; }  /*string literal*/
+L?\"(\\.|[^\\"])*\"	{ yylval.string = new std::string(yytext); return CONSTANT; }  /*string literal*/
+
 
 
 

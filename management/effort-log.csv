@@ -1,4 +1,13 @@
 Date,Effort,Developers,Milestones
+<<<<<<< HEAD
 24,8,Rudolfs,"FamiliariseWithSpec, InitialProjectStructuring, DefineLexerTokens"
 24,8,Mike,
 25,1,Rudolfs,DefineInitialMilestones
+=======
+,,,
+24,8,Rudolfs,"FamiliariseWithSpec, InitialProjectStructuring, DefineLexerTokens"
+24,8,Mike,
+25,1,Rudolfs,DefineInitialMilestones
+,,,
+,,,
+>>>>>>> 3675ab77158ab0ccc164b4fd02a6fb1c027f03df

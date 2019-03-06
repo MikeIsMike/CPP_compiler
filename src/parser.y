@@ -37,6 +37,52 @@
   Declaration_specifiers *declaration_specifiers_ptr;
   Init_declarator_list *init_declarator_list_ptr;
   Storage_class_specifier *storage_class_specifier_ptr;
+  Enumeration_constant *enumeration_constant_ptr;
+  Multiplicative_expression *multiplicative_expression_ptr;
+  Additive_expression *additive_expression_ptr;
+  Shift_expression *shift_expression_ptr;
+  Relational_expression *relational_expression_ptr;
+  Equality_expression *equality_expression_ptr;
+  And_expression *and_expression_ptr;
+  Exclusive_or_expression *exclusive_or_expression_ptr;
+  Inclusive_or_expression *inclusive_or_expression_ptr;
+  Logical_and_expression *logical_and_expression_ptr;
+  Type_specifier *type_specifier_ptr;
+  Type_qualifier *type_qualifier_ptr;
+  Init_declarator *init_declarator_ptr;
+  Declarator *declarator_ptr;
+  Initializer *initializer_ptr;
+  Initializer_list *initializer_list_ptr;
+  Struct_or_union_specifier *struct_or_union_specifier_ptr;
+  Enum_specifier *enum_specifier_ptr;
+  Typedef_name *typedef_name_ptr;
+  Struct_declaration_list *struct_declaration_list_ptr;
+  Struct_declaration *struct_declaration_ptr;
+  Specifier_qualifier_list *specifier_qualifier_list_ptr;
+  Struct_declarator_list *struct_declarator_list_ptr;
+  Struct_declarator *struct_declarator_ptr;
+  Enumerator_list *enumerator_list_ptr;
+  Enumerator *enumerator_ptr;
+  Pointer *pointer_ptr;
+  Direct_declarator *direct_declarator_ptr;
+  Parameter_type_list *parameter_type_list_ptr;
+  Identifier_list *identifier_list_ptr;
+  Type_qualifier_list *type_qualifier_list_ptr;
+  Parameter_list *parameter_list_ptr;
+  Parameter_declaration *parameter_declaration_ptr;
+  Abstract_declarator *abstract_declarator_ptr;
+  Direct_abstract_declarator *direct_abstract_declarator_ptr;
+  Statement *statement_ptr;
+  Labeled_statement *labeled_statement_ptr;
+  Compound_statement *compound_statement_ptr;
+  Expression_statement *expression_statement_ptr;
+  Selection_statement *selection_statement_ptr;
+  Iteration_statement *iteration_statement_ptr;
+  Jump_statement *jump_statement_ptr;
+  Statement_list *statement_list_ptr;
+  Declaration_list *declaration_list_ptr;
+  External_declaration *external_declaration_ptr;
+  Function_definition *function_definition_ptr;
 }
 
 
@@ -75,7 +121,7 @@
 %type <primary_expression_ptr> primary_expression
 %type <expression_ptr> expression
 %type <argument_expression_list_ptr> argument_expression_list
-%type <string> unary_operator IDENTIFIER PUN_EQUALS
+%type <string> unary_operator IDENTIFIER PUN_EQUALS CONSTANT STRING_LITERAL
         OP_ASTERISK OP_DIV OP_REMAINDER OP_PLUS OP_MINUS OP_EXP OP_ANDAND
         OP_OROR OP_AND OP_OR OP_EQ_CONST OP_NE_CONST OP_LT_EQ OP_GT_EQ
         OP_LT OP_GT OP_CONDITIONAL OP_RIGHT_SHIFT OP_LEFT_SHIFT OP_INCREM
@@ -85,7 +131,10 @@
         KEYW_AUTO KEYW_BREAK KEYW_CASE KEYW_CONST KEYW_CONTINUE
         KEYW_DEFAULT KEYW_DO KEYW_ELSE KEYW_ENUM KEYW_EXTERN KEYW_FOR KEYW_IF
         KEYW_REGISTER KEYW_RETURN KEYW_SIZEOF KEYW_STATIC KEYW_STRUCT
-        KEYW_SWITCH KEYW_TYPEDEF KEYW_VOLATILE KEYW_WHILE
+        KEYW_SWITCH KEYW_TYPEDEF KEYW_VOLATILE KEYW_WHILE '<' '>'
+
+        TYPE_CHAR TYPE_DOUBLE TYPE_FLOAT TYPE_INT TYPE_LONG TYPE_SHORT
+        TYPE_SIGNED TYPE_UNSIGNED TYPE_VOID
 %type <assignment_expression_ptr> assignment_expression
 %type <unary_expression_ptr> unary_expression
 %type <cast_expression_ptr> cast_expression
@@ -98,6 +147,52 @@
 %type <declaration_specifiers_ptr> declaration_specifiers
 %type <init_declarator_list_ptr> init_declarator_list
 %type <storage_class_specifier_ptr> storage_class_specifier
+%type <enumeration_constant_ptr> enumeration_constant
+%type <multiplicative_expression_ptr> multiplicative_expression
+%type <additive_expression_ptr> additive_expression
+%type <shift_expression_ptr> shift_expression
+%type <relational_expression_ptr> relational_expression
+%type <equality_expression_ptr> equality_expression
+%type <and_expression_ptr> and_expression
+%type <exclusive_or_expression_ptr> exclusive_or_expression
+%type <inclusive_or_expression_ptr> inclusive_or_expression
+%type <logical_and_expression_ptr> logical_and_expression
+%type <type_specifier_ptr> type_specifier
+%type <type_qualifier_ptr> type_qualifier
+%type <init_declarator_ptr> init_declarator
+%type <declarator_ptr> declarator
+%type <initializer_ptr> initializer
+%type <initializer_list_ptr> initializer_list
+%type <struct_or_union_specifier_ptr> struct_or_union_specifier
+%type <enum_specifier_ptr> enum_specifier
+%type <typedef_name_ptr> typedef_name
+%type <struct_declaration_list_ptr> struct_declaration_list
+%type <struct_declaration_ptr> struct_declaration
+%type <specifier_qualifier_list_ptr> specifier_qualifier_list
+%type <struct_declarator_list_ptr> struct_declarator_list
+%type <struct_declarator_ptr> struct_declarator
+%type <enumerator_list_ptr> enumerator_list
+%type <enumerator_ptr> enumerator
+%type <pointer_ptr> pointer
+%type <direct_declarator_ptr> direct_declarator
+%type <parameter_type_list_ptr> parameter_type_list
+%type <identifier_list_ptr> identifier_list
+%type <type_qualifier_list_ptr> type_qualifier_list
+%type <parameter_list_ptr> parameter_list
+%type <parameter_declaration_ptr> parameter_declaration
+%type <abstract_declarator_ptr> abstract_declarator
+%type <direct_abstract_declarator_ptr> direct_abstract_declarator
+%type <statement_ptr> statement
+%type <labeled_statement_ptr> labeled_statement
+%type <compound_statement_ptr> compound_statement
+%type <expression_statement_ptr> expression_statement
+%type <selection_statement_ptr> selection_statement
+%type <iteration_statement_ptr> iteration_statement
+%type <jump_statement_ptr> jump_statement
+%type <statement_list_ptr> statement_list
+%type <declaration_list_ptr> declaration_list
+%type <external_declaration_ptr> external_declaration
+%type <function_definition_ptr> function_definition
 
 
 %start root
@@ -313,7 +408,7 @@ type_qualifier : KEYW_CONST                                                 {$$ 
             	;
 
 declarator : pointer direct_declarator                                      {$$ = new Declarator($1, $2);}
-            	| direct_declarator                                         {$$ = new Declarator(NULL, $2);}
+            	| direct_declarator                                         {$$ = new Declarator(NULL, $1);}
             	;
 
 direct_declarator : IDENTIFIER                                                             {$$ = new Direct_declarator($1, NULL, NULL, NULL, NULL, NULL, 1)}

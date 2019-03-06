@@ -87,7 +87,7 @@ L?\"(\\.|[^\\"])*\"	{ yylval.string = new std::string(yytext); return STRING_LIT
 &               { return OP_AND; }
 \|              { return OP_OR; }
 
-(==)|           { return OP_EQ_CONST; }
+(==)            { return OP_EQ_CONST; }
 (!=)	        { return OP_NE_CONST; }
 (<=)            { return OP_LT_EQ; }
 (>=)            { return OP_GT_EQ; }

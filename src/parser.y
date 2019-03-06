@@ -23,6 +23,12 @@
 
   Postfix_expression *postfix_expression_ptr;
   Primary_expression *primary_expression_ptr;
+  Expression *expression_ptr;
+  Argument_expression_list *argument_expression_list_ptr;
+  Assignment_expression *assignment_expression_ptr;
+  Unary_expression *unary_expression_ptr;
+  Cast_expression *cast_expression_ptr;
+  Type_name *type_name_ptr;
 }
 
 
@@ -52,9 +58,31 @@
        PUN_SR_BRACKET PUN_SEMIC PUN_COMMA PUN_COLON PUN_EQUALS PUN_ELLIPSIS
        HASHTAG DOUBLE_HASHTAG
 
+
+
+
+
 %type <t_u> translation_unit
 %type <postfix_expression_ptr> postfix_expression
 %type <primary_expression_ptr> primary_expression
+%type <expression_ptr> expression
+%type <argument_expression_list_ptr> argument_expression_list
+%type <string> unary_operator IDENTIFIER
+        OP_ASTERISK OP_DIV OP_REMAINDER OP_PLUS OP_MINUS OP_EXP OP_ANDAND
+        OP_OROR OP_AND OP_OR OP_EQ_CONST OP_NE_CONST OP_LT_EQ OP_GT_EQ
+        OP_LT OP_GT OP_CONDITIONAL OP_RIGHT_SHIFT OP_LEFT_SHIFT OP_INCREM
+        OP_DECREM OP_POINTER OP_MUL_ASSIGN OP_DIV_ASSIGN OP_PLUS_ASSIGN
+        OP_MOD_ASSIGN OP_MINUS_ASSIGN OP_LEFT_ASSIGN OP_RIGHT_ASSIGN
+        OP_AND_ASSIGN OP_XOR_ASSIGN OP_OR_ASSIGN OP_NOT OP_DOT OP_DESTRUCTOR
+        KEYW_AUTO KEYW_BREAK KEYW_CASE KEYW_CONST KEYW_CONTINUE
+        KEYW_DEFAULT KEYW_DO KEYW_ELSE KEYW_ENUM KEYW_EXTERN KEYW_FOR KEYW_IF
+        KEYW_REGISTER KEYW_RETURN KEYW_SIZEOF KEYW_STATIC KEYW_STRUCT
+        KEYW_SWITCH KEYW_TYPEDEF KEYW_VOLATILE KEYW_WHILE
+%type <assignment_expression_ptr> assignment_expression
+%type <unary_expression_ptr> unary_expression
+%type <cast_expression_ptr> cast_expression
+%type <type_name_ptr> type_name
+
 
 %start root
 

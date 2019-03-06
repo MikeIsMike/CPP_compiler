@@ -111,10 +111,10 @@ root: translation_unit { g_root = $1;}
 enumeration_constant : IDENTIFIER                                  {$$ = new Enumeration_constant($1);}
                 ;
 
-primary_expression : IDENTIFIER
-                | CONSTANT
-                | STRING_LITERAL
-                | PUN_L_BRACKET expression PUN_R_BRACKET
+primary_expression : IDENTIFIER                                     { $$ = new Primary_expression($1, NULL, NULL, NULL);}
+                | CONSTANT                                          { $$ = new Primary_expression(NULL, $1, NULL, NULL);}
+                | STRING_LITERAL                                    { $$ = new Primary_expression(NULL, NULL, $1, NULL);}
+                | PUN_L_BRACKET expression PUN_R_BRACKET            { $$ = new Primary_expression(NULL, NULL, NULL, $2);}
                 ;
 
 postfix_expression : primary_expression                                                     {$$ = new Postfix_expression($1, NULL, NULL, NULL, NULL, NULL);}
@@ -295,19 +295,13 @@ struct_declarator : declarator                                             {$$ =
             	| declarator PUN_COLON constant_expression                 {$$ = new Struct_declarator($1, $3);}
             	;
 
-enum_specifier : ENUM PUN_CL_BRACKET enumerator_list PUN_CR_BRACKET                 {$$ = new Enum_specifier($3, NULL);}
-            	| ENUM IDENTIFIER PUN_CL_BRACKET enumerator_list PUN_CR_BRACKET     {$$ = new Enum_specifier($4, $2);}
-            	| ENUM IDENTIFIER                                                   {$$ = new Enum_specifier(NULL, $2);}
+enum_specifier : KEYW_ENUM PUN_CL_BRACKET enumerator_list PUN_CR_BRACKET                 {$$ = new Enum_specifier($3, NULL);}
+            	| KEYW_ENUM IDENTIFIER PUN_CL_BRACKET enumerator_list PUN_CR_BRACKET     {$$ = new Enum_specifier($4, $2);}
+            	| KEYW_ENUM IDENTIFIER                                                   {$$ = new Enum_specifier(NULL, $2);}
             	;
 
-<<<<<<< HEAD
 enumerator_list : enumerator                                                        {$$ = new Enumerator_list($1, NULL);}
             	| enumerator_list PUN_COMMA enumerator                              {$$ = new Enumerator_list($3, $1);}
-=======
-enum_specifier : KEYW_ENUM PUN_CL_BRACKET enumerator_list PUN_CR_BRACKET
-            	| KEYW_ENUM IDENTIFIER PUN_CL_BRACKET enumerator_list PUN_CR_BRACKET
-            	| KEYW_ENUM IDENTIFIER
->>>>>>> 00ff3f05c0f32e4f1c17c12dd40f7ab955904f6e
             	;
 
 enumerator : enumeration_constant                                                   {$$ = new Enumerator($1, NULL);}
@@ -399,15 +393,9 @@ statement : labeled_statement                   { $$ = new Statement($1, NULL, N
             	| jump_statement                { $$ = new Statement(NULL, NULL, NULL, NULL, NULL, $1); }
             	;
 
-<<<<<<< HEAD
 labeled_statement : IDENTIFIER PUN_COLON statement                                  { $$ = new Labeled_statement($1, $3, NULL);}
             	| KEYW_CASE constant_expression PUN_COLON statement                 { $$ = new Labeled_statement(NULL, $4, $2);}
-            	| DEFAULT PUN_COLON statement                                       { $$ = new Labeled_statement(NULL, $3, NULL);}
-=======
-labeled_statement : IDENTIFIER PUN_COLON statement
-            	| KEYW_CASE constant_expression PUN_COLON statement
-            	| KEYW_DEFAULT PUN_COLON statement
->>>>>>> 00ff3f05c0f32e4f1c17c12dd40f7ab955904f6e
+            	| KEYW_DEFAULT PUN_COLON statement                                       { $$ = new Labeled_statement(NULL, $3, NULL);}
             	;
 
 compound_statement : PUN_CL_BRACKET PUN_CR_BRACKET                                  { $$ = new Compound_statement(NULL, NULL);}
@@ -417,7 +405,7 @@ compound_statement : PUN_CL_BRACKET PUN_CR_BRACKET                              
             	;
 
 declaration_list : declaration                                                      { $$ = new Declaration_list($1, NULL);}
-            	| declaration_list declaration                                      { $$ = new Declaration_list($2, $1);}  
+            	| declaration_list declaration                                      { $$ = new Declaration_list($2, $1);}
             	;
 
 statement_list : statement                                                          { $$ = new Statement_list(NULL, $1);}
@@ -428,15 +416,9 @@ expression_statement : PUN_SEMIC                                                
             	| expression PUN_SEMIC                                              { $$ = new Expression_statement($1);}
             	;
 
-<<<<<<< HEAD
 selection_statement : KEYW_IF PUN_L_BRACKET expression PUN_R_BRACKET statement                  { $$ = new Selection_statement($3, $5, NULL, false);}
-            	| KEYW_IF PUN_L_BRACKET expression PUN_R_BRACKET statement ELSE statement       { $$ = new Selection_statement($3, $5, $7, false);}
+            	| KEYW_IF PUN_L_BRACKET expression PUN_R_BRACKET statement KEYW_ELSE statement       { $$ = new Selection_statement($3, $5, $7, false);}
                 | KEYW_SWITCH PUN_L_BRACKET expression PUN_R_BRACKET statement                  { $$ = new Selection_statement($3, $5, NULL, true);}
-=======
-selection_statement : KEYW_IF PUN_L_BRACKET expression PUN_R_BRACKET statement
-            	| KEYW_IF PUN_L_BRACKET expression PUN_R_BRACKET statement KEYW_ELSE statement
-                | KEYW_SWITCH PUN_L_BRACKET expression PUN_R_BRACKET statement
->>>>>>> 00ff3f05c0f32e4f1c17c12dd40f7ab955904f6e
             	;
 
 iteration_statement : KEYW_WHILE PUN_L_BRACKET expression PUN_R_BRACKET statement                                           { $$ = new Iteration_statement($3, $5, NULL, NULL, $1);}

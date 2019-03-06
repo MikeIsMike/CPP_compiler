@@ -7,7 +7,7 @@ KeepMilestonesUpToDate,DefineInitialMilestones,0.1*N,Rudolfs,0%,Update the progr
 ,,,,,
 DefineLexerTokens,InitialProjectStructuring,6,Rudolfs,80%,Create the lexer to lex the tokens used by the parser
 ParseTreeRules,,6,Mike,90%,Write rules for the parser to use
-ParseTreeAST_Subclasses,ParseTreeRules,,Rudolfs,40%,Write classes to be created once a parse rule is passed
+ParseTreeAST_Subclasses,ParseTreeRules,,Rudolfs,90%,Write classes to be created once a parse rule is passed
 ParseTreeIntegration,ParseTreeAST_Subclasses,,,0%,Create classes once rule is passed
 ,,,,,
 ,,,,,

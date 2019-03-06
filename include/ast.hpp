@@ -6,6 +6,6 @@
 
 
 
-extern const Expression *parseAST();
+extern const Translation_unit *parseAST();
 
 #endif

@@ -7,6 +7,10 @@ extern "C" int fileno(FILE *stream);
 #include "parser.tab.hpp"
 %}
 
+H			      [a-fA-F0-9]
+IS                (([uU][lL]?)|([lL][uU]?))
+FS                [fFlL]
+
 
 %%
 "auto"			  { return KEYW_AUTO; }
@@ -23,6 +27,8 @@ extern "C" int fileno(FILE *stream);
 
 "double"		  { return TYPE_DOUBLE; }
 "else"            { return KEYW_ELSE; }
+"enum"			  { return KEYW_ENUM; }
+
 "extern"		  { return KEYW_EXTERN; }
 "float"			  { return TYPE_FLOAT; }
 "for"			  { return KEYW_FOR; }
@@ -48,9 +54,24 @@ extern "C" int fileno(FILE *stream);
 
 [a-zA-Z_][a-zA-Z_0-9]*              { yylval.string=new std::string(yytext); return IDENTIFIER; }
 
-[0-9]+([Ee][+-]?[0-9]+)               { yylval.number=strtod(yytext, 0); return T_NUMBER; }
-[0-9]*"."[0-9]+([Ee][+-]?[0-9]+)?	    { yylval.number=strtod(yytext, 0); return T_NUMBER; }
-[0-9]+"."[0-9]*([Ee][+-]?[0-9]+)?	    { yylval.number=strtod(yytext, 0); return T_NUMBER; }
+[0-9]+([Ee][+-]?[0-9]+){FS}?              { yylval.number=strtod(yytext, 0); return T_NUMBER; }
+[0-9]*"."[0-9]+([Ee][+-]?[0-9]+)?{FS}?	    { yylval.number=strtod(yytext, 0); return T_NUMBER; }
+[0-9]+"."([Ee][+-]?[0-9]+)?{FS}?	    { yylval.number=strtod(yytext, 0); return T_NUMBER; }
+
+0[xX]{H}+{IS}?      { yylval.number = strtod(yytext, 0); return CONSTANT; }
+0[0-7]+{IS}?		{ yylval.number = strtod(yytext, 0); return CONSTANT; }
+[0-9]+{IS}?		{ yylval.number = strtod(yytext, 0); return CONSTANT; }
+
+
+
+
+
+L?\'(\\.|[^\\'])+\'	{ yylval.string = new std::string(yytext); return CONSTANT; }  /*char constant*/
+L?\"(\\.|[^\\"])*\"	{ yylval.string = new std::string(yytext); return STRING_LITERAL; }  /*string literal*/
+
+
+
+
 
 
 [*]             { return OP_ASTERISK; }

@@ -29,6 +29,14 @@
   Unary_expression *unary_expression_ptr;
   Cast_expression *cast_expression_ptr;
   Type_name *type_name_ptr;
+  Conditional_expression *conditional_expression_ptr;
+  Logical_or_expression *logical_or_expression_ptr;
+  Assignment_operator *assignment_operator_ptr;
+  Constant_expression *constant_expression_ptr;
+  Declaration *declaration_ptr;
+  Declaration_specifiers *declaration_specifiers_ptr;
+  Init_declarator_list *init_declarator_list_ptr;
+  Storage_class_specifier *storage_class_specifier_ptr;
 }
 
 
@@ -67,7 +75,7 @@
 %type <primary_expression_ptr> primary_expression
 %type <expression_ptr> expression
 %type <argument_expression_list_ptr> argument_expression_list
-%type <string> unary_operator IDENTIFIER
+%type <string> unary_operator IDENTIFIER PUN_EQUALS
         OP_ASTERISK OP_DIV OP_REMAINDER OP_PLUS OP_MINUS OP_EXP OP_ANDAND
         OP_OROR OP_AND OP_OR OP_EQ_CONST OP_NE_CONST OP_LT_EQ OP_GT_EQ
         OP_LT OP_GT OP_CONDITIONAL OP_RIGHT_SHIFT OP_LEFT_SHIFT OP_INCREM
@@ -82,6 +90,14 @@
 %type <unary_expression_ptr> unary_expression
 %type <cast_expression_ptr> cast_expression
 %type <type_name_ptr> type_name
+%type <conditional_expression_ptr> conditional_expression
+%type <logical_or_expression_ptr> logical_or_expression
+%type <assignment_operator_ptr> assignment_operator
+%type <constant_expression_ptr> constant_expression
+%type <declaration_ptr> declaration
+%type <declaration_specifiers_ptr> declaration_specifiers
+%type <init_declarator_list_ptr> init_declarator_list
+%type <storage_class_specifier_ptr> storage_class_specifier
 
 
 %start root

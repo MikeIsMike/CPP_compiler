@@ -1,5 +1,5 @@
 %code requires{
-  #include "ast.hpp"
+  #include "../include/ast.hpp"
 
   #include <cassert>
 
@@ -17,10 +17,12 @@
 /* // Represents the value associated with any kind of
 // AST node. */
 %union{
-  /* const Expression *expr; */
-  const translation_unit *t_u;
+  const Translation_unit *t_u;
   double number;
   std::string *string;
+
+  Postfix_expression *postfix_expression_ptr;
+  Primary_expression *primary_expression_ptr;
 }
 
 
@@ -31,15 +33,15 @@
 //
 // %type <expr> EXPR TERM FACTOR
 // %type <number> T_NUMBER
-// %type <string> T_VARIABLE T_LOG T_EXP T_SQRT FUNCTION_NAME */
+// %type <string> T_VARIABLE T_LOG T_EXP T_SQRT FUNCTION_NAME  */
 
 %token KEYW_AUTO KEYW_BREAK KEYW_CASE KEYW_CONST KEYW_CONTINUE
-       KEYW_DEFAULT KEYW_DO KEYW_ELSE KEYW_EXTERN KEYW_FOR KEYW_IF
+       KEYW_DEFAULT KEYW_DO KEYW_ELSE KEYW_ENUM KEYW_EXTERN KEYW_FOR KEYW_IF
        KEYW_REGISTER KEYW_RETURN KEYW_SIZEOF KEYW_STATIC KEYW_STRUCT
        KEYW_SWITCH KEYW_TYPEDEF KEYW_VOLATILE KEYW_WHILE
 %token TYPE_CHAR TYPE_DOUBLE TYPE_FLOAT TYPE_INT TYPE_LONG TYPE_SHORT
        TYPE_SIGNED TYPE_UNSIGNED TYPE_VOID
-%token IDENTIFIER T_NUMBER
+%token IDENTIFIER T_NUMBER CONSTANT STRING_LITERAL
 %token OP_ASTERISK OP_DIV OP_REMAINDER OP_PLUS OP_MINUS OP_EXP OP_ANDAND
        OP_OROR OP_AND OP_OR OP_EQ_CONST OP_NE_CONST OP_LT_EQ OP_GT_EQ
        OP_LT OP_GT OP_CONDITIONAL OP_RIGHT_SHIFT OP_LEFT_SHIFT OP_INCREM
@@ -50,7 +52,13 @@
        PUN_SR_BRACKET PUN_SEMIC PUN_COMMA PUN_COLON PUN_EQUALS PUN_ELLIPSIS
        HASHTAG DOUBLE_HASHTAG
 
+%type <t_u> translation_unit
+%type <postfix_expression_ptr> postfix_expression
+%type <primary_expression_ptr> primary_expression
+
 %start root
+
+
 
 %%
 
@@ -60,8 +68,8 @@ enumeration_constant : IDENTIFIER
                 ;
 
 primary_expression : IDENTIFIER
-                | CONSTANT///change
-                | STRING_LITERAL///change
+                | CONSTANT
+                | STRING_LITERAL
                 | PUN_L_BRACKET expression PUN_R_BRACKET
                 ;
 
@@ -83,8 +91,8 @@ unary_expression : postfix_expression                           {$$ = new Unary_
                 | OP_INCREM unary_expression                    {$$ = new Unary_expression(NULL, $1, $2, NULL, NULL, NULL);}
                 | OP_DECREM unary_expression                    {$$ = new Unary_expression(NULL, $1, $2, NULL, NULL, NULL);}
                 | unary_operator cast_expression                {$$ = new Unary_expression(NULL, NULL, NULL, $1, $2, NULL);}
-                | sizeof unary_expression                       {$$ = new Unary_expression(NULL, $1, $2, NULL, NULL, NULL);}
-                | sizeof PUN_L_BRACKET type_name PUN_R_BRACKET  {$$ = new Unary_expression(NULL, $1, NULL, NULL, NULL, $3);}
+                | KEYW_SIZEOF unary_expression                       {$$ = new Unary_expression(NULL, $1, $2, NULL, NULL, NULL);}
+                | KEYW_SIZEOF PUN_L_BRACKET type_name PUN_R_BRACKET  {$$ = new Unary_expression(NULL, $1, NULL, NULL, NULL, $3);}
                 ;
 
 unary_operator : OP_AND             {$$ = $1;}
@@ -179,20 +187,20 @@ declaration :     declaration_specifiers PUN_SEMIC                          {$$ 
 	            | declaration_specifiers init_declarator_list PUN_SEMIC     {$$ = new Declaration($1, $2);}
 	            ;
 
-declaration_specifiers : storage_class_specifier                            {$$ = new Declaration_specifiers($1, NULL, NULL, NULL);}
-                | storage_class_specifier declaration_specifiers            {$$ = new Declaration_specifiers($1, NULL, NULL, $2);
-                | type_specifier                                            {$$ = new Declaration_specifiers(NULL, $1, NULL, NULL);
-                | type_specifier declaration_specifiers                     {$$ = new Declaration_specifiers(NULL, $1, NULL, $2);
-                | type_qualifier                                            {$$ = new Declaration_specifiers(NULL, NULL, $1, NULL);
-                | type_qualifier declaration_specifiers                     {$$ = new Declaration_specifiers(NULL, NULL, $1, $2);
+declaration_specifiers : storage_class_specifier                            {$$ = new Declaration_specifiers($1, NULL, NULL, NULL); }
+                | storage_class_specifier declaration_specifiers            {$$ = new Declaration_specifiers($1, NULL, NULL, $2); }
+                | type_specifier                                            {$$ = new Declaration_specifiers(NULL, $1, NULL, NULL); }
+                | type_specifier declaration_specifiers                     {$$ = new Declaration_specifiers(NULL, $1, NULL, $2); }
+                | type_qualifier                                            {$$ = new Declaration_specifiers(NULL, NULL, $1, NULL); }
+                | type_qualifier declaration_specifiers                     {$$ = new Declaration_specifiers(NULL, NULL, $1, $2); }
                 ;
 
-init_declarator_list : init_declarator                                      {$$ = new Init_declarator_list($1, NULL);
-            	| init_declarator_list PUN_COMMA init_declarator            {$$ = new Init_declarator_list($1, $3);
+init_declarator_list : init_declarator                                      {$$ = new Init_declarator_list($1, NULL); }
+            	| init_declarator_list PUN_COMMA init_declarator            {$$ = new Init_declarator_list($1, $3); }
             	;
 
-init_declarator: declarator                                                 {$$ = new Init_declarator($1, NULL);
-            	| declarator PUN_EQUALS initializer                         {$$ = new Init_declarator($1, $3);
+init_declarator: declarator                                                 {$$ = new Init_declarator($1, NULL); }
+            	| declarator PUN_EQUALS initializer                         {$$ = new Init_declarator($1, $3); }
             	;
 
 storage_class_specifier : KEYW_TYPEDEF                                      {$$ = new Storage_class_specifier($1);}
@@ -246,9 +254,9 @@ struct_declarator : declarator
             	| declarator PUN_COLON constant_expression
             	;
 
-enum_specifier : ENUM PUN_CL_BRACKET enumerator_list PUN_CR_BRACKET
-            	| ENUM IDENTIFIER PUN_CL_BRACKET enumerator_list PUN_CR_BRACKET
-            	| ENUM IDENTIFIER
+enum_specifier : KEYW_ENUM PUN_CL_BRACKET enumerator_list PUN_CR_BRACKET
+            	| KEYW_ENUM IDENTIFIER PUN_CL_BRACKET enumerator_list PUN_CR_BRACKET
+            	| KEYW_ENUM IDENTIFIER
             	;
 
 enumerator_list : enumerator
@@ -346,7 +354,7 @@ statement : labeled_statement
 
 labeled_statement : IDENTIFIER PUN_COLON statement
             	| KEYW_CASE constant_expression PUN_COLON statement
-            	| DEFAULT PUN_COLON statement
+            	| KEYW_DEFAULT PUN_COLON statement
             	;
 
 compound_statement : PUN_CL_BRACKET PUN_CR_BRACKET
@@ -368,7 +376,7 @@ expression_statement : PUN_SEMIC
             	;
 
 selection_statement : KEYW_IF PUN_L_BRACKET expression PUN_R_BRACKET statement
-            	| KEYW_IF PUN_L_BRACKET expression PUN_R_BRACKET statement ELSE statement
+            	| KEYW_IF PUN_L_BRACKET expression PUN_R_BRACKET statement KEYW_ELSE statement
                 | KEYW_SWITCH PUN_L_BRACKET expression PUN_R_BRACKET statement
             	;
 

@@ -27,6 +27,8 @@ FS                [fFlL]
 
 "double"		  { return TYPE_DOUBLE; }
 "else"            { return KEYW_ELSE; }
+"enum"			  { return KEYW_ENUM; }
+
 "extern"		  { return KEYW_EXTERN; }
 "float"			  { return TYPE_FLOAT; }
 "for"			  { return KEYW_FOR; }
@@ -65,7 +67,7 @@ FS                [fFlL]
 
 
 L?\'(\\.|[^\\'])+\'	{ yylval.string = new std::string(yytext); return CONSTANT; }  /*char constant*/
-L?\"(\\.|[^\\"])*\"	{ yylval.string = new std::string(yytext); return CONSTANT; }  /*string literal*/
+L?\"(\\.|[^\\"])*\"	{ yylval.string = new std::string(yytext); return STRING_LITERAL; }  /*string literal*/
 
 
 

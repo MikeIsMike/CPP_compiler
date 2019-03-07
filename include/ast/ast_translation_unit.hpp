@@ -2,6 +2,7 @@
 #define ast_translation_unit_hpp
 
 #include "ast_tree.hpp"
+#include"../ast.hpp"
 
 
 

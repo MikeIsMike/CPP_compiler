@@ -2,6 +2,7 @@
 #define ast_type_specifier_hpp
 
 #include "ast_tree.hpp"
+#include"../ast.hpp"
 #include <string>
 
 

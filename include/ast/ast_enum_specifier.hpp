@@ -2,6 +2,7 @@
 #define ast_enum_specifier_hpp
 
 #include "ast_tree.hpp"
+#include"../ast.hpp"
 #include <string>
 
 
@@ -19,7 +20,7 @@ public:
 
     Enum_specifier(
         Enumerator_list* enum_list_in,
-        std::string* identifier_in) : 
+        std::string* identifier_in) :
         enum_list(enum_list_in),
         identifier(identifier_in){}
 };

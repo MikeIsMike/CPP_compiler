@@ -2,6 +2,7 @@
 #define ast_declaration_specifiers_hpp
 
 #include "ast_tree.hpp"
+#include"../ast.hpp"
 
 
 

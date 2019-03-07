@@ -24,15 +24,12 @@ FS                [fFlL]
 
 "default"		  { return KEYW_DEFAULT; }
 "do"			  { return KEYW_DO; }
-
 "double"		  { return TYPE_DOUBLE; }
 "else"            { return KEYW_ELSE; }
 "enum"			  { return KEYW_ENUM; }
-
 "extern"		  { return KEYW_EXTERN; }
 "float"			  { return TYPE_FLOAT; }
 "for"			  { return KEYW_FOR; }
-
 "if"              { return KEYW_IF; }
 "int"             { return TYPE_INT; }
 "long"			  { return TYPE_LONG; }
@@ -54,9 +51,9 @@ FS                [fFlL]
 
 [a-zA-Z_][a-zA-Z_0-9]*              { yylval.string=new std::string(yytext); return IDENTIFIER; }
 
-[0-9]+([Ee][+-]?[0-9]+){FS}?              { yylval.number=strtod(yytext, 0); return T_NUMBER; }
-[0-9]*"."[0-9]+([Ee][+-]?[0-9]+)?{FS}?	    { yylval.number=strtod(yytext, 0); return T_NUMBER; }
-[0-9]+"."([Ee][+-]?[0-9]+)?{FS}?	    { yylval.number=strtod(yytext, 0); return T_NUMBER; }
+[0-9]+([Ee][+-]?[0-9]+){FS}?              { yylval.number=strtod(yytext, 0); return CONSTANT; }
+[0-9]*"."[0-9]+([Ee][+-]?[0-9]+)?{FS}?	    { yylval.number=strtod(yytext, 0); return CONSTANT; }
+[0-9]+"."([Ee][+-]?[0-9]+)?{FS}?	    { yylval.number=strtod(yytext, 0); return CONSTANT; }
 
 0[xX]{H}+{IS}?      { yylval.number = strtod(yytext, 0); return CONSTANT; }
 0[0-7]+{IS}?		{ yylval.number = strtod(yytext, 0); return CONSTANT; }

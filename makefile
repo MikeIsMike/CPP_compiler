@@ -14,4 +14,6 @@ clean :
 	rm -f src/*.o
 	rm -f bin/*
 	rm -f src/*.tab.cpp
+	rm -f src/*.tab.hpp
 	rm -f src/*.yy.cpp
+	rm -f src/parser.output

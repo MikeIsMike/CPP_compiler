@@ -55,7 +55,7 @@
   Initializer_list *initializer_list_ptr;
   Struct_or_union_specifier *struct_or_union_specifier_ptr;
   Enum_specifier *enum_specifier_ptr;
-  Typedef_name *typedef_name_ptr;
+  /* Typedef_name *typedef_name_ptr; */
   Struct_declaration_list *struct_declaration_list_ptr;
   Struct_declaration *struct_declaration_ptr;
   Specifier_qualifier_list *specifier_qualifier_list_ptr;
@@ -165,7 +165,7 @@
 %type <initializer_list_ptr> initializer_list
 %type <struct_or_union_specifier_ptr> struct_or_union_specifier
 %type <enum_specifier_ptr> enum_specifier
-%type <typedef_name_ptr> typedef_name
+/* %type <typedef_name_ptr> typedef_name */
 %type <struct_declaration_list_ptr> struct_declaration_list
 %type <struct_declaration_ptr> struct_declaration
 %type <specifier_qualifier_list_ptr> specifier_qualifier_list
@@ -360,7 +360,7 @@ type_specifier : TYPE_VOID                                                  {$$ 
                 | TYPE_UNSIGNED                                             {$$ = new Type_specifier($1, NULL, NULL, NULL);}
                 | struct_or_union_specifier                                 {$$ = new Type_specifier(NULL, $1, NULL, NULL);}
                 | enum_specifier                                            {$$ = new Type_specifier(NULL, NULL, $1, NULL);}
-                | typedef_name                                              {$$ = new Type_specifier(NULL, NULL, NULL, $1);}
+                /* | typedef_name                                              {$$ = new Type_specifier(NULL, NULL, NULL, $1);} */
                 ;
 
 struct_or_union_specifier : KEYW_STRUCT IDENTIFIER PUN_CL_BRACKET struct_declaration_list PUN_CR_BRACKET        {$$ = new Struct_or_union_specifier($2, $4);}
@@ -468,8 +468,8 @@ direct_abstract_declarator : PUN_L_BRACKET abstract_declarator PUN_R_BRACKET    
             	| direct_abstract_declarator PUN_L_BRACKET parameter_type_list PUN_R_BRACKET           {$$ = new Direct_abstract_declarator(9, NULL, NULL, $1, $3);}
             	;
 
-typedef_name: IDENTIFIER                                                    { $$ = new Typedef_name($1); }
-                ;
+/* typedef_name: IDENTIFIER                                                    { $$ = new Typedef_name($1); }
+                ; */
 
 initializer : assignment_expression                                             { $$ = new Initializer($1, NULL, false);}
             	| PUN_CL_BRACKET initializer_list PUN_CR_BRACKET                { $$ = new Initializer(NULL, $2, false);}

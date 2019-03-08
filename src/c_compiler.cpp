@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    TreePtr tree=Parse(src);
+    const Translation_unit *ast=parseAST();
 
     if(argv[1]=="--translate"){
 

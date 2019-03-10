@@ -18,7 +18,7 @@ private:
     Initializer_list* init_list;
     bool comma_present;
 public:
-    virtual .* {}
+    virtual ~Initializer() {}
     virtual void print_python(std::ostream &dst) const;
 
     Initializer(

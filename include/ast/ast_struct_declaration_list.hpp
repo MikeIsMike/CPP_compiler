@@ -16,7 +16,7 @@ private:
     Struct_declaration* struct_decl;
     Struct_declaration_list* struct_decl_list;
 public:
-    virtual .* {}
+    virtual ~Struct_declaration_list() {}
     virtual void print_python(std::ostream &dst) const;
 
     Struct_declaration_list(

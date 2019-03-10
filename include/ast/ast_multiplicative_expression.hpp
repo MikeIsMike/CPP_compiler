@@ -18,7 +18,7 @@ private:
     std::string* op;
 
 public:
-    virtual .* {}
+    virtual ~Multiplicative_expression() {}
     virtual void print_python(std::ostream &dst) const;
 
     Multiplicative_expression(

@@ -18,7 +18,7 @@ private:
     std::string* op;
 
 public:
-    virtual .* {}
+    virtual ~Relational_expression() {}
     virtual void print_python(std::ostream &dst) const;
 
     Relational_expression(

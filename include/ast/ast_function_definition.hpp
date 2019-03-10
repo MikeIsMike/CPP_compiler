@@ -21,7 +21,7 @@ private:
     Compound_statement* compound_stmnt;
     Declaration_list* decl_list;
 public:
-    virtual .* {}
+    virtual ~Function_definition() {}
     virtual void print_python(std::ostream &dst) const;
 
     Function_definition(

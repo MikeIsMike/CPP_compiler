@@ -18,7 +18,7 @@ private:
     Direct_declarator* dir_decl;
     //Declarator* declarator;
 public:
-    virtual .* {}
+    virtual ~Declarator() {}
     virtual void print_python(std::ostream &dst) const;
 
     Declarator(Pointer* pointer_in, Direct_declarator* dir_decl_in) : pointer(pointer_in), dir_decl(dir_decl_in){

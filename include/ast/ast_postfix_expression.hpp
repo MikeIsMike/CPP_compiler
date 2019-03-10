@@ -21,11 +21,11 @@ private:
     Postfix_expression* postf_expr;
     Expression* expr;
     Argument_expression_list* arg_expr_list;
-    std::string oper;
-    std::string identifier;
+    std::string* oper;
+    std::string* identifier;
 
 public:
-    virtual .* {}
+    virtual ~Postfix_expression() {}
     virtual void print_python(std::ostream &dst) const;
 
     Postfix_expression(
@@ -33,8 +33,8 @@ public:
         Postfix_expression* postf_expr_in,
         Expression* expr_in,
         Argument_expression_list* arg_expr_list_in,
-        std::string operator_in,
-        std::string identifier_in) :
+        std::string* operator_in,
+        std::string* identifier_in) :
         prim_expr(prim_expr_in),
         postf_expr(postf_expr_in),
         expr(expr_in),

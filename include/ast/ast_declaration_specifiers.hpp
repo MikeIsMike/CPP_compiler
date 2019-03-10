@@ -19,7 +19,7 @@ protected:
     Type_qualifier* type_qual;
 	Declaration_specifiers* decl_spec;
 public:
-    virtual .* {}
+    virtual ~Declaration_specifiers() {}
     virtual void print_python(std::ostream &dst) const;
 
     Declaration_specifiers(

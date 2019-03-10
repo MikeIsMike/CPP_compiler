@@ -19,7 +19,7 @@ private:
     Constant_expression* cont_expr;
 
 public:
-    virtual .* {}
+    virtual ~Labeled_statement() {}
     virtual void print_python(std::ostream &dst) const;
 
     Labeled_statement(

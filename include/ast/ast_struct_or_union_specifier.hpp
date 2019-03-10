@@ -16,7 +16,7 @@ private:
     std::string* identifier;
     Struct_declaration_list* struct_decl_list;
 public:
-    virtual .* {}
+    virtual ~Struct_or_union_specifier() {}
     virtual void print_python(std::ostream &dst) const;
 
     Struct_or_union_specifier(

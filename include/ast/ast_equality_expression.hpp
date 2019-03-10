@@ -18,7 +18,7 @@ private:
     Equality_expression* equality_expr;
     std::string* op;
 public:
-    virtual .* {}
+    virtual ~Equality_expression() {}
     virtual void print_python(std::ostream &dst) const;
 
     Equality_expression(

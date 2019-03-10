@@ -20,7 +20,7 @@ private:
     Abstract_declarator* abstr_decl;
 
 public:
-    virtual .* {}
+    virtual ~Parameter_declaration() {}
     virtual void print_python(std::ostream &dst) const;
 
     Parameter_declaration(

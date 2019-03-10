@@ -17,7 +17,7 @@ private:
     std::string* keyword;
 
 public:
-    virtual .* {}
+    virtual ~Jump_statement() {}
     virtual void print_python(std::ostream &dst) const;
 
     Jump_statement(

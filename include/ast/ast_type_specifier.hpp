@@ -20,7 +20,7 @@ private:
     Enum_specifier* enum_spec;
     Typedef_name* typedef_name;
 public:
-    virtual .* {}
+    virtual ~Type_specifier() {}
     virtual void print_python(std::ostream &dst) const;
 
     Type_specifier(std::string* type_spec_in, Struct_or_union_specifier* s_or_u_spec_in, Enum_specifier* enum_spec_in, Typedef_name* typedef_name_in) : type_spec(type_spec_in), enum_spec(enum_spec_in), s_or_u_spec(s_or_u_spec_in), typedef_name(typedef_name_in) {}

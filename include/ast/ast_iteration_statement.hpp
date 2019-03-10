@@ -22,7 +22,7 @@ private:
     std::string* keyword;
 
 public:
-    virtual .* {}
+    virtual ~Iteration_statement() {}
     virtual void print_python(std::ostream &dst) const;
 
     Iteration_statement(

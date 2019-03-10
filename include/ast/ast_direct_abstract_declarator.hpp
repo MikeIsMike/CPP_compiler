@@ -22,7 +22,7 @@ private:
     Direct_abstract_declarator* direct_abstr_decl;
     Parameter_type_list* pparam_type_list;
 public:
-    virtual .* {}
+    virtual ~Direct_abstract_declarator() {}
     virtual void print_python(std::ostream &dst) const;
 
     Direct_abstract_declarator(

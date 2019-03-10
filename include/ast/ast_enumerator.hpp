@@ -17,7 +17,7 @@ private:
     Enumeration_constant* enum_constant;
     Constant_expression* cont_expr;
 public:
-    virtual .* {}
+    virtual ~Enumerator() {}
     virtual void print_python(std::ostream &dst) const;
 
     Enumerator(

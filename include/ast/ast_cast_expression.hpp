@@ -20,7 +20,7 @@ private:
     Cast_expression* cast_expr;
 
 public:
-    virtual .* {}
+    virtual ~Cast_expression() {}
     virtual void print_python(std::ostream &dst) const;
 
     Cast_expression(

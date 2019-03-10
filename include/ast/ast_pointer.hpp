@@ -16,7 +16,7 @@ private:
     Type_qualifier_list* type_qual_list;
     Pointer* ptr;
 public:
-    virtual .* {}
+    virtual ~Pointer() {}
     virtual void print_python(std::ostream &dst) const;
 
     Pointer(

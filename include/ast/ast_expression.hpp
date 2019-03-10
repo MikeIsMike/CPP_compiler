@@ -16,11 +16,11 @@ private:
     Assignment_expression* assign_expr;
     Expression* expr;
 public:
-    virtual .* {}
+    virtual ~Expression() {}
     virtual void print_python(std::ostream &dst) const;
 
     Expression(
-        Assignment_expression* assign_expr_in, 
+        Assignment_expression* assign_expr_in,
         Expression* expr_in) :
         assign_expr(assign_expr_in),
         expr(expr_in){}

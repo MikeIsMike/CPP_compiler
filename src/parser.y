@@ -121,6 +121,7 @@
 %type <expression_ptr> expression
 %type <argument_expression_list_ptr> argument_expression_list
 %type <string> unary_operator IDENTIFIER PUN_EQUALS CONSTANT STRING_LITERAL
+        assignment_operator
         OP_ASTERISK OP_DIV OP_REMAINDER OP_PLUS OP_MINUS OP_EXP OP_ANDAND
         OP_OROR OP_AND OP_OR OP_EQ_CONST OP_NE_CONST OP_LT_EQ OP_GT_EQ
         OP_LT OP_GT OP_CONDITIONAL OP_RIGHT_SHIFT OP_LEFT_SHIFT OP_INCREM
@@ -140,7 +141,7 @@
 %type <type_name_ptr> type_name
 %type <conditional_expression_ptr> conditional_expression
 %type <logical_or_expression_ptr> logical_or_expression
-%type <assignment_operator_ptr> assignment_operator
+/* %type <assignment_operator_ptr> assignment_operator */
 %type <constant_expression_ptr> constant_expression
 %type <declaration_ptr> declaration
 %type <declaration_specifiers_ptr> declaration_specifiers
@@ -222,7 +223,7 @@ postfix_expression : primary_expression                                         
                 ;
 
 argument_expression_list : assignment_expression                                {$$ = new Argument_expression_list($1, NULL);}
-                | argument_expression_list PUN_COMMA assignment_expression      {$$ = new Argument_expression_list($1, $3);}
+                | argument_expression_list PUN_COMMA assignment_expression      {$$ = new Argument_expression_list($3, $1);}
                 ;
 
 unary_expression : postfix_expression                           {$$ = new Unary_expression($1, NULL, NULL, NULL, NULL, NULL);}
@@ -257,8 +258,8 @@ additive_expression : multiplicative_expression                                 
             	;
 
 shift_expression : additive_expression                                                                  {$$ = new Shift_expression($1, NULL, NULL);}
-            	| shift_expression OP_LEFT_SHIFT additive_expression                                    {$$ = new Relational_expression($3, $1, $2);}
-            	| shift_expression OP_RIGHT_SHIFT additive_expression                                   {$$ = new Relational_expression($3, $1, $2);}
+            	| shift_expression OP_LEFT_SHIFT additive_expression                                    {$$ = new Shift_expression($3, $1, $2);}
+            	| shift_expression OP_RIGHT_SHIFT additive_expression                                   {$$ = new Shift_expression($3, $1, $2);}
             	;
 
 relational_expression : shift_expression                                                                {$$ = new Relational_expression($1, NULL, NULL);}
@@ -286,7 +287,7 @@ inclusive_or_expression : exclusive_or_expression                               
             	;
 
 logical_and_expression : inclusive_or_expression                                                        {$$ = new Logical_and_expression($1, NULL);}
-            	| logical_and_expression OP_ANDAND inclusive_or_expression                              {$$ = new Logical_or_expression($3, $1);}
+            	| logical_and_expression OP_ANDAND inclusive_or_expression                              {$$ = new Logical_and_expression($3, $1);}
             	;
 
 logical_or_expression : logical_and_expression                                                          {$$ = new Logical_or_expression($1, NULL);}

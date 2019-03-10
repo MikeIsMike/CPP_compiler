@@ -15,7 +15,7 @@ protected:
     External_declaration* external_decl;
 	Translation_unit* translation_unit;
 public:
-    virtual .* {}
+    virtual ~Translation_unit() {}
     virtual void print_python(std::ostream &dst) const;
 
 	Translation_unit(

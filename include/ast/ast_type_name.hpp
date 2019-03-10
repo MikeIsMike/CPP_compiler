@@ -17,7 +17,7 @@ private:
     Specifier_qualifier_list* spec_qual_list;
     Abstract_declarator* abstr_decl;
 public:
-    virtual .* {}
+    virtual ~Type_name() {}
     virtual void print_python(std::ostream &dst) const;
 
     Type_name(

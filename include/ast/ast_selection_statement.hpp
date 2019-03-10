@@ -21,7 +21,7 @@ private:
 
 
 public:
-    virtual .* {}
+    virtual ~Selection_statement() {}
     virtual void print_python(std::ostream &dst) const;
 
     Selection_statement(

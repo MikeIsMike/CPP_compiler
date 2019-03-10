@@ -16,7 +16,7 @@ private:
     Statement_list* stmnt_list;
     Statement* stmnt;
 public:
-    virtual .* {}
+    virtual ~Statement_list() {}
     virtual void print_python(std::ostream &dst) const;
 
     Statement_list(

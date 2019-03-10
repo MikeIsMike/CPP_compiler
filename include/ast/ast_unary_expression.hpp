@@ -17,19 +17,19 @@ class Unary_expression
 
 private:
     Postfix_expression* postf_expr;
-    std::string oper;
+    std::string* oper;
     Unary_expression* unary_expr;
     std::string* unary_op;
     Cast_expression* cast_expr;
     Type_name* type_name;
 
 public:
-    virtual .* {}
+    virtual ~Unary_expression() {}
     virtual void print_python(std::ostream &dst) const;
 
     Unary_expression(
         Postfix_expression* postf_expr_in,
-        std::string oper_in,
+        std::string* oper_in,
         Unary_expression* unary_expr_in,
         std::string* unary_op_in,
         Cast_expression* cast_expr_in,

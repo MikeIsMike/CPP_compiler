@@ -18,7 +18,7 @@ private:
     Enumerator_list* enum_list;
 public:
     virtual ~Enumerator_list() {}
-    virtual void print_python(std::ostream &dst) const;
+    virtual void print_python(std::ostream &dst) {};
 
     Enumerator_list(
         Enumerator* enumer_in,

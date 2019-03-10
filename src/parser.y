@@ -17,7 +17,7 @@
 /* // Represents the value associated with any kind of
 // AST node. */
 %union{
-  const Translation_unit *t_u;
+  Translation_unit *t_u;
   double number;
   std::string *string;
 
@@ -316,7 +316,7 @@ assignment_operator : PUN_EQUALS           {$$ = $1;}
             	;
 
 expression :      assignment_expression                                     {$$ = new Expression($1, NULL);}
-            	| expression PUN_COMMA assignment_expression                {$$ = new Expression($1, $3);}
+            	| expression PUN_COMMA assignment_expression                {$$ = new Expression($3, $1);}
             	;
 
 constant_expression : conditional_expression                                {$$ = new Constant_expression($1);}
@@ -335,7 +335,7 @@ declaration_specifiers : storage_class_specifier                            {$$ 
                 ;
 
 init_declarator_list : init_declarator                                      {$$ = new Init_declarator_list($1, NULL); }
-            	| init_declarator_list PUN_COMMA init_declarator            {$$ = new Init_declarator_list($1, $3); }
+            	| init_declarator_list PUN_COMMA init_declarator            {$$ = new Init_declarator_list($3, $1); }
             	;
 
 init_declarator: declarator                                                 {$$ = new Init_declarator($1, NULL); }
@@ -411,13 +411,13 @@ declarator : pointer direct_declarator                                      {$$ 
             	| direct_declarator                                         {$$ = new Declarator(NULL, $1);}
             	;
 
-direct_declarator : IDENTIFIER                                                             {$$ = new Direct_declarator($1, NULL, NULL, NULL, NULL, NULL, 1)}
-            	| PUN_L_BRACKET declarator PUN_R_BRACKET                                   {$$ = new Direct_declarator(NULL, $2, NULL, NULL, NULL, NULL, 2)}
-            	| direct_declarator PUN_SL_BRACKET constant_expression PUN_SR_BRACKET      {$$ = new Direct_declarator(NULL, NULL, $1, $3, NULL, NULL, 3)}
-            	| direct_declarator PUN_SL_BRACKET PUN_SR_BRACKET                          {$$ = new Direct_declarator(NULL, NULL, $1, NULL, NULL, NULL, 4)}
-            	| direct_declarator PUN_L_BRACKET parameter_type_list PUN_R_BRACKET        {$$ = new Direct_declarator(NULL, NULL, $1, NULL, $3, NULL, 5)}
-            	| direct_declarator PUN_L_BRACKET identifier_list PUN_R_BRACKET            {$$ = new Direct_declarator(NULL, NULL, $1, NULL, NULL, $3, 6)}
-            	| direct_declarator PUN_L_BRACKET PUN_R_BRACKET                            {$$ = new Direct_declarator(NULL, NULL, $1, NULL, NULL, NULL, 7)}
+direct_declarator : IDENTIFIER                                                             {$$ = new Direct_declarator($1, NULL, NULL, NULL, NULL, NULL, 1);}
+            	| PUN_L_BRACKET declarator PUN_R_BRACKET                                   {$$ = new Direct_declarator(NULL, $2, NULL, NULL, NULL, NULL, 2);}
+            	| direct_declarator PUN_SL_BRACKET constant_expression PUN_SR_BRACKET      {$$ = new Direct_declarator(NULL, NULL, $1, $3, NULL, NULL, 3);}
+            	| direct_declarator PUN_SL_BRACKET PUN_SR_BRACKET                          {$$ = new Direct_declarator(NULL, NULL, $1, NULL, NULL, NULL, 4);}
+            	| direct_declarator PUN_L_BRACKET parameter_type_list PUN_R_BRACKET        {$$ = new Direct_declarator(NULL, NULL, $1, NULL, $3, NULL, 5);}
+            	| direct_declarator PUN_L_BRACKET identifier_list PUN_R_BRACKET            {$$ = new Direct_declarator(NULL, NULL, $1, NULL, NULL, $3, 6);}
+            	| direct_declarator PUN_L_BRACKET PUN_R_BRACKET                            {$$ = new Direct_declarator(NULL, NULL, $1, NULL, NULL, NULL, 7);}
             	;
 
 pointer : OP_ASTERISK                                                          {$$ = new Pointer(NULL, NULL);}
@@ -562,7 +562,7 @@ function_definition : declaration_specifiers declarator declaration_list compoun
 
 %%
 
-const Translation_unit *g_root; // Definition of variable (to match declaration earlier)
+const Translation_unit *g_root; /*// Definition of variable (to match declaration earlier)*/
 
 const Translation_unit *parseAST()
 {

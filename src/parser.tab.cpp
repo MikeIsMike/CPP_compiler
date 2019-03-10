@@ -206,7 +206,7 @@ union YYSTYPE
 {
 #line 19 "src/parser.y" /* yacc.c:355  */
 
-  const Translation_unit *t_u;
+  Translation_unit *t_u;
   double number;
   std::string *string;
 
@@ -2276,7 +2276,7 @@ yyreduce:
 
   case 76:
 #line 319 "src/parser.y" /* yacc.c:1646  */
-    {(yyval.expression_ptr) = new Expression((yyvsp[-2].expression_ptr), (yyvsp[0].assignment_expression_ptr));}
+    {(yyval.expression_ptr) = new Expression((yyvsp[0].assignment_expression_ptr), (yyvsp[-2].expression_ptr));}
 #line 2281 "src/parser.tab.cpp" /* yacc.c:1646  */
     break;
 
@@ -2342,7 +2342,7 @@ yyreduce:
 
   case 87:
 #line 338 "src/parser.y" /* yacc.c:1646  */
-    {(yyval.init_declarator_list_ptr) = new Init_declarator_list((yyvsp[-2].init_declarator_list_ptr), (yyvsp[0].init_declarator_ptr)); }
+    {(yyval.init_declarator_list_ptr) = new Init_declarator_list((yyvsp[0].init_declarator_ptr), (yyvsp[-2].init_declarator_list_ptr)); }
 #line 2347 "src/parser.tab.cpp" /* yacc.c:1646  */
     break;
 
@@ -2612,43 +2612,43 @@ yyreduce:
 
   case 132:
 #line 414 "src/parser.y" /* yacc.c:1646  */
-    {(yyval.direct_declarator_ptr) = new Direct_declarator((yyvsp[0].string), NULL, NULL, NULL, NULL, NULL, 1)}
+    {(yyval.direct_declarator_ptr) = new Direct_declarator((yyvsp[0].string), NULL, NULL, NULL, NULL, NULL, 1);}
 #line 2617 "src/parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 133:
 #line 415 "src/parser.y" /* yacc.c:1646  */
-    {(yyval.direct_declarator_ptr) = new Direct_declarator(NULL, (yyvsp[-1].declarator_ptr), NULL, NULL, NULL, NULL, 2)}
+    {(yyval.direct_declarator_ptr) = new Direct_declarator(NULL, (yyvsp[-1].declarator_ptr), NULL, NULL, NULL, NULL, 2);}
 #line 2623 "src/parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 134:
 #line 416 "src/parser.y" /* yacc.c:1646  */
-    {(yyval.direct_declarator_ptr) = new Direct_declarator(NULL, NULL, (yyvsp[-3].direct_declarator_ptr), (yyvsp[-1].constant_expression_ptr), NULL, NULL, 3)}
+    {(yyval.direct_declarator_ptr) = new Direct_declarator(NULL, NULL, (yyvsp[-3].direct_declarator_ptr), (yyvsp[-1].constant_expression_ptr), NULL, NULL, 3);}
 #line 2629 "src/parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 135:
 #line 417 "src/parser.y" /* yacc.c:1646  */
-    {(yyval.direct_declarator_ptr) = new Direct_declarator(NULL, NULL, (yyvsp[-2].direct_declarator_ptr), NULL, NULL, NULL, 4)}
+    {(yyval.direct_declarator_ptr) = new Direct_declarator(NULL, NULL, (yyvsp[-2].direct_declarator_ptr), NULL, NULL, NULL, 4);}
 #line 2635 "src/parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 136:
 #line 418 "src/parser.y" /* yacc.c:1646  */
-    {(yyval.direct_declarator_ptr) = new Direct_declarator(NULL, NULL, (yyvsp[-3].direct_declarator_ptr), NULL, (yyvsp[-1].parameter_type_list_ptr), NULL, 5)}
+    {(yyval.direct_declarator_ptr) = new Direct_declarator(NULL, NULL, (yyvsp[-3].direct_declarator_ptr), NULL, (yyvsp[-1].parameter_type_list_ptr), NULL, 5);}
 #line 2641 "src/parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 137:
 #line 419 "src/parser.y" /* yacc.c:1646  */
-    {(yyval.direct_declarator_ptr) = new Direct_declarator(NULL, NULL, (yyvsp[-3].direct_declarator_ptr), NULL, NULL, (yyvsp[-1].identifier_list_ptr), 6)}
+    {(yyval.direct_declarator_ptr) = new Direct_declarator(NULL, NULL, (yyvsp[-3].direct_declarator_ptr), NULL, NULL, (yyvsp[-1].identifier_list_ptr), 6);}
 #line 2647 "src/parser.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 138:
 #line 420 "src/parser.y" /* yacc.c:1646  */
-    {(yyval.direct_declarator_ptr) = new Direct_declarator(NULL, NULL, (yyvsp[-2].direct_declarator_ptr), NULL, NULL, NULL, 7)}
+    {(yyval.direct_declarator_ptr) = new Direct_declarator(NULL, NULL, (yyvsp[-2].direct_declarator_ptr), NULL, NULL, NULL, 7);}
 #line 2653 "src/parser.tab.cpp" /* yacc.c:1646  */
     break;
 
@@ -3316,7 +3316,7 @@ yyreturn:
 #line 563 "src/parser.y" /* yacc.c:1906  */
 
 
-const Translation_unit *g_root; // Definition of variable (to match declaration earlier)
+const Translation_unit *g_root; /*// Definition of variable (to match declaration earlier)*/
 
 const Translation_unit *parseAST()
 {

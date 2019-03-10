@@ -27,7 +27,7 @@ private:
 
 public:
     virtual ~Direct_declarator() {}
-    virtual void print_python(std::ostream &dst) const;
+    virtual void print_python(std::ostream &dst) {};
 
     Direct_declarator(
         std::string* identifier_in,

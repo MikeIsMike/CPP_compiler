@@ -19,7 +19,7 @@ private:
 
 public:
     virtual ~Relational_expression() {}
-    virtual void print_python(std::ostream &dst) const;
+    virtual void print_python(std::ostream &dst) {};
 
     Relational_expression(
         Shift_expression* shift_expr_in,

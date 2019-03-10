@@ -16,13 +16,13 @@ class Function_definition
 {
 
 private:
-    Declarator* decl;
     Declaration_specifiers* decl_spec;
+    Declarator* decl;
     Compound_statement* compound_stmnt;
     Declaration_list* decl_list;
 public:
     virtual ~Function_definition() {}
-    virtual void print_python(std::ostream &dst) const;
+    virtual void print_python(std::ostream &dst) {};
 
     Function_definition(
         Declaration_specifiers* decl_spec_in,

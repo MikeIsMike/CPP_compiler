@@ -23,7 +23,7 @@ private:
     Parameter_type_list* pparam_type_list;
 public:
     virtual ~Direct_abstract_declarator() {}
-    virtual void print_python(std::ostream &dst) const;
+    virtual void print_python(std::ostream &dst) {};
 
     Direct_abstract_declarator(
         int parse_rule_followed_in, //Rule parser follows to create this node

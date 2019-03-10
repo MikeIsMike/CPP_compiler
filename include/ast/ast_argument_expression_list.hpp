@@ -16,14 +16,14 @@ private:
     Assignment_expression* assign_expr;
     Argument_expression_list* arg_expr_list;
 public:
-    virtual ~Argument_expression_list() {}
-    virtual void print_python(std::ostream &dst) const;
+    virtual ~Argument_expression_list() { };
+    virtual void print_python(std::ostream &dst) {};
 
     Argument_expression_list(
         Assignment_expression* assign_expr_in,
         Argument_expression_list* arg_expr_list_in) :
         assign_expr(assign_expr_in),
-        arg_expr_list(arg_expr_list_in){}
+        arg_expr_list(arg_expr_list_in) {}
 };
 
 #endif

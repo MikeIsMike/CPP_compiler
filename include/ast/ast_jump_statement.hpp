@@ -18,7 +18,7 @@ private:
 
 public:
     virtual ~Jump_statement() {}
-    virtual void print_python(std::ostream &dst) const;
+    virtual void print_python(std::ostream &dst) {};
 
     Jump_statement(
         Expression* expr_in,

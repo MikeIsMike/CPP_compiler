@@ -9,10 +9,8 @@ typedef const Tree *TreePtr;
 class Tree
 {
 public:
-    virtual ~Tree()
-    {}
-
-    virtual void print_python(std::ostream &dst);
+    virtual ~Tree() { };
+    virtual void print_python(std::ostream &dst) { };
 };
 
 

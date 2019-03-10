@@ -21,7 +21,7 @@ private:
 
 public:
     virtual ~Cast_expression() {}
-    virtual void print_python(std::ostream &dst) const;
+    virtual void print_python(std::ostream &dst) {};
 
     Cast_expression(
         Unary_expression* unary_expr_in,

@@ -153,7 +153,7 @@ union YYSTYPE
 {
 #line 19 "src/parser.y" /* yacc.c:1909  */
 
-  const Translation_unit *t_u;
+  Translation_unit *t_u;
   double number;
   std::string *string;
 

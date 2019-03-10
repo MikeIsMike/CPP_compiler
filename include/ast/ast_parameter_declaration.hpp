@@ -21,7 +21,7 @@ private:
 
 public:
     virtual ~Parameter_declaration() {}
-    virtual void print_python(std::ostream &dst) const;
+    virtual void print_python(std::ostream &dst) {};
 
     Parameter_declaration(
         Declaration_specifiers* decl_spec_in,

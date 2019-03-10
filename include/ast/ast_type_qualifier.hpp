@@ -15,7 +15,7 @@ private:
     std::string* type_qualifier;
 public:
     virtual ~Type_qualifier() {}
-    virtual void print_python(std::ostream &dst) const;
+    virtual void print_python(std::ostream &dst) {}
 
     Type_qualifier(std::string* type_qualifier_in) : type_qualifier(type_qualifier_in) {}
 };

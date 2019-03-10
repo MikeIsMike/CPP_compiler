@@ -19,7 +19,7 @@ private:
 
 public:
     virtual ~Multiplicative_expression() {}
-    virtual void print_python(std::ostream &dst) const;
+    virtual void print_python(std::ostream &dst) {};
 
     Multiplicative_expression(
         Cast_expression* cast_expr_in,

@@ -2,7 +2,8 @@
 #define ast_init_declarator_hpp
 
 #include "ast_tree.hpp"
-#include"../ast.hpp"
+#include "ast_declarator.hpp"
+#include "ast_initializer.hpp"
 #include <string>
 
 
@@ -14,11 +15,11 @@ class Init_declarator
 
 private:
     Declarator* declarator;
-    Initialiser* initialiser;
+    Initializer* initializer;
 public:
     virtual ~Init_declarator() {}
 
-    Init_declarator(Declarator* declarator_in, Initialiser* initialiser_in) : declarator(declarator_in), initialiser(initialiser_in) {}
+    Init_declarator(Declarator* declarator_in, Initializer* initializer_in) : declarator(declarator_in), initializer(initializer_in) {}
 };
 
 #endif

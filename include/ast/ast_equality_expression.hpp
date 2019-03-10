@@ -2,7 +2,8 @@
 #define ast_equality_expression_hpp
 
 #include "ast_tree.hpp"
-#include"../ast.hpp"
+#include "ast_relational_expression.hpp"
+#include "ast_equality_expression.hpp"
 #include <string>
 
 

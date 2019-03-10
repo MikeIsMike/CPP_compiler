@@ -2,7 +2,8 @@
 #define ast_external_declaration_hpp
 
 #include "ast_tree.hpp"
-#include"../ast.hpp"
+#include "ast_function_definition.hpp"
+#include "ast_declaration.hpp"
 
 
 
@@ -19,7 +20,11 @@ protected:
 public:
     virtual ~External_declaration() {}
 
-    ExternalDeclaration(Function_definition* funct_def_in, Declaration* decl_in) : funct_def(FunctionDef),  decl(DecLaration) {
+    External_declaration(
+        Function_definition* funct_def_in,
+        Declaration* decl_in) :
+        funct_def(funct_def_in),
+        decl(decl_in) {
         // external_decl = NULL;
         // preprocessor_ptr = NULL;
     }

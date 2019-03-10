@@ -2,7 +2,9 @@
 #define ast_type_specifier_hpp
 
 #include "ast_tree.hpp"
-#include"../ast.hpp"
+#include "ast_struct_or_union_specifier.hpp"
+#include "ast_enum_specifier.hpp"
+#include "ast_typedef_name.hpp"
 #include <string>
 
 

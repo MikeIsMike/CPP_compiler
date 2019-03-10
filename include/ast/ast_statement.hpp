@@ -2,11 +2,16 @@
 #define ast_statement_hpp
 
 #include "ast_tree.hpp"
-#include"../ast.hpp"
+#include "ast_labeled_statement.hpp"
+#include "ast_compound_statement.hpp"
+#include "ast_expression_statement.hpp"
+#include "ast_selection_statement.hpp"
+#include "ast_iteration_statement.hpp"
+#include "ast_jump_statement.hpp"
 #include <string>
 
 
-
+class Compound_statement;
 
 class Statement
     : public Tree

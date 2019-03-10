@@ -2,7 +2,7 @@
 #define ast_translation_unit_hpp
 
 #include "ast_tree.hpp"
-#include"../ast.hpp"
+#include "ast_external_declaration.hpp"
 
 
 
@@ -17,7 +17,11 @@ protected:
 public:
     virtual ~Translation_unit() {}
 
-	translation_unit(External_declaration* ext_decl_ptr, Translation_unit* transl_unit_ptr) :  external_decl(ext_decl_ptr) , translation_unit(transl_unit_ptr){}
+	Translation_unit(
+        External_declaration* ext_decl_ptr,
+        Translation_unit* transl_unit_ptr) :  
+        external_decl(ext_decl_ptr) ,
+        translation_unit(transl_unit_ptr){}
 };
 
 #endif

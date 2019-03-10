@@ -2,11 +2,12 @@
 #define ast_struct_declaration_hpp
 
 #include "ast_tree.hpp"
-#include"../ast.hpp"
+#include "ast_specifier_qualifier_list.hpp"
+#include "ast_struct_declarator_list.hpp"
 #include <string>
 
 
-
+class Specifier_qualifier_list;
 
 class Struct_declaration
     : public Tree

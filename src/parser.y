@@ -3,7 +3,7 @@
 
   #include <cassert>
 
-  extern const Expression *g_root; // A way of getting the AST out
+  extern const Translation_unit *g_root; // A way of getting the AST out
 
   //! This is to fix problems when generating C++
   // We are declaring the functions provided by Flex, so
@@ -31,7 +31,6 @@
   Type_name *type_name_ptr;
   Conditional_expression *conditional_expression_ptr;
   Logical_or_expression *logical_or_expression_ptr;
-  Assignment_operator *assignment_operator_ptr;
   Constant_expression *constant_expression_ptr;
   Declaration *declaration_ptr;
   Declaration_specifiers *declaration_specifiers_ptr;

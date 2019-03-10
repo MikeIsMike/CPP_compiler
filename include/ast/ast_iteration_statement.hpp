@@ -2,7 +2,9 @@
 #define ast_iteration_statement_hpp
 
 #include "ast_tree.hpp"
-#include"../ast.hpp"
+#include "ast_expression.hpp"
+#include "ast_statement.hpp"
+#include "ast_expression_statement.hpp"
 #include <string>
 
 
@@ -17,7 +19,7 @@ private:
     Statement* statement;
     Expression_statement* expr_stmnt_1;
     Expression_statement* expr_stmnt_2;
-    std::String* keyword;
+    std::string* keyword;
 
 public:
     virtual ~Iteration_statement() {}
@@ -27,7 +29,7 @@ public:
         Statement* statement_in,
         Expression_statement* expr_stmnt_1_in,
         Expression_statement* expr_stmnt_2_in,
-        std::String* keyword_in) :
+        std::string* keyword_in) :
         expr(expr_in),
         statement(statement_in),
         expr_stmnt_1(expr_stmnt_1_in),

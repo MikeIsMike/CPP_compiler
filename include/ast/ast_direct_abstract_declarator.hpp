@@ -2,18 +2,21 @@
 #define ast_direct_abstract_declarator_hpp
 
 #include "ast_tree.hpp"
-#include"../ast.hpp"
+#include "ast_abstract_declarator.hpp"
+#include "ast_constant_expression.hpp"
+#include "ast_direct_abstract_declarator.hpp"
+#include "ast_parameter_type_list.hpp"
 #include <string>
 
 
-
+class Abstract_declarator;
 
 class Direct_abstract_declarator
     : public Tree
 {
 
 private:
-    Int parse_rule_followed; //Rule parser follows to create this node
+    int parse_rule_followed; //Rule parser follows to create this node
     Abstract_declarator* abstr_decl;
     Constant_expression* const_expr;
     Direct_abstract_declarator* direct_abstr_decl;
@@ -22,7 +25,7 @@ public:
     virtual ~Direct_abstract_declarator() {}
 
     Direct_abstract_declarator(
-        Int parse_rule_followed_in, //Rule parser follows to create this node
+        int parse_rule_followed_in, //Rule parser follows to create this node
         Abstract_declarator* abstr_decl_in,
         Constant_expression* const_expr_in,
         Direct_abstract_declarator* direct_abstr_decl_in,

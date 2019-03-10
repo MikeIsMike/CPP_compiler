@@ -2,10 +2,14 @@
 #define ast_postfix_expression_hpp
 
 #include "ast_tree.hpp"
-#include"../ast.hpp"
+#include "ast_primary_expression.hpp"
+#include "ast_expression.hpp"
+#include "ast_argument_expression_list.hpp"
 #include <string>
 
 
+class Primary_expression;
+class Expression;
 
 
 class Postfix_expression
@@ -17,8 +21,8 @@ private:
     Postfix_expression* postf_expr;
     Expression* expr;
     Argument_expression_list* arg_expr_list;
-    std::String operator;
-    std::String identifier;
+    std::string oper;
+    std::string identifier;
 
 public:
     virtual ~Postfix_expression() {}
@@ -28,13 +32,13 @@ public:
         Postfix_expression* postf_expr_in,
         Expression* expr_in,
         Argument_expression_list* arg_expr_list_in,
-        std::String operator_in,
-        std::String identifier_in) :
+        std::string operator_in,
+        std::string identifier_in) :
         prim_expr(prim_expr_in),
         postf_expr(postf_expr_in),
         expr(expr_in),
         arg_expr_list(arg_expr_list_in),
-        operator(operator_in),
+        oper(operator_in),
         identifier(identifier_in)
         {}
 };

@@ -2,7 +2,8 @@
 #define ast_abstract_declarator_hpp
 
 #include "ast_tree.hpp"
-#include"../ast.hpp"
+#include "ast_pointer.hpp"
+#include "ast_direct_abstract_declarator.hpp"
 #include <string>
 
 

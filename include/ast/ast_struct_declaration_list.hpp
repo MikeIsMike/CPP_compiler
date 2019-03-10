@@ -2,7 +2,7 @@
 #define ast_struct_declaration_list_hpp
 
 #include "ast_tree.hpp"
-#include"../ast.hpp"
+#include "ast_struct_declaration.hpp"
 #include <string>
 
 

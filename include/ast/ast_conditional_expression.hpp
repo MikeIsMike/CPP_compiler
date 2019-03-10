@@ -2,7 +2,9 @@
 #define ast_conditional_expression_hpp
 
 #include "ast_tree.hpp"
-#include"../ast.hpp"
+#include "ast_logical_or_expression.hpp"
+#include "ast_expression.hpp"
+#include "ast_conditional_expression.hpp"
 #include <string>
 
 

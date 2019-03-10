@@ -2,7 +2,7 @@
 #define ast_struct_or_union_specifier_hpp
 
 #include "ast_tree.hpp"
-#include"../ast.hpp"
+#include "ast_struct_declaration_list.hpp"
 #include <string>
 
 

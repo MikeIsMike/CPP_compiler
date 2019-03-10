@@ -2,7 +2,8 @@
 #define ast_struct_declarator_hpp
 
 #include "ast_tree.hpp"
-#include"../ast.hpp"
+#include "ast_declarator.hpp"
+#include "ast_constant_expression.hpp"
 #include <string>
 
 

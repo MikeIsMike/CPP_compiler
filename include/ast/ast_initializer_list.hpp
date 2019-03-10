@@ -1,12 +1,11 @@
-#ifndef ast_initialiser_list_hpp
-#define ast_initialiser_list_hpp
+#ifndef ast_initializer_list_hpp
+#define ast_initializer_list_hpp
 
 #include "ast_tree.hpp"
-#include"../ast.hpp"
+#include "ast_initializer.hpp"
 #include <string>
 
-
-
+class Initializer;
 
 class Initializer_list
     : public Tree

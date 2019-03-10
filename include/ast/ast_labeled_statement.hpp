@@ -2,18 +2,19 @@
 #define ast_labeled_statement_hpp
 
 #include "ast_tree.hpp"
-#include"../ast.hpp"
+#include "ast_statement.hpp"
+#include "ast_constant_expression.hpp"
 #include <string>
 
 
-
+class Statement;
 
 class Labeled_statement
     : public Tree
 {
 
 private:
-    std::String* identifier;
+    std::string* identifier;
     Statement* stmnt;
     Constant_expression* cont_expr;
 
@@ -21,7 +22,7 @@ public:
     virtual ~Labeled_statement() {}
 
     Labeled_statement(
-        std::String* identifier_in,
+        std::string* identifier_in,
         Statement* stmnt_in,
         Constant_expression* cont_expr_in) :
         identifier(identifier_in),

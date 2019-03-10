@@ -2,7 +2,9 @@
 #define ast_parameter_declaration_hpp
 
 #include "ast_tree.hpp"
-#include"../ast.hpp"
+#include "ast_declaration_specifiers.hpp"
+#include "ast_declarator.hpp"
+#include "ast_abstract_declarator.hpp"
 #include <string>
 
 
@@ -23,7 +25,7 @@ public:
     Parameter_declaration(
         Declaration_specifiers* decl_spec_in,
         Declarator* declarator_in,
-        Abstract_declarator* abstr_decl;
+        Abstract_declarator* abstr_decl_in
         ) :
         decl_spec(decl_spec_in),
         declarator(declarator_in),

@@ -2,7 +2,7 @@
 #define ast_expression_hpp
 
 #include "ast_tree.hpp"
-#include"../ast.hpp"
+#include"ast_assignment_expression.hpp"
 #include <string>
 
 
@@ -18,7 +18,11 @@ private:
 public:
     virtual ~Expression() {}
 
-    Expression(Assignment_expression assign_expr_in, Expression* expr_in) : assign_expr(assign_expr_in), expr(expr_in){}
+    Expression(
+        Assignment_expression* assign_expr_in, 
+        Expression* expr_in) :
+        assign_expr(assign_expr_in),
+        expr(expr_in){}
 };
 
 #endif

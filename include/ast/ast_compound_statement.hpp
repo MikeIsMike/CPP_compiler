@@ -2,7 +2,8 @@
 #define ast_compound_statement_hpp
 
 #include "ast_tree.hpp"
-#include"../ast.hpp"
+#include "ast_statement_list.hpp"
+#include "ast_declaration_list.hpp"
 #include <string>
 
 

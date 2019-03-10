@@ -2,7 +2,8 @@
 #define ast_enumerator_hpp
 
 #include "ast_tree.hpp"
-#include"../ast.hpp"
+#include "ast_enumeration_constant.hpp"
+#include "ast_constant_expression.hpp"
 #include <string>
 
 

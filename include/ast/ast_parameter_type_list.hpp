@@ -2,11 +2,10 @@
 #define ast_parameter_type_list_hpp
 
 #include "ast_tree.hpp"
-#include"../ast.hpp"
 #include <string>
 
 
-
+class Parameter_list;
 
 class Parameter_type_list
     : public Tree

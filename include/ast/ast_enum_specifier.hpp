@@ -2,7 +2,7 @@
 #define ast_enum_specifier_hpp
 
 #include "ast_tree.hpp"
-#include"../ast.hpp"
+#include "ast_enumerator_list.hpp"
 #include <string>
 
 

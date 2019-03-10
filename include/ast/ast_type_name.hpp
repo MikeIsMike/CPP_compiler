@@ -2,7 +2,8 @@
 #define ast_type_name_hpp
 
 #include "ast_tree.hpp"
-#include"../ast.hpp"
+#include "ast_specifier_qualifier_list.hpp"
+#include "ast_abstract_declarator.hpp"
 #include <string>
 
 

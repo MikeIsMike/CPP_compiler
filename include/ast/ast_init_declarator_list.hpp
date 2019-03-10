@@ -2,7 +2,7 @@
 #define ast_init_declarator_list_hpp
 
 #include "ast_tree.hpp"
-#include"../ast.hpp"
+#include "ast_init_declarator.hpp"
 #include <string>
 
 

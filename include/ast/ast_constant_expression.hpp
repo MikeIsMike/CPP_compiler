@@ -2,11 +2,11 @@
 #define ast_constant_expression_hpp
 
 #include "ast_tree.hpp"
-#include"../ast.hpp"
+#include "ast_conditional_expression.hpp"
 #include <string>
 
 
-
+class Conditional_expression;
 
 class Constant_expression
     : public Tree

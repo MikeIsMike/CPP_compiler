@@ -15,7 +15,8 @@ private:
     Initializer* init;
     Initializer_list* init_list;
 public:
-    virtual ~Initializer_list() {}
+    virtual .* {}
+    virtual void print_python(std::ostream &dst) const;
 
     Initializer_list(
         Initializer* init_in,

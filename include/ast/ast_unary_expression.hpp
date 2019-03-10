@@ -24,7 +24,8 @@ private:
     Type_name* type_name;
 
 public:
-    virtual ~Unary_expression() {}
+    virtual .* {}
+    virtual void print_python(std::ostream &dst) const;
 
     Unary_expression(
         Postfix_expression* postf_expr_in,

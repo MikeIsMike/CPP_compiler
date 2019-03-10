@@ -17,7 +17,8 @@ private:
     Specifier_qualifier_list* spec_qual_list;
     Struct_declarator_list* struct_declarator_list;
 public:
-    virtual ~Struct_declaration() {}
+    virtual .* {}
+    virtual void print_python(std::ostream &dst) const;
 
     Struct_declaration(
         Specifier_qualifier_list* spec_qual_list_in,

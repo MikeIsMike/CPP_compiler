@@ -19,7 +19,8 @@ private:
     Constant_expression* cont_expr;
 
 public:
-    virtual ~Labeled_statement() {}
+    virtual .* {}
+    virtual void print_python(std::ostream &dst) const;
 
     Labeled_statement(
         std::string* identifier_in,

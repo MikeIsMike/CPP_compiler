@@ -18,7 +18,8 @@ private:
     std::string* string_literal;
     Expression* expression;
 public:
-    virtual ~Primary_expression() {}
+    virtual .* {}
+    virtual void print_python(std::ostream &dst) const;
 
     Primary_expression(
         std::string* identifier_in,

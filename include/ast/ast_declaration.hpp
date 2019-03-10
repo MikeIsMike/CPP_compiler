@@ -15,7 +15,8 @@ protected:
     Declaration_specifiers* decl_spec;
 	Init_declarator_list* decl_list;
 public:
-    virtual ~Declaration() {}
+    virtual .* {}
+    virtual void print_python(std::ostream &dst) const;
 
     Declaration(
         Declaration_specifiers* decl_spec_in,

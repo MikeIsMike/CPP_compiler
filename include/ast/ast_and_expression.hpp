@@ -16,7 +16,8 @@ private:
     Equality_expression* equality_expr;
     And_expression* and_expr;
 public:
-    virtual ~And_expression() {}
+    virtual .* {}
+    virtual void print_python(std::ostream &dst) const;
 
     And_expression(
         Equality_expression* equality_expr_in,

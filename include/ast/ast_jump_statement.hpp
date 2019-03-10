@@ -17,7 +17,8 @@ private:
     std::string* keyword;
 
 public:
-    virtual ~Jump_statement() {}
+    virtual .* {}
+    virtual void print_python(std::ostream &dst) const;
 
     Jump_statement(
         Expression* expr_in,

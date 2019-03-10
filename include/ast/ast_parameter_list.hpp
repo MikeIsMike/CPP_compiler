@@ -17,7 +17,8 @@ private:
     Parameter_list* param_list;
 
 public:
-    virtual ~Parameter_list() {}
+    virtual .* {}
+    virtual void print_python(std::ostream &dst) const;
 
     Parameter_list(
         Parameter_declaration* param_decl_in,

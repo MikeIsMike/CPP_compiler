@@ -16,7 +16,8 @@ private:
     Enumerator_list* enum_list;
     std::string* identifier;
 public:
-    virtual ~Enum_specifier() {}
+    virtual .* {}
+    virtual void print_python(std::ostream &dst) const;
 
     Enum_specifier(
         Enumerator_list* enum_list_in,

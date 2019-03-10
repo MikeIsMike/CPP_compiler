@@ -18,7 +18,8 @@ private:
     std::string* op;
 
 public:
-    virtual ~Multiplicative_expression() {}
+    virtual .* {}
+    virtual void print_python(std::ostream &dst) const;
 
     Multiplicative_expression(
         Cast_expression* cast_expr_in,

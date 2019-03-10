@@ -18,7 +18,8 @@ protected:
 	// External_declaration* external_decl;
 	// std::string* preprocessor_ptr;
 public:
-    virtual ~External_declaration() {}
+    virtual .* {}
+    virtual void print_python(std::ostream &dst) const;
 
     External_declaration(
         Function_definition* funct_def_in,

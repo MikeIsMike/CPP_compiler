@@ -16,7 +16,8 @@ private:
     Type_qualifier* type_qual;
     Type_qualifier_list* type_qual_list;
 public:
-    virtual ~Type_qualifier_list() {}
+    virtual .* {}
+    virtual void print_python(std::ostream &dst) const;
 
     Type_qualifier_list(
         Type_qualifier* type_qual_in,

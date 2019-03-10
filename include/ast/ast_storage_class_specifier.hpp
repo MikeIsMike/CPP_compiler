@@ -14,7 +14,8 @@ class Storage_class_specifier
 private:
     std::string* stor_class_spec;
 public:
-    virtual ~Storage_class_specifier() {}
+    virtual .* {}
+    virtual void print_python(std::ostream &dst) const;
 
     Storage_class_specifier(std::string* stor_class_spec_in) : stor_class_spec(stor_class_spec_in) {}
 };

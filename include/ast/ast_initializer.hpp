@@ -18,7 +18,8 @@ private:
     Initializer_list* init_list;
     bool comma_present;
 public:
-    virtual ~Initializer() {}
+    virtual .* {}
+    virtual void print_python(std::ostream &dst) const;
 
     Initializer(
         Assignment_expression* assignment_expr_in,

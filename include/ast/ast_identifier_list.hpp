@@ -16,7 +16,8 @@ private:
     std::string* identifier;
     Identifier_list* ident_list;
 public:
-    virtual ~Identifier_list() {}
+    virtual .* {}
+    virtual void print_python(std::ostream &dst) const;
 
     Identifier_list(
         std::string* identifier_in,

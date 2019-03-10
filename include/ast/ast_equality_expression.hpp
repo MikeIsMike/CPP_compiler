@@ -18,7 +18,8 @@ private:
     Equality_expression* equality_expr;
     std::string* op;
 public:
-    virtual ~Equality_expression() {}
+    virtual .* {}
+    virtual void print_python(std::ostream &dst) const;
 
     Equality_expression(
         Relational_expression* relat_expr_in,

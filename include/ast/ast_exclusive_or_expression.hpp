@@ -16,7 +16,8 @@ private:
     And_expression* and_expr;
     Exclusive_or_expression* exclusive_or_expr;
 public:
-    virtual ~Exclusive_or_expression() {}
+    virtual .* {}
+    virtual void print_python(std::ostream &dst) const;
 
     Exclusive_or_expression(
         And_expression* and_expr_in,

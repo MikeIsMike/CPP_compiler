@@ -26,7 +26,8 @@ private:
     Jump_statement* jump_stmnt;
 
 public:
-    virtual ~Statement() {}
+    virtual .* {}
+    virtual void print_python(std::ostream &dst) const;
 
     Statement(
         Labeled_statement* labeled_stmnt_in,

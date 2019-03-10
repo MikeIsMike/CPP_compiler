@@ -17,7 +17,8 @@ private:
     Statement_list* stmnt_list;
     Declaration_list* decl_list;
 public:
-    virtual ~Compound_statement() {}
+    virtual .* {}
+    virtual void print_python(std::ostream &dst) const;
 
     Compound_statement(
         Statement_list* stmnt_list_in,

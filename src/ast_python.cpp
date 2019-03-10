@@ -121,7 +121,7 @@ virtual void Assignment_expression::print_python(std::ostream &dst) const{
 
 virtual void Init_declarator::print_python(std::ostream &dst) const{
     if(initializer!=NULL && declarator!=NULL){//// to be finished with declarator
-        dst<<declarator->print_python(dst)<<"="<<initializer->print_python(dst);
+        dst<<declarator->print_python(dst)<<"="<<initializer->print_python(dst)<<std::endl;
     }
 }
 

@@ -9,16 +9,18 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    std::ifstream src(argv[2]);
-    if(!src.is_open()){
+    // std::ifstream src(argv[2]);
+
+    FILE *src;
+    src=fopen(argv[2], "r");
+    if(!src){
         fprintf(stderr, "Couldn't open '%s'\n", argv[2]);
         exit(1);
     }
 
-    const Translation_unit *ast=parseAST();
+    const Translation_unit *ast=parseAST(src);
 
-    if(argv[1]=="--translate"){
-
+    if(std::string(argv[1])=="--translate"){
         std::ofstream outfile (argv[4]);
 
         //outfile << "my text here!" << std::endl;
@@ -27,7 +29,7 @@ int main(int argc, char *argv[])
 
         outfile.close();
     }
-    else if(argv[1]=="-S"){
+    else if(std::string(argv[1])=="-S"){
 
         std::ofstream outfile (argv[4]);
 

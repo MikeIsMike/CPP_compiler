@@ -13,7 +13,7 @@ class Declaration
 
 protected:
     Declaration_specifiers* decl_spec;
-	Init_declarator_list* decl_list;
+	Init_declarator_list* init_decl_list;
 public:
     virtual ~Declaration() {}
     virtual void print_python(std::ostream &dst) {};
@@ -22,7 +22,7 @@ public:
         Declaration_specifiers* decl_spec_in,
         Init_declarator_list* decl_list_in) :
         decl_spec(decl_spec_in),
-        decl_list(decl_list_in) {}
+        init_decl_list(decl_list_in) {}
 };
 
 #endif

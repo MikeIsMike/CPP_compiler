@@ -2,6 +2,7 @@
   #include "../include/ast.hpp"
 
   #include <cassert>
+  #include <fstream>
 
   extern const Translation_unit *g_root; // A way of getting the AST out
 
@@ -10,6 +11,8 @@
   // that Bison generated code can call them.
   int yylex(void);
   void yyerror(const char *);
+
+
 }
 
 
@@ -563,10 +566,12 @@ function_definition : declaration_specifiers declarator declaration_list compoun
 %%
 
 const Translation_unit *g_root; /*// Definition of variable (to match declaration earlier)*/
+extern FILE *yyin;
 
-const Translation_unit *parseAST()
+const Translation_unit *parseAST(FILE* src)
 {
   g_root=0;
+  yyin = src;
   yyparse();
   return g_root;
 }

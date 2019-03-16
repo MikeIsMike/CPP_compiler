@@ -16,19 +16,22 @@ class Function_definition
 {
 
 private:
+    int parse_rule_followed; //Rule parser follows to create this node
     Declaration_specifiers* decl_spec;
     Declarator* decl;
     Compound_statement* compound_stmnt;
     Declaration_list* decl_list;
 public:
     virtual ~Function_definition() {}
-    virtual void print_python(std::ostream &dst) {};
+    virtual void print_python(std::ostream &dst) const{};
 
     Function_definition(
+        int parse_rule_followed_in, //Rule parser follows to create this node
         Declaration_specifiers* decl_spec_in,
         Declarator* decl_in,
         Compound_statement* compound_stmnt_in,
         Declaration_list* decl_list_in) :
+        parse_rule_followed(parse_rule_followed_in),
         decl_spec(decl_spec_in),
         decl(decl_in),
         compound_stmnt(compound_stmnt_in),

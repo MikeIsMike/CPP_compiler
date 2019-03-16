@@ -18,7 +18,7 @@ private:
     Constant_expression* const_expr;
 public:
     virtual ~Struct_declarator() {}
-    virtual void print_python(std::ostream &dst) {}
+    virtual void print_python(std::ostream &dst) const{}
 
     Struct_declarator(
         Declarator* decl_in,

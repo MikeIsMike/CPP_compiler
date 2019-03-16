@@ -15,7 +15,7 @@ private:
     std::string* identifier;
 public:
     virtual ~Enumeration_constant() {}
-    virtual void print_python(std::ostream &dst) {};
+    virtual void print_python(std::ostream &dst) const{};
 
     Enumeration_constant(
         std::string* identifier_in) :

@@ -19,7 +19,7 @@ private:
 
 public:
     virtual ~Shift_expression() {}
-    virtual void print_python(std::ostream &dst) {};
+    virtual void print_python(std::ostream &dst) const{};
 
     Shift_expression(
         Additive_expression* additive_expr_in,

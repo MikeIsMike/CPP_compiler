@@ -539,10 +539,10 @@ external_declaration : function_definition                  { $$ = new External_
                 | declaration                               { $$ = new External_declaration(NULL, $1); }
                 ;
 
-function_definition : declaration_specifiers declarator declaration_list compound_statement     { $$ = new Function_definition($1, $2, $4, $3);}
-                | declaration_specifiers declarator compound_statement                          { $$ = new Function_definition($1, $2, $3, NULL);}
-                | declarator declaration_list compound_statement                                { $$ = new Function_definition(NULL, $1, $3, $2);}
-                | declarator compound_statement                                                 { $$ = new Function_definition(NULL, $1, $2, NULL);}
+function_definition : declaration_specifiers declarator declaration_list compound_statement     { $$ = new Function_definition(1, $1, $2, $4, $3);}
+                | declaration_specifiers declarator compound_statement                          { $$ = new Function_definition(2, $1, $2, $3, NULL);}
+                | declarator declaration_list compound_statement                                { $$ = new Function_definition(3, NULL, $1, $3, $2);}
+                | declarator compound_statement                                                 { $$ = new Function_definition(4, NULL, $1, $2, NULL);}
                 ;
 
 

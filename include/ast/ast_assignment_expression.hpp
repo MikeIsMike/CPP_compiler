@@ -21,7 +21,7 @@ private:
     Assignment_expression* assign_expr;
 public:
     virtual ~Assignment_expression() {}
-    virtual void print_python(std::ostream &dst) {};
+    virtual void print_python(std::ostream &dst) const{};
 
 
     Assignment_expression(Conditional_expression* cond_expr_in, Unary_expression* unary_expr_in, std::string* assign_op_in, Assignment_expression* assign_expr_in) : cond_expr(cond_expr_in), unary_expr(unary_expr_in), assign_op(assign_op_in), assign_expr(assign_expr_in){}

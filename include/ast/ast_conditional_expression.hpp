@@ -20,7 +20,7 @@ private:
     Conditional_expression* cond_expr;
 public:
     virtual ~Conditional_expression() {}
-    virtual void print_python(std::ostream &dst) const{};
+    virtual void print_python(std::ostream &dst) const;
 
     Conditional_expression(Logical_or_expression* logic_or_expr_in, Expression* expr_in, Conditional_expression* cond_expr_in) : logic_or_expr(logic_or_expr_in), expr(expr_in), cond_expr(cond_expr_in){}
 };

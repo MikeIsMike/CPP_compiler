@@ -18,7 +18,7 @@ private:
     Initializer* initializer;
 public:
     virtual ~Init_declarator() {}
-    virtual void print_python(std::ostream &dst) const{};
+    virtual void print_python(std::ostream &dst) const;
 
     Init_declarator(Declarator* declarator_in, Initializer* initializer_in) : declarator(declarator_in), initializer(initializer_in) {}
 };

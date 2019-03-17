@@ -19,7 +19,7 @@ private:
     bool comma_present;
 public:
     virtual ~Initializer() {}
-    virtual void print_python(std::ostream &dst) const{};
+    virtual void print_python(std::ostream &dst) const;
 
     Initializer(
         Assignment_expression* assignment_expr_in,

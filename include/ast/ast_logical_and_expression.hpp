@@ -17,7 +17,7 @@ private:
     Logical_and_expression* logical_and_expr;
 public:
     virtual ~Logical_and_expression() {}
-    virtual void print_python(std::ostream &dst) const{};
+    virtual void print_python(std::ostream &dst) const;
 
     Logical_and_expression(
         Inclusive_or_expression* inclusive_or_expr_in,

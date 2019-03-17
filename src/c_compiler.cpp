@@ -22,9 +22,8 @@ int main(int argc, char *argv[])
     const Translation_unit *ast=parseAST(src);
 
     if(std::string(argv[1])=="--translate"){
-        std::ofstream outfile (argv[4]);
-
-        print_python(outfile);
+        std::ofstream outfile(argv[4]);
+        ast->print_python(outfile);
         //outfile << "my text here!" << std::endl;
         //pass outfile as an argument to translate function and print python code into it like above
         // run translate function with tree and outfile

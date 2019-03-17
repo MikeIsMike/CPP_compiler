@@ -1,8 +1,4 @@
-print_python/// #include <all the ast nodes somehow>
-int indent_count(0);
-bool in_iteration(false);
-bool in_selective(false);
-bool in_function(false);
+
 
 
 void Primary_expression::print_python(std::ostream &dst) const{
@@ -355,27 +351,87 @@ void Statement:print_python(std::ostream& dst){
 }
 
 
-void Compound_statement:print_python(std::ostream& dst){
+void Compound_statement:print_python(std::ostream& dst) const{
 
-    if( stmnt_list == NULL && decl_list == NULL ) {
+    if(stmnt_list == NULL && decl_list == NULL) {
         for( int i(0); i<counter_py; i++) { dst << "\t"; }
         dst << "pass" << std::endl;
     }
-    else if( stmnt_list != NULL && decl_list != NULL ) {
+    else if(stmnt_list != NULL && decl_list != NULL) {
         decl_list->print_py(dst);
         stmnt_list->print_py(dst);
     }
-    else if( stmnt_list == NULL && decl_list != NULL ) {
+    else if(stmnt_list == NULL && decl_list != NULL) {
         decl_list->print_py(dst);
     }
-    else if( stmnt_list != NULL && decl_list == NULL ) {
+    else if(stmnt_list != NULL && decl_list == NULL) {
         stmnt_list->print_py(dst);
     }
 
 }
 
 
-void Selection_statement:print_python(std::ofstream& dst){
+void Selection_statement:print_python(std::ofstream& dst) const{
 
+    if(!switch_stmnt){
+        if(else_statement == NULL){
+
+            newline_selective = true;
+
+            for(int i = 0; i<indent_count; i++){dst << "\t";}
+            dst<<"if(";
+            expr->print_python(std::ofstream& dst);
+            dst<<"):"<<std::endl;
+
+            newline_selective = false;
+
+            if(if_statement->compound_stmnt != NULL) {   //dont need to indent here if it is a compound statement, compound statement should allways be indented when called   independantly, so no need to indent twice
+                if_statement->print_python(dst);
+                dst << std::endl;
+            }
+            else{
+                indent_count++;
+                statement->print_python(dst);
+                indent_count--;
+                dst << std::endl;
+            }
+
+        }
+        else{
+            newline_selective = true;
+
+            for(int i = 0; i<indent_count; i++){dst << "\t";}
+            dst<<"if(";
+            expr->print_python(std::ofstream& dst);
+            dst<<"):"<<std::endl;
+
+            newline_selective = false;
+
+            if(if_statement->compound_stmnt != NULL) {   //dont need to indent here if it is a compound statement, compound statement should allways be indented when called   independantly, so no need to indent twice
+                if_statement->print_python(dst);
+                dst << std::endl;
+            }
+            else{
+                indent_count++;
+                else_statement->print_python(dst);
+                indent_count--;
+                dst << std::endl;
+            }
+
+            for(int i = 0; i<indent_count; i++){dst << "\t";}
+            dst<<"else:" <<std::newl;
+
+            if(else_statement->compound_stmnt != NULL) {   //dont need to indent here if it is a compound statement, compound statement should allways be indented when called   independantly, so no need to indent twice
+                else_statement->print_python(dst);
+                dst << std::endl;
+            }
+            else{
+                indent_count++;
+                else_statement->print_python(dst);
+                indent_count--;
+                dst << std::endl;
+            }
+        }
+    }
 
 }

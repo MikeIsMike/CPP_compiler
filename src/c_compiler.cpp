@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
 
     const Translation_unit *ast=parseAST();
 
-    if(argv[1]=="--translate"){
+    if(argv[1]=='--translate'){
 
         std::ofstream outfile (argv[4]);
 

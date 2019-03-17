@@ -6,3 +6,4 @@ src/parser.output
 src/lexer.yy.cpp
 src/c_compiler.o
 bin/c_compiler
+tmp/formative/*

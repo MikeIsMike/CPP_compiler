@@ -1,10 +1,21 @@
+<<<<<<< HEAD
 
+=======
+#include "ast.hpp"
+#include <iostream>
+
+
+int indent_count(0);
+bool in_iteration(false);
+bool in_selective(false);
+bool in_function(false);
+>>>>>>> 0788e3e345a2def77a2c6895c088d8240b77a275
 
 
 void Primary_expression::print_python(std::ostream &dst) const{
     if(constant != NULL){///only second rule implemented now
         std::cout<<"26"<<std::endl;
-        dst<<strtod(constant);
+        dst<<strtod((*constant).c_str(), NULL);
     }
 }
 
@@ -28,7 +39,7 @@ void Unary_expression::print_python(std::ostream &dst) const{
 void Cast_expression::print_python(std::ostream &dst) const{
     if(unary_expr !=NULL){///only first rule implemented now
         std::cout<<"23a"<<std::endl;
-        unary-expr->print_python(dst);
+        unary_expr->print_python(dst);
     }
 }
 
@@ -137,12 +148,17 @@ void Assignment_expression::print_python(std::ostream &dst) const{
 
 
 void Init_declarator::print_python(std::ostream &dst) const{
-    if(declarator!=NULL && initializer!=NULL){//// to be finished with declarator
+    if(declarator!=NULL && initializer!=NULL){/// to be finished with declarator
         std::cout<<"9a"<<std::endl;
 
         declarator->print_python(dst);
         dst<<"=";
         initializer->print_python(dst);
+        dst<<std::endl;
+    }
+    else if(declarator!=NULL && initializer==NULL){
+        declarator->print_python(dst);
+        dst<<"=0";
         dst<<std::endl;
     }
 }
@@ -156,6 +172,7 @@ void Init_declarator_list::print_python(std::ostream &dst) const{
     else if(init_decl_list!=NULL){
         std::cout<<"8b"<<std::endl;
         init_decl_list->print_python(dst);
+        dst<<", ";
         init_decl->print_python(dst);
     }
 }
@@ -194,31 +211,37 @@ void Declarator::print_python(std::ostream &dst) const{
 void Declaration::print_python(std::ostream &dst) const{
     if(init_decl_list!=NULL){///only the initilised case
         std::cout<<"5a"<<std::endl;
+        // decl_spec->print_python(dst);
         init_decl_list->print_python(dst);
+    }
+    else if(init_decl_list==NULL){
+        std::cout<<"5b"<<std::endl;
+        // decl_spec->print_python(dst);
+        //nothing to do here
+
     }
 }
 
 
 void Type_specifier::print_python(std::ostream &dst) const{
-    if(type_spec!=NULL){///last few rules not implemented
-        std::cout<<"4a"<<std::endl;
-
-        dst<<"def ";
-    }
+//     if(type_spec!=NULL){///last few rules not implemented
+//         std::cout<<"4a"<<std::endl;
+//
+//
+//     }
 }
 
 
 void Declaration_specifiers::print_python(std::ostream &dst) const{
-    if(type_spec!=NULL){///only rule 3 and 4 implemented
-        std::cout<<"3a"<<std::endl;
-
-        type_spec->print_python(dst);
-    }
-    if(decl_spec!=NULL){
-        std::cout<<"3b"<<std::endl;
-
-        decl_spec->print_python(dst);
-    }
+//     if(type_spec!=NULL){///only rule 3 and 4 implemented
+//         std::cout<<"3a"<<std::endl;//only gets here when variable declared, not when function declared
+//         //nothing to do here
+//     }
+//     if(decl_spec!=NULL){
+//         std::cout<<"3b"<<std::endl;
+//         //nothing to do here
+//         // decl_spec->print_python(dst);
+//     }
 }
 
 
@@ -233,7 +256,8 @@ void Function_definition::print_python(std::ostream &dst) const{
         case 2: ///function int abc(){sflkdsjf}
             std::cout<<"2a"<<std::endl;
 
-            decl_spec->print_python(dst);
+            // decl_spec->print_python(dst);//not needed because function only has return type int and void
+            dst<<"def ";
             decl->print_python(dst);
             indent_count++;
             compound_stmnt->print_python(dst);
@@ -244,7 +268,7 @@ void Function_definition::print_python(std::ostream &dst) const{
         //     decl_list->print_python(dst);
         //     compound_stmnt->print_python(dst);
         //     break;
-        case 4: ///
+        case 4: ///function abc(){saldkfjsdflk}
             std::cout<<"2b"<<std::endl;
 
             decl->print_python(dst);
@@ -292,7 +316,7 @@ void Translation_unit::print_python(std::ostream &dst) const{
 }
 
 
-void Iteration_statement:print_python(std::ostream& dst){
+void Iteration_statement::print_python(std::ostream& dst) const{
     if(*keyword == "while" ){
         if(statement != NULL && expr != NULL){
             in_iteration = true;
@@ -319,7 +343,7 @@ void Iteration_statement:print_python(std::ostream& dst){
 }
 
 
-void Statement:print_python(std::ostream& dst){
+void Statement:print_python(std::ostream& dst) const{
 
     if( labeled_stmnt != NULL ) {
         labeled_stmnt->print_python(dst);

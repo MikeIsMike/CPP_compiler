@@ -188,6 +188,35 @@ void Iteration_statement:print_python(std::ofstream& dst){
 }
 
 
+void Function_definition::print_python(std::ostream &dst) const{
+    switch(parse_rule_followed){///case 1 and 3 support K&R style, not to be implemented
+        // case 1:///decl_list might not need to be implemented in our compiler
+        //     decl_spec->print_python(dst);
+        //     decl->print_python(dst);
+        //     decl_list->print_python(dst);
+        //     compound_stmnt->print_python(dst);
+        //     break;
+        case 2: ///function int abc(){sflkdsjf}
+            std::cout<<"2a"<<std::endl;
+
+            decl_spec->print_python(dst);
+            decl->print_python(dst);
+            compound_stmnt->print_python(dst);
+            break;
+        // case 3:///decl_list might not need to be implemented in our compiler
+        //     decl->print_python(dst);
+        //     decl_list->print_python(dst);
+        //     compound_stmnt->print_python(dst);
+        //     break;
+        case 4: ///
+            std::cout<<"2b"<<std::endl;
+
+            decl->print_python(dst);
+            compound_stmnt->print_python(dst);
+            std::cout<<"hihihih"<<std::endl;
+            break;
+    }
+
 void Statement:print_python(std::ofstream& dst){
 
     if( labeled_stmnt != NULL ) {
@@ -200,8 +229,15 @@ void Statement:print_python(std::ofstream& dst){
         indent_count--;
     }
 
+
+
+
+
+
+
     else if( expression_stmnt != NULL ) {
         expression_stmnt->print_python(dst);
+
     }
 
     else if( selection_stmnt != NULL ) {

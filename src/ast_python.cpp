@@ -120,14 +120,38 @@ virtual void Assignment_expression::print_python(std::ostream &dst) const{
 
 
 virtual void Init_declarator::print_python(std::ostream &dst) const{
-    if(initializer!=NULL && declarator!=NULL){//// to be finished with declarator
+    if(declarator!=NULL && initializer!=NULL){//// to be finished with declarator
         dst<<declarator->print_python(dst)<<"="<<initializer->print_python(dst)<<std::endl;
     }
 }
 
 
 virtual void Init_declarator_list::print_python(std::ostream &dst) const{
-    if(init_decl_list==NULL && init_decl!=NULL){
+    if(init_decl_list==NULL && init_decl!=NULL){///only second rule implemented
         init_decl->print_python(dst);
+    }
+    else if(init_decl_list!=NULL){
+        init_decl_list->print_python(dst);
+        init_decl->print_python(dst);
+    }
+}
+
+
+virtual void Declaration::print_python(std::ostream &dst) const{
+    if(init_decl_list!=NULL){///only the initilised case
+        init_decl_list->print_python(dst);
+    }
+}
+
+virtual void External_declaration::print_python(std::ostream &dst) const{
+    if(decl!=NULL){///only second rule
+        decl->print_python(dst);
+    }
+}
+
+
+virtual void Translation_unit::print_python(std::ostream &dst) const{
+    if(external_decl!=NULL&&translation_unit==NULL){
+        external_decl->print_python(dst);
     }
 }

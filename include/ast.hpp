@@ -68,6 +68,6 @@
 #include "ast/ast_typedef_name.hpp"
 #include "ast/ast_unary_expression.hpp"
 
-extern const Translation_unit *parseAST();
+extern const Translation_unit *parseAST(FILE* src);
 
 #endif

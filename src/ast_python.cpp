@@ -212,7 +212,7 @@ void Declarator::print_python(std::ostream &dst) const{
 
 
 void Declaration::print_python(std::ostream &dst) const{
-    if()
+    // if()
     if(init_decl_list!=NULL){///only the initilised case
         std::cout<<"5a"<<std::endl;
 

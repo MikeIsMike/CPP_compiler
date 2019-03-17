@@ -1,4 +1,4 @@
-print_python/// #include <all the ast nodes somehow>
+
 int indent_count(0);
 bool in_iteration(false);
 bool in_selective(false);
@@ -8,7 +8,7 @@ bool in_function(false);
 void Primary_expression::print_python(std::ostream &dst) const{
     if(constant != NULL){///only second rule implemented now
         std::cout<<"26"<<std::endl;
-        dst<<strtod(constant);
+        dst<<strtod((*constant).c_str(), NULL);
     }
 }
 
@@ -32,7 +32,7 @@ void Unary_expression::print_python(std::ostream &dst) const{
 void Cast_expression::print_python(std::ostream &dst) const{
     if(unary_expr !=NULL){///only first rule implemented now
         std::cout<<"23a"<<std::endl;
-        unary-expr->print_python(dst);
+        unary_expr->print_python(dst);
     }
 }
 
@@ -292,10 +292,10 @@ void Translation_unit::print_python(std::ostream &dst) const{
 }
 
 
-void Iteration_statement:print_python(std::ofstream& dst){
+void Iteration_statement::print_python(std::ostream& dst) const{
     if(*keyword == "while" ){
         if(statement != NULL && expr != NULL){
-            in_while = true;
+            in_iteration = true;
             dst<<std::endl;
 
             for( int i = 0; i<indent_count; i++) { dst << "\t"; }
@@ -319,7 +319,7 @@ void Iteration_statement:print_python(std::ofstream& dst){
 }
 
 
-void Statement:print_python(std::ofstream& dst){
+void Statement:print_python(std::ostream& dst) const{
 
     if( labeled_stmnt != NULL ) {
         labeled_stmnt->print_python(dst);
@@ -351,7 +351,7 @@ void Statement:print_python(std::ofstream& dst){
 }
 
 
-void Compound_statement:print_python(std::ofstream& dst){
+void Compound_statement:print_python(std::ostream& dst) const{
 
     if( stmnt_list == NULL && decl_list == NULL ) {
         for( int i(0); i<counter_py; i++) { dst << "\t"; }

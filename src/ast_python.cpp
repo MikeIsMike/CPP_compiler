@@ -1,3 +1,6 @@
+#include "ast.hpp"
+#include <iostream>
+
 
 int indent_count(0);
 bool in_iteration(false);
@@ -199,6 +202,10 @@ void Declaration::print_python(std::ostream &dst) const{
     if(init_decl_list!=NULL){///only the initilised case
         std::cout<<"5a"<<std::endl;
         init_decl_list->print_python(dst);
+    }
+    else if(init_decl_list==NULL){
+        std::cout<<"5b"<<std::endl;
+
     }
 }
 

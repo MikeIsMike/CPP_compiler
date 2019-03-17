@@ -1,4 +1,4 @@
-/// #include <all the ast nodes somehow>
+print_python/// #include <all the ast nodes somehow>
 int indent_count(0);
 bool in_iteration(false);
 bool in_selective(false);
@@ -174,12 +174,12 @@ void Iteration_statement:print_python(std::ofstream& dst){
 			dst << "):" << std::endl;
 
             if(statement->compound_stmnt != NULL) {   //dont need to indent here if it is a compound statement, compound statement should allways be indented when called      independantly, so no need to indent twice
-                statement->print_python(file);
+                statement->print_python(dst);
                 dst << std::endl;
             }
             else{
                 indent_count++;
-                statement->print_python(file);
+                statement->print_python(dst);
                 indent_count--;
                 dst << std::endl;
             }
@@ -221,8 +221,19 @@ void Statement:print_python(std::ofstream& dst){
 
 void Compound_statement:print_python(std::ofstream& dst){
 
-
-
-
+    if( stmnt_list == NULL && decl_list == NULL ) {
+        for( int i(0); i<counter_py; i++) { dst << "\t"; }
+        dst << "pass" << std::endl;
+    }
+    else if( stmnt_list != NULL && decl_list != NULL ) {
+        decl_list->print_py(dst);
+        stmnt_list->print_py(dst);
+    }
+    else if( stmnt_list == NULL && decl_list != NULL ) {
+        decl_list->print_py(dst);
+    }
+    else if( stmnt_list != NULL && decl_list == NULL ) {
+        stmnt_list->print_py(dst);
+    }
 
 }

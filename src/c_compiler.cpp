@@ -1,4 +1,5 @@
 #include "ast.hpp"
+#include "ast_python.cpp"
 
 #include <fstream>
 
@@ -21,12 +22,12 @@ int main(int argc, char *argv[])
     const Translation_unit *ast=parseAST(src);
 
     if(std::string(argv[1])=="--translate"){
-        std::ofstream outfile (argv[4]);
-
+        std::ofstream outfile(argv[4]);
+        ast->print_python(outfile);
         //outfile << "my text here!" << std::endl;
         //pass outfile as an argument to translate function and print python code into it like above
         // run translate function with tree and outfile
-
+        outfile<<"if __name__ == \"__main__\":\n\timport sys\n\tret=main()\n\tsys.exit(ret)"<<std::endl;
         outfile.close();
     }
     else if(std::string(argv[1])=="-S"){

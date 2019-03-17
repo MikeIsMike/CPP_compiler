@@ -13,41 +13,71 @@ FS                [fFlL]
 
 
 %%
-"auto"			  { return KEYW_AUTO; }
-"break"			  { return KEYW_BREAK; }
+"auto"			  { yylval.string = new std::string("auto");
+                    return KEYW_AUTO; }
+"break"			  { yylval.string = new std::string("break");
+                    return KEYW_BREAK; }
 
-"case"			  { return KEYW_CASE; }
-"char"            { return TYPE_CHAR; }
-"const"			  { return KEYW_CONST; }
-"continue"		  { return KEYW_CONTINUE; }
-
-
-"default"		  { return KEYW_DEFAULT; }
-"do"			  { return KEYW_DO; }
-"double"		  { return TYPE_DOUBLE; }
-"else"            { return KEYW_ELSE; }
-"enum"			  { return KEYW_ENUM; }
-"extern"		  { return KEYW_EXTERN; }
-"float"			  { return TYPE_FLOAT; }
-"for"			  { return KEYW_FOR; }
-"if"              { return KEYW_IF; }
-"int"             { return TYPE_INT; }
-"long"			  { return TYPE_LONG; }
+"case"			  { yylval.string = new std::string("case");
+                    return KEYW_CASE; }
+"char"            { yylval.string = new std::string("char");
+                    return TYPE_CHAR; }
+"const"			  { yylval.string = new std::string("const");
+                    return KEYW_CONST; }
+"continue"		  { yylval.string = new std::string("continue");
+                    return KEYW_CONTINUE; }
 
 
-"register"		  { return KEYW_REGISTER; }
-"return"		  { return KEYW_RETURN; }
-"short"			  { return TYPE_SHORT; }
-"signed"	      { return TYPE_SIGNED; }
-"sizeof"          { return KEYW_SIZEOF; }
-"static"		  { return KEYW_STATIC; }
-"struct"		  { return KEYW_STRUCT; }
-"switch"		  { return KEYW_SWITCH; }
-"typedef"		  { return KEYW_TYPEDEF; }
-"unsigned"	      { return TYPE_UNSIGNED; }
-"void"			  { return TYPE_VOID; }
-"volatile"		  { return KEYW_VOLATILE; }
-"while"			  { return KEYW_WHILE; }
+"default"		  { yylval.string = new std::string("default");
+                    return KEYW_DEFAULT; }
+"do"			  { yylval.string = new std::string("do");
+                    return KEYW_DO; }
+"double"		  { yylval.string = new std::string("double");
+                    return TYPE_DOUBLE; }
+"else"            { yylval.string = new std::string("else");
+                    return KEYW_ELSE; }
+"enum"			  { yylval.string = new std::string("enum");
+                    return KEYW_ENUM; }
+"extern"		  { yylval.string = new std::string("extern");
+                    return KEYW_EXTERN; }
+"float"			  { yylval.string = new std::string("float");
+                    return TYPE_FLOAT; }
+"for"			  { yylval.string = new std::string("for");
+                    return KEYW_FOR; }
+"if"              { yylval.string = new std::string("if");
+                    return KEYW_IF; }
+"int"             { yylval.string = new std::string("int");
+                    return TYPE_INT; }
+"long"			  { yylval.string = new std::string("long");
+                    return TYPE_LONG; }
+
+
+"register"		  { yylval.string = new std::string("register");
+                    return KEYW_REGISTER; }
+"return"		  { yylval.string = new std::string("return");
+                    return KEYW_RETURN; }
+"short"			  { yylval.string = new std::string("short");
+                    return TYPE_SHORT; }
+"signed"	      { yylval.string = new std::string("signed");
+                    return TYPE_SIGNED; }
+"sizeof"          { yylval.string = new std::string("sizeof");
+                    return KEYW_SIZEOF; }
+"static"		  { yylval.string = new std::string("static");
+                    return KEYW_STATIC; }
+"struct"		  { yylval.string = new std::string("struct");
+                    return KEYW_STRUCT; }
+"switch"		  { yylval.string = new std::string("switch");
+                    return KEYW_SWITCH; }
+"typedef"		  { yylval.string = new std::string("typedef");
+                    return KEYW_TYPEDEF; }
+"unsigned"	      { yylval.string = new std::string("unsigned");
+                    return TYPE_UNSIGNED; }
+"void"			  { yylval.string = new std::string("void");
+                    return TYPE_VOID; }
+"volatile"		  { yylval.string = new std::string("volatile");
+                    return KEYW_VOLATILE; }
+"while"			  { yylval.string = new std::string("while");
+                    return KEYW_WHILE; }
 
 [a-zA-Z_][a-zA-Z_0-9]*              { yylval.string=new std::string(yytext); return IDENTIFIER; }
 

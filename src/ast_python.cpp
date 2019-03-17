@@ -1,4 +1,8 @@
 /// #include <all the ast nodes somehow>
+int indent_count(0);
+bool in_iteration(false);
+bool in_selective(false);
+bool in_function(false);
 
 
 virtual void Primary_expression::print_python(std::ostream &dst) const{
@@ -154,4 +158,71 @@ virtual void Translation_unit::print_python(std::ostream &dst) const{
     if(external_decl!=NULL&&translation_unit==NULL){
         external_decl->print_python(dst);
     }
+}
+
+
+void Iteration_statement:print_python(std::ofstream& dst){
+    if(*keyword == "while" ){
+        if(statement != NULL && expr != NULL){
+            in_while = true;
+            dst<<std::endl;
+
+            for( int i = 0; i<indent_count; i++) { dst << "\t"; }
+
+			dst << "while(";
+			expr->print_python(dst);
+			dst << "):" << std::endl;
+
+            if(statement->compound_stmnt != NULL) {   //dont need to indent here if it is a compound statement, compound statement should allways be indented when called      independantly, so no need to indent twice
+                statement->print_python(file);
+                dst << std::endl;
+            }
+            else{
+                indent_count++;
+                statement->print_python(file);
+                indent_count--;
+                dst << std::endl;
+            }
+	    }
+    }
+}
+
+
+void Statement:print_python(std::ofstream& dst){
+
+    if( labeled_stmnt != NULL ) {
+        labeled_stmnt->print_python(dst);
+    }
+
+    else if( compound_stmnt != NULL ) {
+        indent_count++;
+        compound_stmnt->print_python(dst);
+        indent_count--;
+    }
+
+    else if( expression_stmnt != NULL ) {
+        expression_stmnt->print_python(dst);
+    }
+
+    else if( selection_stmnt != NULL ) {
+        selection_stmnt->print_python(dst);
+    }
+
+    else if( iteration_stmnt != NULL ) {
+        iteration_stmnt->print_python(dst);
+    }
+
+    else if( jump_stmnt != NULL ) {
+        jump_stmnt->print_python(dst);
+    }
+
+}
+
+
+void Compound_statement:print_python(std::ofstream& dst){
+
+
+
+
+
 }

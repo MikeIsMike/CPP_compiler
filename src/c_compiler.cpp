@@ -18,13 +18,7 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-<<<<<<< HEAD
-    const Translation_unit *ast=parseAST();
-
-    if(argv[1]=='--translate'){
-=======
     const Translation_unit *ast=parseAST(src);
->>>>>>> 551dc4c42b7c5915270257fa877be5df62a688c0
 
     if(std::string(argv[1])=="--translate"){
         std::ofstream outfile (argv[4]);

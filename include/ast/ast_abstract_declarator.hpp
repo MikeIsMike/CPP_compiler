@@ -18,7 +18,7 @@ private:
     Direct_abstract_declarator* direct_abstr_decl;
 public:
     virtual ~Abstract_declarator() {}
-    virtual void print_python(std::ostream &dst) {};
+    virtual void print_python(std::ostream &dst) const{};
 
     Abstract_declarator(
         Pointer* ptr_in,

@@ -1,7 +1,7 @@
 CPPFLAGS += -std=c++11 -W -Wall -g -Wno-unused-parameter
 CPPFLAGS += -I include
 
-# all
+all : bin/c_compiler
 
 
 src/parser.tab.cpp src/parser.tab.hpp : src/parser.y
@@ -21,3 +21,4 @@ clean :
 	rm -f src/*.tab.hpp
 	rm -f src/*.yy.cpp
 	rm -f src/parser.output
+	rm -f tmp/formative/*

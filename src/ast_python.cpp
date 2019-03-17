@@ -239,7 +239,9 @@ void Function_definition::print_python(std::ostream &dst) const{
 
             decl_spec->print_python(dst);
             decl->print_python(dst);
+            indent_count++;
             compound_stmnt->print_python(dst);
+            indent_count--;
             break;
         // case 3:///decl_list might not need to be implemented in our compiler
         //     decl->print_python(dst);
@@ -250,7 +252,9 @@ void Function_definition::print_python(std::ostream &dst) const{
             std::cout<<"2b"<<std::endl;
 
             decl->print_python(dst);
+            indent_count++;
             compound_stmnt->print_python(dst);
+            indent_count--;
             std::cout<<"hihihih"<<std::endl;
             std::cout<<"sdfsdfihih"<<std::endl;
 
@@ -292,10 +296,10 @@ void Translation_unit::print_python(std::ostream &dst) const{
 }
 
 
-void Iteration_statement:print_python(std::ofstream& dst){
+void Iteration_statement:print_python(std::ostream& dst){
     if(*keyword == "while" ){
         if(statement != NULL && expr != NULL){
-            in_while = true;
+            in_iteration = true;
             dst<<std::endl;
 
             for( int i = 0; i<indent_count; i++) { dst << "\t"; }
@@ -319,7 +323,7 @@ void Iteration_statement:print_python(std::ofstream& dst){
 }
 
 
-void Statement:print_python(std::ofstream& dst){
+void Statement:print_python(std::ostream& dst){
 
     if( labeled_stmnt != NULL ) {
         labeled_stmnt->print_python(dst);
@@ -351,7 +355,7 @@ void Statement:print_python(std::ofstream& dst){
 }
 
 
-void Compound_statement:print_python(std::ofstream& dst){
+void Compound_statement:print_python(std::ostream& dst){
 
     if( stmnt_list == NULL && decl_list == NULL ) {
         for( int i(0); i<counter_py; i++) { dst << "\t"; }
@@ -367,5 +371,11 @@ void Compound_statement:print_python(std::ofstream& dst){
     else if( stmnt_list != NULL && decl_list == NULL ) {
         stmnt_list->print_py(dst);
     }
+
+}
+
+
+void Selection_statement:print_python(std::ofstream& dst){
+
 
 }

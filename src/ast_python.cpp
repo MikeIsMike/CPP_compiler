@@ -239,7 +239,9 @@ void Function_definition::print_python(std::ostream &dst) const{
 
             decl_spec->print_python(dst);
             decl->print_python(dst);
+            indent_count++;
             compound_stmnt->print_python(dst);
+            indent_count--;
             break;
         // case 3:///decl_list might not need to be implemented in our compiler
         //     decl->print_python(dst);
@@ -250,7 +252,9 @@ void Function_definition::print_python(std::ostream &dst) const{
             std::cout<<"2b"<<std::endl;
 
             decl->print_python(dst);
+            indent_count++;
             compound_stmnt->print_python(dst);
+            indent_count--;
             std::cout<<"hihihih"<<std::endl;
             std::cout<<"sdfsdfihih"<<std::endl;
 
@@ -367,5 +371,11 @@ void Compound_statement:print_python(std::ostream& dst) const{
     else if( stmnt_list != NULL && decl_list == NULL ) {
         stmnt_list->print_py(dst);
     }
+
+}
+
+
+void Selection_statement:print_python(std::ofstream& dst){
+
 
 }

@@ -216,6 +216,8 @@ void Function_definition::print_python(std::ostream &dst) const{
             std::cout<<"hihihih"<<std::endl;
             break;
     }
+}
+
 
 void Statement:print_python(std::ofstream& dst){
 
@@ -228,12 +230,6 @@ void Statement:print_python(std::ofstream& dst){
         compound_stmnt->print_python(dst);
         indent_count--;
     }
-
-
-
-
-
-
 
     else if( expression_stmnt != NULL ) {
         expression_stmnt->print_python(dst);

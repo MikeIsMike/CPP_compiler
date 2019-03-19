@@ -362,6 +362,17 @@ void Iteration_statement::print_python(std::ostream& dst) const{
 }
 
 
+void Statement_list::print_python(std::ostream& dst) const{
+    if(stmnt_list!=NULL){
+        stmnt_list->print_python(dst);
+        stmnt->print_python(dst);
+    }
+    else if(stmnt_list==NULL){
+        stmnt->print_python(dst);
+    }
+}
+
+
 void Statement::print_python(std::ostream& dst) const{
 
     if( labeled_stmnt != NULL ) {

@@ -4,7 +4,7 @@ CPPFLAGS += -I include
 all : clean bin/c_compiler
 
 debug: bin/c_compiler
-	gdb --args ./bin/c_compiler --translate c_translator/formative/f0.c -o c_translator.py
+	gdb --args ./bin/c_compiler --translate c_translator/formative/f5.c -o c_translator.py
 
 src/parser.tab.cpp src/parser.tab.hpp : src/parser.y
 	bison -v -d src/parser.y -o src/parser.tab.cpp

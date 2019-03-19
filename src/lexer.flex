@@ -159,7 +159,7 @@ L?\"(\\.|[^\\"])*\"	{ yylval.string = new std::string(yytext); return STRING_LIT
 [\;]            { return PUN_SEMIC;}
 [,]             { return PUN_COMMA;}
 [:]             { return PUN_COLON;}
-[=]             { return PUN_EQUALS;}
+[=]             { yylval.string = new std::string("="); return PUN_EQUALS;}
 "..."           { return PUN_ELLIPSIS;}
 (\#)            { return HASHTAG;}
 (\#\#)          { return DOUBLE_HASHTAG;}

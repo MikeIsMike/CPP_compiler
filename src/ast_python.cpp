@@ -213,7 +213,7 @@ void Assignment_expression::print_python(std::ostream &dst) const{
             std::cout<<"Assignment operators are not linked to the Assignment_expression node, RIP"<<std::endl;
         }
         else{
-            std::cout<<"Assignment_expression if_22"<<std::endl;
+            std::cout<<"Assignment_expression if_22, ASSIGN_OP = "<<*assign_op<<std::endl;
             dst<<*assign_op<< " ";
         }
         if(assign_expr!=NULL){
@@ -269,7 +269,7 @@ void Direct_declarator::print_python(std::ostream &dst) const{ //global and othe
             std::cout<<"Direct_declarator switch_1"<<std::endl;
             dst<<"(";
             decl->print_python(dst);
-            dst<<")";
+            dst<<"):"<<"\n";
             break;
         case 5:
             std::cout<<"Direct_declarator switch_5"<<std::endl;
@@ -277,7 +277,7 @@ void Direct_declarator::print_python(std::ostream &dst) const{ //global and othe
 
             dst<<"(";
             param_type_list->print_python(dst);
-            dst<<")";
+            dst<<"):"<<"\n";
             break;
         case 6:
             std::cout<<"Direct_declarator switch_6"<<std::endl;
@@ -285,7 +285,7 @@ void Direct_declarator::print_python(std::ostream &dst) const{ //global and othe
 
             dst<<"(";
             identif_list->print_python(dst);
-            dst<<")";
+            dst<<"):"<<"\n";
             break;
         case 7:
             std::cout<<"Direct_declarator switch_7"<<std::endl;
@@ -308,6 +308,7 @@ void Declarator::print_python(std::ostream &dst) const{
 void Declaration::print_python(std::ostream &dst) const{
     if(init_decl_list!=NULL){///only the initilised case
         // decl_spec->print_python(dst);
+        for( int i = 0; i<indent_count; i++) { dst << "\t"; }
         init_decl_list->print_python(dst);
     }
     else if(init_decl_list==NULL){
@@ -353,6 +354,7 @@ void Function_definition::print_python(std::ostream &dst) const{
             // decl_spec->print_python(dst);//not needed because function only has return type int and void
             dst<<"def ";
             decl->print_python(dst);
+
             compound_stmnt->print_python(dst);
             break;
         // case 3:///decl_list might not need to be implemented in our compiler
@@ -592,4 +594,32 @@ void Parameter_declaration::print_python(std::ostream& dst) const{
     if(declarator!=NULL){
         declarator->print_python(dst);
     }
+}
+
+void Argument_expression_list::print_python(std::ostream& dst) const{
+    if(arg_expr_list!=NULL){
+        arg_expr_list->print_python(dst);
+        dst<<", ";
+    }
+    if(assign_expr!=NULL){
+        assign_expr->print_python(dst);
+    }
+
+}
+
+void Expression_statement::print_python(std::ostream& dst) const{
+    if(expr!=NULL){
+        expr->print_python(dst);
+    }
+    dst<<std::endl;
+}
+
+void Declaration_list::print_python(std::ostream& dst) const{
+    if(decl_list!=NULL){
+        decl_list->print_python(dst);
+    }
+    if(decl!=NULL){
+        decl->print_python(dst);
+    }
+
 }

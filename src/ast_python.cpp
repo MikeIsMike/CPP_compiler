@@ -20,17 +20,15 @@ void Postfix_expression::print_python(std::ostream &dst) const{
 
 
 void Unary_expression::print_python(std::ostream &dst) const{
-<<<<<<< HEAD
     if(postf_expr != NULL){///only first rule implemented
         postf_expr->print_python(dst);
     }
     else if(unary_op==NULL){
-=======
+
     if(postf_expr != NULL){//rule 1
         postf_expr->print_python(dst);
     }
     else if(unary_op==NULL){//rule 3
->>>>>>> 4a655746d8bdeec8e13e0ef65de474ae5dd86f93
         std::cout<<"Should there be a unary operator linked?"<<std::endl;
     }
     else{
@@ -39,11 +37,7 @@ void Unary_expression::print_python(std::ostream &dst) const{
             cast_expr->print_python(dst);
         }
     }
-<<<<<<< HEAD
-
-=======
     //should not need any more rules for python?
->>>>>>> 4a655746d8bdeec8e13e0ef65de474ae5dd86f93
 }
 
 

@@ -20,10 +20,10 @@ void Postfix_expression::print_python(std::ostream &dst) const{
 
 
 void Unary_expression::print_python(std::ostream &dst) const{
-    if(postf_expr != NULL){///only first rule implemented
+    if(postf_expr != NULL){//rule 1
         postf_expr->print_python(dst);
     }
-    else if(unary_op==NULL){
+    else if(unary_op==NULL){//rule 3
         std::cout<<"Should there be a unary operator linked?"<<std::endl;
     }
     else{
@@ -32,15 +32,15 @@ void Unary_expression::print_python(std::ostream &dst) const{
             cast_expr->print_python(dst);
         }
     }
-
+    //should not need any more rules for python?
 }
 
 
 void Cast_expression::print_python(std::ostream &dst) const{
-    if(unary_expr !=NULL){///only first rule implemented now
-        std::cout<<"23a"<<std::endl;
+    if(unary_expr !=NULL){///first rule
         unary_expr->print_python(dst);
     }
+    //no casting in python translator needed
 }
 
 

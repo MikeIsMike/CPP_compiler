@@ -20,11 +20,6 @@ void Postfix_expression::print_python(std::ostream &dst) const{
 
 
 void Unary_expression::print_python(std::ostream &dst) const{
-    if(postf_expr != NULL){///only first rule implemented
-        postf_expr->print_python(dst);
-    }
-    else if(unary_op==NULL){
-
     if(postf_expr != NULL){//rule 1
         postf_expr->print_python(dst);
     }
@@ -357,6 +352,17 @@ void Iteration_statement::print_python(std::ostream& dst) const{
             statement->print_python(dst);
             dst << std::endl;
 	    }
+    }
+}
+
+
+void Statement_list::print_python(std::ostream& dst) const{
+    if(stmnt_list!=NULL){
+        stmnt_list->print_python(dst);
+        stmnt->print_python(dst);
+    }
+    else if(stmnt_list==NULL){
+        stmnt->print_python(dst);
     }
 }
 

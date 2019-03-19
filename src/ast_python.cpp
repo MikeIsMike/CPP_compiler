@@ -19,10 +19,19 @@ void Postfix_expression::print_python(std::ostream &dst) const{
 
 
 void Unary_expression::print_python(std::ostream &dst) const{
-    if(postf_expr != NULL){///only first rule implemented now
-        std::cout<<"24a"<<std::endl;
+    if(postf_expr != NULL){///only first rule implemented
         postf_expr->print_python(dst);
     }
+    else if(unary_op==NULL){
+        std::cout<<"Should there be a unary operator linked?"<<std::endl;
+    }
+    else{
+        dst<<" "<<*unary_op << " ";
+        if(cast_expr!=NULL){
+            cast_expr->print_python(dst);
+        }
+    }
+
 }
 
 
@@ -130,10 +139,30 @@ void Initializer::print_python(std::ostream &dst) const{
 
 
 void Assignment_expression::print_python(std::ostream &dst) const{
-    if(cond_expr!=NULL){///only first rule
-        std::cout<<"10a"<<std::endl;
+
+    if(cond_expr!=NULL){
         cond_expr->print_python(dst);
     }
+    else if(unary_expr!=NULL){
+        for(int i = 0; i<indent_count; i++){dst << "\t";}
+        unary_expr->print_python(dst);
+
+        if(assign_op == NULL){
+            std::cout<<"Assignment operators are not linked to the Assignment_expression node, RIP"<<std::endl;
+        }
+        else{
+            dst<<*assign_op<< " ";
+        }
+        if(assign_expr!=NULL){
+            assign_expr->print_python(dst);
+
+        }
+    }
+    if(!in_iteration && !in_function && !newline_selective){
+        dst<<std::endl;
+    }
+
+
 }
 
 
@@ -317,6 +346,7 @@ void Iteration_statement::print_python(std::ostream& dst) const{
 			dst << "while(";
 			expr->print_python(dst);
 			dst << "):" << std::endl;
+            in_iteration = false;
 
             statement->print_python(dst);
             dst << std::endl;
@@ -424,6 +454,17 @@ void Selection_statement::print_python(std::ostream& dst) const{
 
             else_statement->print_python(dst);
             dst << std::endl;
+        }
+    }
+
+}
+
+void Jump_statement::print_python(std::ostream& dst) const{
+    for(int i = 0; i<indent_count; i++){dst << "\t";}
+    if(*keyword == "return"){
+        dst << *keyword << " ";
+        if(expr != NULL){
+            expr->print_python(dst);
         }
     }
 

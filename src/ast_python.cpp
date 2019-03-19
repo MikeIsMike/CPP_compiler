@@ -1,4 +1,5 @@
 #include "ast.hpp"
+#include "forward_declaration.hpp"
 #include <iostream>
 
 
@@ -215,7 +216,7 @@ void Direct_declarator::print_python(std::ostream &dst) const{
 
 
 void Declarator::print_python(std::ostream &dst) const{
-    if(pointer==NULL){///only second rule implemented
+    if(pointer==NULL){///second rule
         std::cout<<"6a"<<std::endl;
 
         dir_decl->print_python(dst);
@@ -397,19 +398,26 @@ void Statement::print_python(std::ostream& dst) const{
 void Compound_statement::print_python(std::ostream& dst) const{
 
     indent_count++;
-
     if(stmnt_list == NULL && decl_list == NULL) {
+        std::cout<<"100a"<<std::endl;
+
         for( int i(0); i<indent_count; i++) { dst << "\t"; }
         dst << "pass" << std::endl;
     }
     else if(stmnt_list != NULL && decl_list != NULL) {
+        std::cout<<"100b"<<std::endl;
+
         decl_list->print_python(dst);
         stmnt_list->print_python(dst);
     }
     else if(stmnt_list == NULL && decl_list != NULL) {
+        std::cout<<"100c"<<std::endl;
+
         decl_list->print_python(dst);
     }
     else if(stmnt_list != NULL && decl_list == NULL) {
+        std::cout<<"100d"<<std::endl;
+
         stmnt_list->print_python(dst);
     }
 

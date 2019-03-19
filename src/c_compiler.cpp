@@ -3,8 +3,13 @@
 
 #include <fstream>
 
+int gdb_or_not=0;
+
 int main(int argc, char *argv[])
 {
+    if(std::string(argv[0])=="gdb"){
+        gdb_or_not=2;
+    }
     if(argc < 5){
         fprintf(stderr, "usage : compiler sourceCode\n");
         exit(1);
@@ -13,7 +18,7 @@ int main(int argc, char *argv[])
     // std::ifstream src(argv[2]);
 
     FILE *src;
-    src=fopen(argv[2], "r");
+    src=fopen(argv[2+gdb_or_not], "r");
     if(!src){
         fprintf(stderr, "Couldn't open '%s'\n", argv[2]);
         exit(1);
@@ -21,8 +26,8 @@ int main(int argc, char *argv[])
 
     const Translation_unit *ast=parseAST(src);
 
-    if(std::string(argv[1])=="--translate"){
-        std::ofstream outfile(argv[4]);
+    if(std::string(argv[1+gdb_or_not])=="--translate"){
+        std::ofstream outfile(argv[4+gdb_or_not]);
         ast->print_python(outfile);
         //outfile << "my text here!" << std::endl;
         //pass outfile as an argument to translate function and print python code into it like above

@@ -1,11 +1,6 @@
 #ifndef ast_hpp
 #define ast_hpp
 
-//FORWARD DECL
-int indent_count(0);
-bool in_iteration(false);
-bool newline_selective(false);
-bool in_function(false);
 
 
 #include "ast/ast_primary_expression.hpp"
@@ -67,7 +62,6 @@ bool in_function(false);
 #include "ast/ast_struct_declarator.hpp"
 #include "ast/ast_struct_or_union_specifier.hpp"
 #include "ast/ast_translation_unit.hpp"
-#include "ast/ast_tree.hpp"
 #include "ast/ast_type_name.hpp"
 #include "ast/ast_type_qualifier_list.hpp"
 #include "ast/ast_type_qualifier.hpp"

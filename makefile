@@ -1,8 +1,10 @@
 CPPFLAGS += -std=c++11 -W -Wall -g -Wno-unused-parameter
 CPPFLAGS += -I include
 
-all : bin/c_compiler
+all : clean bin/c_compiler
 
+debug: bin/c_compiler
+	gdb --args ./bin/c_compiler --translate c_translator/formative/f0.c -o c_translator.py
 
 src/parser.tab.cpp src/parser.tab.hpp : src/parser.y
 	bison -v -d src/parser.y -o src/parser.tab.cpp

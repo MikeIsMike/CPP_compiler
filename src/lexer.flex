@@ -79,15 +79,15 @@ FS                [fFlL]
 "while"			  { yylval.string = new std::string("while");
                     return KEYW_WHILE; }
 
-[a-zA-Z_][a-zA-Z_0-9]*              { yylval.string=new std::string(yytext); return IDENTIFIER; }
+[a-zA-Z_][a-zA-Z_0-9]*              { yylval.string= new std::string(yytext); return IDENTIFIER; }
 
-[0-9]+([Ee][+-]?[0-9]+){FS}?              { yylval.number=strtod(yytext, 0); return CONSTANT; }
-[0-9]*"."[0-9]+([Ee][+-]?[0-9]+)?{FS}?	    { yylval.number=strtod(yytext, 0); return CONSTANT; }
-[0-9]+"."([Ee][+-]?[0-9]+)?{FS}?	    { yylval.number=strtod(yytext, 0); return CONSTANT; }
+[0-9]+([Ee][+-]?[0-9]+){FS}?              { yylval.number= strtod(yytext, 0); return CONSTANT; }
+[0-9]*"."[0-9]+([Ee][+-]?[0-9]+)?{FS}?	    { yylval.number= strtod(yytext, 0); return CONSTANT; }
+[0-9]+"."([Ee][+-]?[0-9]+)?{FS}?	    { yylval.number= strtod(yytext, 0); return CONSTANT; }
 
 0[xX]{H}+{IS}?      { yylval.number = strtod(yytext, 0); return CONSTANT; }
 0[0-7]+{IS}?		{ yylval.number = strtod(yytext, 0); return CONSTANT; }
-[0-9]+{IS}?		{ yylval.number = strtod(yytext, 0); return CONSTANT; }
+[0-9]+{IS}?		    { yylval.number = strtod(yytext, 0); return CONSTANT; }
 
 
 
@@ -101,51 +101,51 @@ L?\"(\\.|[^\\"])*\"	{ yylval.string = new std::string(yytext); return STRING_LIT
 
 
 
-[*]             { return OP_ASTERISK; }
-[\/]            { return OP_DIV; }
-[%]             { return OP_REMAINDER; }
-[+]             { return OP_PLUS; }
-[-]             { return OP_MINUS; }
-[\^]              { return OP_EXP;}
+[*]             { yylval.string = new std::string("*"); return OP_ASTERISK; }
+[\/]            { yylval.string = new std::string("/"); return OP_DIV; }
+[%]             { yylval.string = new std::string("%"); return OP_REMAINDER; }
+[+]             { yylval.string = new std::string("+"); return OP_PLUS; }
+[-]             { yylval.string = new std::string("-"); return OP_MINUS; }
+[\^]            { return OP_EXP;}
 
 
 &&              { return OP_ANDAND; }
-(\|\|)              { return OP_OROR; }
-&               { return OP_AND; }
+(\|\|)          { return OP_OROR; }
+&               { yylval.string = new std::string("&"); return OP_AND; }
 \|              { return OP_OR; }
 
-(==)            { return OP_EQ_CONST; }
-(!=)	        { return OP_NE_CONST; }
-(<=)            { return OP_LT_EQ; }
-(>=)            { return OP_GT_EQ; }
-(<)             { return OP_LT; }
-(>)             { return OP_GT; }
+(==)            { yylval.string = new std::string("=="); return OP_EQ_CONST; }
+(!=)	        { yylval.string = new std::string("!="); return OP_NE_CONST; }
+(<=)            { yylval.string = new std::string("<="); return OP_LT_EQ; }
+(>=)            { yylval.string = new std::string(">="); return OP_GT_EQ; }
+(<)             { yylval.string = new std::string("<"); return OP_LT; }
+(>)             { yylval.string = new std::string(">"); return OP_GT; }
 
 [?]             { return OP_CONDITIONAL;}
 
-(>>)		    { return OP_RIGHT_SHIFT; }
-(<<)            { return OP_LEFT_SHIFT; }
+(>>)		    { yylval.string = new std::string(">>"); return OP_RIGHT_SHIFT; }
+(<<)            { yylval.string = new std::string("<<"); return OP_LEFT_SHIFT; }
 
-"++"		    { return OP_INCREM; }
-"--"            { return OP_DECREM; }
-(->)			{ return OP_POINTER; }
+"++"		    { yylval.string = new std::string("++"); return OP_INCREM; }
+"--"            { yylval.string = new std::string("--"); return OP_DECREM; }
+(->)			{ yylval.string = new std::string("->"); return OP_POINTER; }
 
-"*="            { return OP_MUL_ASSIGN; }
-"/="            { return OP_DIV_ASSIGN; }
-"+="            { return OP_PLUS_ASSIGN; }
-"%="            { return OP_MOD_ASSIGN; }
-"-="            { return OP_MINUS_ASSIGN; }
-"<<="           { return OP_LEFT_ASSIGN; }
-">>="           { return OP_RIGHT_ASSIGN; }
-"&="            { return OP_AND_ASSIGN; }
-"^="            { return OP_XOR_ASSIGN; }
-"|="            { return OP_OR_ASSIGN; }
+"*="            { yylval.string = new std::string("*="); return OP_MUL_ASSIGN; }
+"/="            { yylval.string = new std::string("/="); return OP_DIV_ASSIGN; }
+"+="            { yylval.string = new std::string("+="); return OP_PLUS_ASSIGN; }
+"%="            { yylval.string = new std::string("%="); return OP_MOD_ASSIGN; }
+"-="            { yylval.string = new std::string("-="); return OP_MINUS_ASSIGN; }
+"<<="           { yylval.string = new std::string("<<="); return OP_LEFT_ASSIGN; }
+">>="           { yylval.string = new std::string(">>="); return OP_RIGHT_ASSIGN; }
+"&="            { yylval.string = new std::string("&="); return OP_AND_ASSIGN; }
+"^="            { yylval.string = new std::string("^="); return OP_XOR_ASSIGN; }
+"|="            { yylval.string = new std::string("|="); return OP_OR_ASSIGN; }
 
-[!]             { return OP_NOT; }
+[!]             { yylval.string = new std::string("!"); return OP_NOT; }
 
-[.]             { return OP_DOT;}
+[.]             { yylval.string = new std::string("."); return OP_DOT;}
 
-[~]             { return OP_DESTRUCTOR; }
+[~]             { yylval.string = new std::string("~"); return OP_DESTRUCTOR; }
 
 
 
@@ -176,14 +176,3 @@ void yyerror (char const *s)
   fprintf (stderr, "Parse error : %s\n", s);
   exit(1);
 }
-
-/* int check_type()
-{
-	if (yytext == type_name)
-		return TYPE_NAME;
-
-	return IDENTIFIER;
-
-
-	return IDENTIFIER;
-} */

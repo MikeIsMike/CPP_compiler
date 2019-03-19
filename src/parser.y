@@ -11,8 +11,6 @@
   // that Bison generated code can call them.
   int yylex(void);
   void yyerror(const char *);
-
-
 }
 
 
@@ -210,7 +208,7 @@ enumeration_constant : IDENTIFIER                                  {$$ = new Enu
                 ;
 
 primary_expression : IDENTIFIER                                     { $$ = new Primary_expression($1, NULL, NULL, NULL);}
-                | CONSTANT                                          { $$ = new Primary_expression(NULL, $1, NULL, NULL);}
+                | CONSTANT                                          { $$ = new Primary_expression(NULL,new double(yylval.number), NULL, NULL);}
                 | STRING_LITERAL                                    { $$ = new Primary_expression(NULL, NULL, $1, NULL);}
                 | PUN_L_BRACKET expression PUN_R_BRACKET            { $$ = new Primary_expression(NULL, NULL, NULL, $2);}
                 ;
@@ -266,8 +264,8 @@ shift_expression : additive_expression                                          
             	;
 
 relational_expression : shift_expression                                                                {$$ = new Relational_expression($1, NULL, NULL);}
-            	| relational_expression '<' shift_expression                                            {$$ = new Relational_expression($3, $1, $2);} ///TODO: < and > tokens?
-            	| relational_expression '>' shift_expression                                            {$$ = new Relational_expression($3, $1, $2);} ///TODO: < and > tokens?
+            	| relational_expression OP_LT shift_expression                                            {$$ = new Relational_expression($3, $1, $2);} ///TODO: < and > tokens?
+            	| relational_expression OP_GT shift_expression                                            {$$ = new Relational_expression($3, $1, $2);} ///TODO: < and > tokens?
             	| relational_expression OP_LT_EQ shift_expression                                       {$$ = new Relational_expression($3, $1, $2);}
             	| relational_expression OP_GT_EQ shift_expression                                       {$$ = new Relational_expression($3, $1, $2);}
             	;

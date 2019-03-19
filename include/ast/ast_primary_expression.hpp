@@ -14,7 +14,7 @@ class Primary_expression
 
 private:
     std::string* identifier;
-    std::string* constant;
+    double* constant;
     std::string* string_literal;
     Expression* expression;
 public:
@@ -23,7 +23,7 @@ public:
 
     Primary_expression(
         std::string* identifier_in,
-        std::string* constant_in,
+        double* constant_in,
         std::string* string_literal_in,
         Expression* expression_in) :
         identifier(identifier_in),

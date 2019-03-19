@@ -12,10 +12,20 @@ void Primary_expression::print_python(std::ostream &dst) const{
 
 
 void Postfix_expression::print_python(std::ostream &dst) const{
-    if(prim_expr != NULL){///only first rule implemented now
-        std::cout<<"25a"<<std::endl;
+    if(prim_expr != NULL){///first rule
         prim_expr->print_python(dst);
     }
+    //rule 2 not applicable
+    else if(postf_expr!=NULL){//rule 3 and 4
+        for( int i = 0; i<indent_count; i++) { dst << "\t"; }
+        dst<<"(";
+        if(arg_expr_list!=NULL){
+            arg_expr_list->print_python(dst);
+        }
+        dst<<")";
+        in_function=false;
+    }
+    //other rules not applicable to python?
 }
 
 
@@ -284,9 +294,7 @@ void Function_definition::print_python(std::ostream &dst) const{
             // decl_spec->print_python(dst);//not needed because function only has return type int and void
             dst<<"def ";
             decl->print_python(dst);
-            indent_count++;
             compound_stmnt->print_python(dst);
-            indent_count--;
             break;
         // case 3:///decl_list might not need to be implemented in our compiler
         //     decl->print_python(dst);
@@ -297,9 +305,7 @@ void Function_definition::print_python(std::ostream &dst) const{
             std::cout<<"2b"<<std::endl;
 
             decl->print_python(dst);
-            indent_count++;
             compound_stmnt->print_python(dst);
-            indent_count--;
             std::cout<<"hihihih"<<std::endl;
             std::cout<<"sdfsdfihih"<<std::endl;
 

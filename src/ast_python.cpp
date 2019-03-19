@@ -31,12 +31,17 @@ void Primary_expression::print_python(std::ostream &dst) const{
 
 void Postfix_expression::print_python(std::ostream &dst) const{
     if(prim_expr != NULL){///first rule
+        std::cout<<"Postfix_expression if_1"<<std::endl;
+
         prim_expr->print_python(dst);
     }
     //rule 2 not applicable
     else if(postf_expr!=NULL){//rule 3 and 4
+        std::cout<<"Postfix_expression if_2"<<std::endl;
         for( int i = 0; i<indent_count; i++) { dst << "\t"; }
+        postf_expr->print_python(dst);
         dst<<"(";
+        in_function=true;
         if(arg_expr_list!=NULL){
             arg_expr_list->print_python(dst);
         }
@@ -253,15 +258,39 @@ void Init_declarator_list::print_python(std::ostream &dst) const{
 }
 
 
-void Direct_declarator::print_python(std::ostream &dst) const{
+void Direct_declarator::print_python(std::ostream &dst) const{ //global and other variebles handeled needed aghhh
     switch(parse_rule_followed){
         case 1:
-
+            std::cout<<"Direct_declarator switch_1"<<std::endl;
+            std::cout<<"HEEEERE: " <<*identifier<<std::endl;
             dst<<*identifier;
             break;
-        case 7:
-
+        case 2:
+            std::cout<<"Direct_declarator switch_1"<<std::endl;
+            dst<<"(";
+            decl->print_python(dst);
+            dst<<")";
+            break;
+        case 5:
+            std::cout<<"Direct_declarator switch_5"<<std::endl;
             direct_decl->print_python(dst);
+
+            dst<<"(";
+            param_type_list->print_python(dst);
+            dst<<")";
+            break;
+        case 6:
+            std::cout<<"Direct_declarator switch_6"<<std::endl;
+            direct_decl->print_python(dst);
+
+            dst<<"(";
+            identif_list->print_python(dst);
+            dst<<")";
+            break;
+        case 7:
+            std::cout<<"Direct_declarator switch_7"<<std::endl;
+            direct_decl->print_python(dst);
+
             dst<<"():"<<"\n";
             break;
     }
@@ -270,12 +299,9 @@ void Direct_declarator::print_python(std::ostream &dst) const{
 
 void Declarator::print_python(std::ostream &dst) const{
     if(pointer==NULL){///second rule
-
         dir_decl->print_python(dst);
     }
-    else if(pointer!=NULL){///first rule to be implemented here
-
-    }
+    //first rule not needed
 }
 
 
@@ -542,5 +568,28 @@ void Expression::print_python(std::ostream& dst) const{
     if(assign_expr!=NULL){
         std::cout<<"Expression if_1"<<std::endl;
         assign_expr->print_python(dst);
+    }
+}
+
+void Parameter_type_list::print_python(std::ostream& dst) const{
+    if(param_list!=NULL){               //rule 1. Rule 2 not needed
+        param_list->print_python(dst);
+    }
+}
+
+void Parameter_list::print_python(std::ostream& dst) const{
+    if(param_list!=NULL){
+        param_list->print_python(dst);
+        dst<<", ";
+    }
+    if(param_decl!=NULL){
+        param_decl->print_python(dst);
+    }
+}
+
+void Parameter_declaration::print_python(std::ostream& dst) const{
+    //dont need anything else
+    if(declarator!=NULL){
+        declarator->print_python(dst);
     }
 }

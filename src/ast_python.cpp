@@ -355,8 +355,11 @@ void Iteration_statement::print_python(std::ostream& dst) const{
 			dst << "):" << std::endl;
             in_iteration = false;
 
+            indent_count++;
+            dst << std::endl;
             statement->print_python(dst);
             dst << std::endl;
+            indent_count--;
 	    }
     }
 }
@@ -376,9 +379,7 @@ void Statement_list::print_python(std::ostream& dst) const{
 void Statement::print_python(std::ostream& dst) const{
 
     if( labeled_stmnt != NULL ) {
-        indent_count++;
         labeled_stmnt->print_python(dst);
-        indent_count--;
     }
 
     else if( compound_stmnt != NULL ) {
@@ -386,27 +387,19 @@ void Statement::print_python(std::ostream& dst) const{
     }
 
     else if( expression_stmnt != NULL ) {
-        indent_count++;
         expression_stmnt->print_python(dst);
-        indent_count--;
     }
 
     else if( selection_stmnt != NULL ) {
-        indent_count++;
         selection_stmnt->print_python(dst);
-        indent_count--;
     }
 
     else if( iteration_stmnt != NULL ) {
-        indent_count++;
         iteration_stmnt->print_python(dst);
-        indent_count--;
     }
 
     else if( jump_stmnt != NULL ) {
-        indent_count++;
         jump_stmnt->print_python(dst);
-        indent_count--;
     }
 
 }
@@ -437,7 +430,6 @@ void Compound_statement::print_python(std::ostream& dst) const{
 
         stmnt_list->print_python(dst);
     }
-
     indent_count--;
 
 }
@@ -456,10 +448,11 @@ void Selection_statement::print_python(std::ostream& dst) const{
             dst<<"):"<<std::endl;
 
             newline_selective = false;
-
+            indent_count++;
+            dst << std::endl;
             if_statement->print_python(dst);
             dst << std::endl;
-
+            indent_count--;
         }
         else{
             newline_selective = true;
@@ -471,14 +464,20 @@ void Selection_statement::print_python(std::ostream& dst) const{
 
             newline_selective = false;
 
+            indent_count++;
+            dst << std::endl;
             if_statement->print_python(dst);
             dst << std::endl;
+            indent_count--;
 
             for(int i = 0; i<indent_count; i++){dst << "\t";}
             dst<<"else:" <<std::endl;
 
+            indent_count++;
+            dst << std::endl;
             else_statement->print_python(dst);
             dst << std::endl;
+            indent_count--;
         }
     }
 

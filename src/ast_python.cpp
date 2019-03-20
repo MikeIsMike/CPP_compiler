@@ -12,7 +12,6 @@ void Primary_expression::print_python(std::ostream &dst) const{
 
     }
     else if(identifier!=NULL){
-        std::cout<<"Primary_expression_expression if_2"<<std::endl;
         dst<<*identifier;
     }
     else if(string_literal!=NULL){

@@ -198,7 +198,8 @@
 
 %start root
 
-
+%nonassoc THEN
+%nonassoc KEYW_ELSE
 
 %%
 
@@ -512,7 +513,7 @@ expression_statement : PUN_SEMIC                                                
             	| expression PUN_SEMIC                                              { $$ = new Expression_statement($1);}
             	;
 
-selection_statement : KEYW_IF PUN_L_BRACKET expression PUN_R_BRACKET statement                  { $$ = new Selection_statement($3, $5, NULL, false);}
+selection_statement : KEYW_IF PUN_L_BRACKET expression PUN_R_BRACKET statement                  { $$ = new Selection_statement($3, $5, NULL, false);} %prec THEN
             	| KEYW_IF PUN_L_BRACKET expression PUN_R_BRACKET statement KEYW_ELSE statement       { $$ = new Selection_statement($3, $5, $7, false);}
                 | KEYW_SWITCH PUN_L_BRACKET expression PUN_R_BRACKET statement                  { $$ = new Selection_statement($3, $5, NULL, true);}
             	;

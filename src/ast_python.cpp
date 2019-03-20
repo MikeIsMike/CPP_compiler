@@ -3,6 +3,7 @@
 #include <iostream>
 
 
+
 void Primary_expression::print_python(std::ostream &dst) const{
     if(constant != NULL){//second rule
         // std::cout<<"Primary_expression_expression if_1"<<std::endl;
@@ -11,7 +12,7 @@ void Primary_expression::print_python(std::ostream &dst) const{
 
     }
     else if(identifier!=NULL){
-        // std::cout<<"Primary_expression_expression if_2"<<std::endl;
+        std::cout<<"Primary_expression_expression if_2"<<std::endl;
         dst<<*identifier;
     }
     else if(string_literal!=NULL){
@@ -263,6 +264,9 @@ void Direct_declarator::print_python(std::ostream &dst) const{ //global and othe
         case 1:
             // std::cout<<"Direct_declarator switch_1"<<std::endl;
             // std::cout<<"HEEEERE: " <<*identifier<<std::endl;
+            if(indent_count==0&&function==false){
+                global_variables.push_back(*identifier);
+            }
             dst<<*identifier;
             break;
         case 2:
@@ -270,28 +274,33 @@ void Direct_declarator::print_python(std::ostream &dst) const{ //global and othe
             dst<<"(";
             decl->print_python(dst);
             dst<<"):"<<"\n";
+            function = false;
+
             break;
         case 5:
             // std::cout<<"Direct_declarator switch_5"<<std::endl;
             direct_decl->print_python(dst);
-
             dst<<"(";
             param_type_list->print_python(dst);
             dst<<"):"<<"\n";
+            function = false;
+
             break;
         case 6:
             // std::cout<<"Direct_declarator switch_6"<<std::endl;
             direct_decl->print_python(dst);
-
             dst<<"(";
             identif_list->print_python(dst);
             dst<<"):"<<"\n";
+            function = false;
+
             break;
         case 7:
             // std::cout<<"Direct_declarator switch_7"<<std::endl;
             direct_decl->print_python(dst);
-
             dst<<"():"<<"\n";
+            function = false;
+
             break;
     }
 }
@@ -308,10 +317,14 @@ void Declarator::print_python(std::ostream &dst) const{
 void Declaration::print_python(std::ostream &dst) const{
     if(init_decl_list!=NULL){///only the initilised case
         // decl_spec->print_python(dst);
+
         for( int i = 0; i<indent_count; i++) { dst << "\t"; }
         init_decl_list->print_python(dst);
     }
     else if(init_decl_list==NULL){
+
+        for( int i = 0; i<indent_count; i++) { dst << "\t"; }
+
         // decl_spec->print_python(dst);
         //nothing to do here
 
@@ -352,6 +365,7 @@ void Function_definition::print_python(std::ostream &dst) const{
         case 2: ///function int abc(){sflkdsjf}
 
             // decl_spec->print_python(dst);//not needed because function only has return type int and void
+            function = true;
             dst<<"def ";
             decl->print_python(dst);
 
@@ -363,7 +377,7 @@ void Function_definition::print_python(std::ostream &dst) const{
         //     compound_stmnt->print_python(dst);
         //     break;
         case 4: ///function abc(){saldkfjsdflk}
-
+            function = true;
             decl->print_python(dst);
             compound_stmnt->print_python(dst);
             break;
@@ -480,6 +494,11 @@ void Statement::print_python(std::ostream& dst) const{
 void Compound_statement::print_python(std::ostream& dst) const{
 
     indent_count++;
+    for(int i = 0; i<global_variables.size(); i++){
+        for( int i(0); i<indent_count; i++) { dst << "\t"; }
+        dst<<"global "<<global_variables[i]<<"\n";
+    }
+
     if(stmnt_list == NULL && decl_list == NULL) {
 
         for( int i(0); i<indent_count; i++) { dst << "\t"; }

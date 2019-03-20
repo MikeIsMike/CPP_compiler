@@ -369,6 +369,13 @@ void Function_definition::print_python(std::ostream &dst) const{
             dst<<"def ";
             decl->print_python(dst);
 
+            indent_count++;
+            for(int i = 0; i<global_variables.size(); i++){
+                for( int i(0); i<indent_count; i++) { dst << "\t"; }
+                dst<<"global "<<global_variables[i]<<"\n";
+            }
+            indent_count--;
+
             compound_stmnt->print_python(dst);
             break;
         // case 3:///decl_list might not need to be implemented in our compiler
@@ -379,6 +386,14 @@ void Function_definition::print_python(std::ostream &dst) const{
         case 4: ///function abc(){saldkfjsdflk}
             function = true;
             decl->print_python(dst);
+
+            indent_count++;
+            for(int i = 0; i<global_variables.size(); i++){
+                for( int i(0); i<indent_count; i++) { dst << "\t"; }
+                dst<<"global "<<global_variables[i]<<"\n";
+            }
+            indent_count--;
+
             compound_stmnt->print_python(dst);
             break;
 
@@ -494,10 +509,6 @@ void Statement::print_python(std::ostream& dst) const{
 void Compound_statement::print_python(std::ostream& dst) const{
 
     indent_count++;
-    for(int i = 0; i<global_variables.size(); i++){
-        for( int i(0); i<indent_count; i++) { dst << "\t"; }
-        dst<<"global "<<global_variables[i]<<"\n";
-    }
 
     if(stmnt_list == NULL && decl_list == NULL) {
 

@@ -12,7 +12,7 @@ void Primary_expression::print_python(std::ostream &dst) const{
 
     }
     else if(identifier!=NULL){
-        std::cout<<"Primary_expression_expression if_2"<<std::endl;
+        // std::cout<<"Primary_expression_expression if_2"<<std::endl;
         dst<<*identifier;
     }
     else if(string_literal!=NULL){
@@ -21,11 +21,11 @@ void Primary_expression::print_python(std::ostream &dst) const{
     }
     else if(expression!=NULL){
         // std::cout<<"Primary_expression_expression if_4"<<std::endl;
-        primary_parantheses = true;
+        primary_parantheses++;
         dst<<"(";
         expression->print_python(dst);
         dst<<")";
-        primary_parantheses = false;
+        primary_parantheses--;
     }
 }
 
@@ -223,7 +223,7 @@ void Assignment_expression::print_python(std::ostream &dst) const{
 
         }
     }
-    if(!in_iteration && !in_function && !newline_selective){
+    if(!in_iteration && !in_function && !newline_selective && primary_parantheses==0){
         dst<<std::endl;
     }
 
@@ -232,6 +232,7 @@ void Assignment_expression::print_python(std::ostream &dst) const{
 
 
 void Init_declarator::print_python(std::ostream &dst) const{
+    for( int i = 0; i<indent_count; i++) { dst << "\t"; }
     if(declarator!=NULL && initializer!=NULL){/// to be finished with declarator
 
         declarator->print_python(dst);
@@ -248,12 +249,11 @@ void Init_declarator::print_python(std::ostream &dst) const{
 
 
 void Init_declarator_list::print_python(std::ostream &dst) const{
-    if(init_decl_list==NULL && init_decl!=NULL){///only second rule implemented
+    if(init_decl_list==NULL && init_decl!=NULL){
         init_decl->print_python(dst);
     }
     else if(init_decl_list!=NULL){
         init_decl_list->print_python(dst);
-        dst<<", ";
         init_decl->print_python(dst);
     }
 }
@@ -318,7 +318,6 @@ void Declaration::print_python(std::ostream &dst) const{
     if(init_decl_list!=NULL){///only the initilised case
         // decl_spec->print_python(dst);
 
-        for( int i = 0; i<indent_count; i++) { dst << "\t"; }
         init_decl_list->print_python(dst);
     }
     else if(init_decl_list==NULL){

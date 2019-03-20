@@ -11,5 +11,16 @@ ParseTreeAST_Subclasses,ParseTreeRules,,Rudolfs,90%,Write classes to be created 
 ParseTreeIntegration,ParseTreeAST_Subclasses,,,0%,Create classes once rule is passed
 ,,,,,
 ,,,,,
-PythonTranslator,ParseTreeIntegration,,,0%,"Create a Python code from the input, TODO: separate task"
-CodeGenMIPS,PythonTranslator,,,0%,"Create a MIPS assembly from the input, TODO: separate task"
+PythonTranslator,ParseTreeIntegration,20,Both,90%,"Create a Python code from the input"
+PT-FormativeTestSetup,,2,Mike,90%,"Set up formative test environment"
+PT-GlobalVariable,,3,Mike,60%,"Add suport for python global variable"
+PT-Statements,,3,Rudolfs,100%,"Add support for python translator statements"
+PT-Expressions,,3,Rudolfs,100%,"Add support for python translator expressions"
+PT-ScopeTabs,,2,Rudolfs,100%,"Add support for deifferent scopes"
+PT-FunctionDeclarations,,2,Mike,100%,"Add support for functions"
+PT-DisableEndlInBrackets,,1,Rudolfs,100%"Endline not neede in function declarations"
+PT-MakeTestCases,PythonTranslator,3,Rudolfs,10%,"Test cases to confirm that the tranlator is correct and fix errors"
+,,,,,
+,,,,,
+CodeGenMIPS,PythonTranslator,100,,0%,"Create a MIPS assembly from the input"
+ScopeResolution,,5,,5%,"Scope resolution distinction"

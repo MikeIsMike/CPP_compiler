@@ -9,3 +9,7 @@ Date,Effort,Developers,Milestones
 06-Mar,8,Rudolfs,ParseTreeAST_Subclasses
 06-Mar,5,Mike,ParseTreeRules & DefineLexerTokens
 10-Mar,6,Mike,ParseTreeIntegration
+16-Mar,5,Mike,"PT-FunctionDeclarations, PT-FormativeTestSetup, ParseTreeAST_Subclasses"
+17-Mar,5, Rudolfs,"PT-Statements, ParseTreeAST_Subclasses"
+19-Mar,10,Rudolfs,"PythonTranslator, PT-Expressions, PT-ScopeTabs, PT-DisableEndlInBrackets, DefineLexerTokens"
+19-Mar,5,Mike,"PT-GlobalVariable"

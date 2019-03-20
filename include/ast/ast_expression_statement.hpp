@@ -18,6 +18,7 @@ private:
 public:
     virtual ~Expression_statement() {}
     virtual void print_python(std::ostream &dst) const;
+    virtual void compile(std::ostream &dst) const{};
 
     Expression_statement(
         Expression* expr_in) :

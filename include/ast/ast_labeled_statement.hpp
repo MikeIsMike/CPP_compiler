@@ -21,6 +21,7 @@ private:
 public:
     virtual ~Labeled_statement() {}
     virtual void print_python(std::ostream &dst) const{};
+    virtual void compile(std::ostream &dst) const{};
 
     Labeled_statement(
         std::string* identifier_in,

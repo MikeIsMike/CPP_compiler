@@ -18,6 +18,7 @@ private:
 public:
     virtual ~Init_declarator_list() {}
     virtual void print_python(std::ostream &dst) const;
+    virtual void compile(std::ostream &dst) const{};
 
     Init_declarator_list(Init_declarator* init_decl_in, Init_declarator_list* init_decl_list_in) : init_decl(init_decl_in), init_decl_list(init_decl_list_in) {}
 };

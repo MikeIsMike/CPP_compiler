@@ -22,6 +22,7 @@ private:
 public:
     virtual ~Type_specifier() {}
     virtual void print_python(std::ostream &dst) const;
+    virtual void compile(std::ostream &dst) const{};
 
     Type_specifier(std::string* type_spec_in,
         Struct_or_union_specifier* s_or_u_spec_in,

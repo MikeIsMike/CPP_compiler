@@ -28,6 +28,7 @@ private:
 public:
     virtual ~Statement() {}
     virtual void print_python(std::ostream &dst) const;
+    virtual void compile(std::ostream &dst) const{};
 
     Statement(
         Labeled_statement* labeled_stmnt_in,

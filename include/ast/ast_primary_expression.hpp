@@ -20,6 +20,7 @@ private:
 public:
     virtual ~Primary_expression() {}
     virtual void print_python(std::ostream &dst) const;
+    virtual void compile(std::ostream &dst) const{};
 
     Primary_expression(
         std::string* identifier_in,

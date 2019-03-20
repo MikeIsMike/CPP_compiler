@@ -17,6 +17,7 @@ private:
 public:
     virtual ~Constant_expression() {}
     virtual void print_python(std::ostream &dst) const{};
+    virtual void compile(std::ostream &dst) const{};
 
     Constant_expression(Conditional_expression* cond_expr_in) : cond_expr(cond_expr_in){}
 };

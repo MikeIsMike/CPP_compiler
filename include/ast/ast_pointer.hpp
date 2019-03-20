@@ -18,6 +18,7 @@ private:
 public:
     virtual ~Pointer() {}
     virtual void print_python(std::ostream &dst) const{};
+    virtual void compile(std::ostream &dst) const{};
 
     Pointer(
         Type_qualifier_list* type_qual_list_in,

@@ -17,6 +17,7 @@ protected:
 public:
     virtual ~Declaration() {}
     virtual void print_python(std::ostream &dst) const;
+    virtual void compile(std::ostream &dst) const{};
 
     Declaration(
         Declaration_specifiers* decl_spec_in,

@@ -18,6 +18,7 @@ private:
 public:
     virtual ~Argument_expression_list() { };
     virtual void print_python(std::ostream &dst) const;
+    virtual void compile(std::ostream &dst) const{};
 
     Argument_expression_list(
         Assignment_expression* assign_expr_in,

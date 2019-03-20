@@ -20,6 +20,7 @@ private:
 public:
     virtual ~Specifier_qualifier_list() {}
     virtual void print_python(std::ostream &dst) const{};
+    virtual void compile(std::ostream &dst) const{};
 
     Specifier_qualifier_list(
         Type_specifier* type_spec_in,

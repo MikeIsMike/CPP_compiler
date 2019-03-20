@@ -24,6 +24,7 @@ private:
 public:
     virtual ~Direct_abstract_declarator() {}
     virtual void print_python(std::ostream &dst) const{};
+    virtual void compile(std::ostream &dst) const{};
 
     Direct_abstract_declarator(
         int parse_rule_followed_in, //Rule parser follows to create this node

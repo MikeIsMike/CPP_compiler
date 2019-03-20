@@ -27,6 +27,7 @@ private:
 public:
     virtual ~Postfix_expression() {}
     virtual void print_python(std::ostream &dst) const;
+    virtual void compile(std::ostream &dst) const{};
 
     Postfix_expression(
         Primary_expression* prim_expr_in,

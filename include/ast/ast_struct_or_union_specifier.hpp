@@ -18,6 +18,7 @@ private:
 public:
     virtual ~Struct_or_union_specifier() {}
     virtual void print_python(std::ostream &dst) const{}
+    virtual void compile(std::ostream &dst) const{};
 
     Struct_or_union_specifier(
         std::string* identifier_in,

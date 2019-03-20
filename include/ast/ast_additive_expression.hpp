@@ -20,6 +20,7 @@ private:
 public:
     virtual ~Additive_expression() {}
     virtual void print_python(std::ostream &dst) const;
+    virtual void compile(std::ostream &dst) const{};
 
     Additive_expression(
         Multiplicative_expression* mult_expr_in,

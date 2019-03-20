@@ -5,21 +5,21 @@
 
 void Primary_expression::print_python(std::ostream &dst) const{
     if(constant != NULL){//second rule
-        std::cout<<"Primary_expression_expression if_1"<<std::endl;
+        // std::cout<<"Primary_expression_expression if_1"<<std::endl;
         dst<<*constant;
-        std::cout<<"Primary_expression_expression if_1_END"<<std::endl;
+        // std::cout<<"Primary_expression_expression if_1_END"<<std::endl;
 
     }
     else if(identifier!=NULL){
-        std::cout<<"Primary_expression_expression if_2"<<std::endl;
+        // std::cout<<"Primary_expression_expression if_2"<<std::endl;
         dst<<*identifier;
     }
     else if(string_literal!=NULL){
-        std::cout<<"Primary_expression_expression if_3"<<std::endl;
+        // std::cout<<"Primary_expression_expression if_3"<<std::endl;
         dst<<" \"" << *string_literal << "\" ";
     }
     else if(expression!=NULL){
-        std::cout<<"Primary_expression_expression if_4"<<std::endl;
+        // std::cout<<"Primary_expression_expression if_4"<<std::endl;
         primary_parantheses = true;
         dst<<"(";
         expression->print_python(dst);
@@ -31,13 +31,13 @@ void Primary_expression::print_python(std::ostream &dst) const{
 
 void Postfix_expression::print_python(std::ostream &dst) const{
     if(prim_expr != NULL){///first rule
-        std::cout<<"Postfix_expression if_1"<<std::endl;
+        // std::cout<<"Postfix_expression if_1"<<std::endl;
 
         prim_expr->print_python(dst);
     }
     //rule 2 not applicable
     else if(postf_expr!=NULL){//rule 3 and 4
-        std::cout<<"Postfix_expression if_2"<<std::endl;
+        // std::cout<<"Postfix_expression if_2"<<std::endl;
         for( int i = 0; i<indent_count; i++) { dst << "\t"; }
         postf_expr->print_python(dst);
         dst<<"(";
@@ -54,15 +54,15 @@ void Postfix_expression::print_python(std::ostream &dst) const{
 
 void Unary_expression::print_python(std::ostream &dst) const{
     if(postf_expr != NULL){//rule 1
-        std::cout<<"Unary_expression if_1"<<std::endl;
+        // std::cout<<"Unary_expression if_1"<<std::endl;
         postf_expr->print_python(dst);
     }
     else if(unary_op==NULL){//rule 3
-        std::cout<<"Unary_expression if_2"<<std::endl;
+        // std::cout<<"Unary_expression if_2"<<std::endl;
         std::cout<<"Should there be a unary operator linked?"<<std::endl;
     }
     else{
-        std::cout<<"Unary_expression if_3"<<std::endl;
+        // std::cout<<"Unary_expression if_3"<<std::endl;
         dst<<" "<<*unary_op << " ";
         if(cast_expr!=NULL){
             cast_expr->print_python(dst);
@@ -157,7 +157,7 @@ void Inclusive_or_expression::print_python(std::ostream &dst) const{
 
 void Logical_and_expression::print_python(std::ostream &dst) const{
     if(inclusive_or_expr!=NULL && logical_and_expr == NULL){///first rule
-        std::cout<<"Logical_and_expression if_1"<<std::endl;
+        // std::cout<<"Logical_and_expression if_1"<<std::endl;
         inclusive_or_expr->print_python(dst);
     }
     else if(inclusive_or_expr!=NULL && logical_and_expr != NULL) {///first rule
@@ -170,11 +170,11 @@ void Logical_and_expression::print_python(std::ostream &dst) const{
 
 void Logical_or_expression::print_python(std::ostream &dst) const{
     if(logical_and_expr!=NULL && logical_or_expr==NULL){///first rule
-        std::cout<<"Logical_or_expression if_1"<<std::endl;
+        // std::cout<<"Logical_or_expression if_1"<<std::endl;
         logical_and_expr->print_python(dst);
     }
     else if(logical_and_expr!=NULL && logical_or_expr!=NULL){ //second rule
-        std::cout<<"Logical_or_expression if_2"<<std::endl;
+        // std::cout<<"Logical_or_expression if_2"<<std::endl;
         logical_or_expr->print_python(dst);
         dst<<" or ";
         logical_and_expr->print_python(dst);
@@ -183,7 +183,7 @@ void Logical_or_expression::print_python(std::ostream &dst) const{
 
 void Conditional_expression::print_python(std::ostream &dst) const{
     if(logic_or_expr!=NULL){///only first rule needed for python
-        std::cout<<"Conditional_expression if_1"<<std::endl;
+        // std::cout<<"Conditional_expression if_1"<<std::endl;
         logic_or_expr->print_python(dst);
     }
 }
@@ -200,24 +200,24 @@ void Initializer::print_python(std::ostream &dst) const{
 void Assignment_expression::print_python(std::ostream &dst) const{
 
     if(cond_expr!=NULL){
-        std::cout<<"Assignment_expression if_1"<<std::endl;
+        // std::cout<<"Assignment_expression if_1"<<std::endl;
         cond_expr->print_python(dst);
     }
     else if(unary_expr!=NULL){
-        std::cout<<"Assignment_expression if_2"<<std::endl;
+        // std::cout<<"Assignment_expression if_2"<<std::endl;
         for(int i = 0; i<indent_count; i++){dst << "\t";}
         unary_expr->print_python(dst);
 
         if(assign_op == NULL){
-            std::cout<<"Assignment_expression if_21"<<std::endl;
+            // std::cout<<"Assignment_expression if_21"<<std::endl;
             std::cout<<"Assignment operators are not linked to the Assignment_expression node, RIP"<<std::endl;
         }
         else{
-            std::cout<<"Assignment_expression if_22, ASSIGN_OP = "<<*assign_op<<std::endl;
-            dst<<*assign_op<< " ";
+            // std::cout<<"Assignment_expression if_22, ASSIGN_OP = "<<*assign_op<<std::endl;
+            dst<<" "<<*assign_op<< " ";
         }
         if(assign_expr!=NULL){
-            std::cout<<"Assignment_expression if_23"<<std::endl;
+            // std::cout<<"Assignment_expression if_23"<<std::endl;
             assign_expr->print_python(dst);
 
         }
@@ -234,13 +234,13 @@ void Init_declarator::print_python(std::ostream &dst) const{
     if(declarator!=NULL && initializer!=NULL){/// to be finished with declarator
 
         declarator->print_python(dst);
-        dst<<"=";
+        dst<<" = ";
         initializer->print_python(dst);
         dst<<std::endl;
     }
     else if(declarator!=NULL && initializer==NULL){
         declarator->print_python(dst);
-        dst<<"=0";
+        dst<<" = 0";
         dst<<std::endl;
     }
 }
@@ -261,18 +261,18 @@ void Init_declarator_list::print_python(std::ostream &dst) const{
 void Direct_declarator::print_python(std::ostream &dst) const{ //global and other variebles handeled needed aghhh
     switch(parse_rule_followed){
         case 1:
-            std::cout<<"Direct_declarator switch_1"<<std::endl;
-            std::cout<<"HEEEERE: " <<*identifier<<std::endl;
+            // std::cout<<"Direct_declarator switch_1"<<std::endl;
+            // std::cout<<"HEEEERE: " <<*identifier<<std::endl;
             dst<<*identifier;
             break;
         case 2:
-            std::cout<<"Direct_declarator switch_1"<<std::endl;
+            // std::cout<<"Direct_declarator switch_1"<<std::endl;
             dst<<"(";
             decl->print_python(dst);
             dst<<"):"<<"\n";
             break;
         case 5:
-            std::cout<<"Direct_declarator switch_5"<<std::endl;
+            // std::cout<<"Direct_declarator switch_5"<<std::endl;
             direct_decl->print_python(dst);
 
             dst<<"(";
@@ -280,7 +280,7 @@ void Direct_declarator::print_python(std::ostream &dst) const{ //global and othe
             dst<<"):"<<"\n";
             break;
         case 6:
-            std::cout<<"Direct_declarator switch_6"<<std::endl;
+            // std::cout<<"Direct_declarator switch_6"<<std::endl;
             direct_decl->print_python(dst);
 
             dst<<"(";
@@ -288,7 +288,7 @@ void Direct_declarator::print_python(std::ostream &dst) const{ //global and othe
             dst<<"):"<<"\n";
             break;
         case 7:
-            std::cout<<"Direct_declarator switch_7"<<std::endl;
+            // std::cout<<"Direct_declarator switch_7"<<std::endl;
             direct_decl->print_python(dst);
 
             dst<<"():"<<"\n";
@@ -375,13 +375,11 @@ void Function_definition::print_python(std::ostream &dst) const{
 void External_declaration::print_python(std::ostream &dst) const{
     if(decl!=NULL){
 
-        dst<<std::endl;
         decl->print_python(dst);
         dst<<std::endl;
     }
     else if(funct_def!=NULL){
 
-        dst<<std::endl;
         funct_def->print_python(dst);
         dst<<std::endl;
     }
@@ -426,17 +424,17 @@ void Iteration_statement::print_python(std::ostream& dst) const{
 
 void Statement_list::print_python(std::ostream& dst) const{
     if(stmnt_list!=NULL && stmnt!=NULL){
-        std::cout<<"Statement_list if_1"<<std::endl;
+        // std::cout<<"Statement_list if_1"<<std::endl;
         stmnt_list->print_python(dst);
         stmnt->print_python(dst);
     }
     else if(stmnt_list==NULL){
         if(stmnt!=NULL){
-            std::cout<<"Statement_list if_2"<<std::endl;
+            // std::cout<<"Statement_list if_2"<<std::endl;
             stmnt->print_python(dst);
         }
         else{
-            std::cout<<"Statement_list if_3"<<std::endl;
+            // std::cout<<"Statement_list if_3"<<std::endl;
             for(int i = 0; i<indent_count; i++){dst << "\t";}
             dst<<"pass" << std::endl;
         }
@@ -445,34 +443,34 @@ void Statement_list::print_python(std::ostream& dst) const{
 
 
 void Statement::print_python(std::ostream& dst) const{
-    std::cout<<"Statement"<<std::endl;
+    // std::cout<<"Statement"<<std::endl;
     if( labeled_stmnt != NULL ) {
-        std::cout<<"Statement if_1"<<std::endl;
         labeled_stmnt->print_python(dst);
+        // std::cout<<"Statement if_1"<<std::endl;
     }
 
     else if( compound_stmnt != NULL ) {
-        std::cout<<"Statement if_2"<<std::endl;
+        // std::cout<<"Statement if_2"<<std::endl;
         compound_stmnt->print_python(dst);
     }
 
     else if( expression_stmnt != NULL ) {
-        std::cout<<"Statement if_3"<<std::endl;
+        // std::cout<<"Statement if_3"<<std::endl;
         expression_stmnt->print_python(dst);
     }
 
     else if( selection_stmnt != NULL ) {
-        std::cout<<"Statement if_4"<<std::endl;
+        // std::cout<<"Statement if_4"<<std::endl;
         selection_stmnt->print_python(dst);
     }
 
     else if( iteration_stmnt != NULL ) {
-        std::cout<<"Statement if_5"<<std::endl;
+        // std::cout<<"Statement if_5"<<std::endl;
         iteration_stmnt->print_python(dst);
     }
 
     else if( jump_stmnt != NULL ) {
-        std::cout<<"Statement if_6"<<std::endl;
+        // std::cout<<"Statement if_6"<<std::endl;
         jump_stmnt->print_python(dst);
     }
 
@@ -521,7 +519,6 @@ void Selection_statement::print_python(std::ostream& dst) const{
             indent_count++;
             dst << std::endl;
             if_statement->print_python(dst);
-            dst << std::endl;
             indent_count--;
         }
         else{
@@ -537,7 +534,6 @@ void Selection_statement::print_python(std::ostream& dst) const{
             indent_count++;
             dst << std::endl;
             if_statement->print_python(dst);
-            dst << std::endl;
             indent_count--;
 
             for(int i = 0; i<indent_count; i++){dst << "\t";}
@@ -546,7 +542,6 @@ void Selection_statement::print_python(std::ostream& dst) const{
             indent_count++;
             dst << std::endl;
             else_statement->print_python(dst);
-            dst << std::endl;
             indent_count--;
         }
     }
@@ -556,10 +551,10 @@ void Selection_statement::print_python(std::ostream& dst) const{
 void Jump_statement::print_python(std::ostream& dst) const{
     for(int i = 0; i<indent_count; i++){dst << "\t";}
     if(*keyword == "return"){
-        std::cout<<"Jump if_1"<<std::endl;
+        // std::cout<<"Jump if_1"<<std::endl;
         dst << *keyword << " ";
         if(expr != NULL){
-            std::cout<<"Jump if_11"<<std::endl;
+            // std::cout<<"Jump if_11"<<std::endl;
             expr->print_python(dst);
         }
     }
@@ -568,7 +563,7 @@ void Jump_statement::print_python(std::ostream& dst) const{
 
 void Expression::print_python(std::ostream& dst) const{
     if(assign_expr!=NULL){
-        std::cout<<"Expression if_1"<<std::endl;
+        // std::cout<<"Expression if_1"<<std::endl;
         assign_expr->print_python(dst);
     }
 }
@@ -611,7 +606,6 @@ void Expression_statement::print_python(std::ostream& dst) const{
     if(expr!=NULL){
         expr->print_python(dst);
     }
-    dst<<std::endl;
 }
 
 void Declaration_list::print_python(std::ostream& dst) const{

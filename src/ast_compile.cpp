@@ -33,8 +33,10 @@ void Function_definition::compile(std::ostream &dst, Context& context) const{
             //Count minimum number of variables
             context->declaration_count = 0;
             context->stack_counting = true;
-            compound_stmnt->compile(dst, context);
-            context->stack_counting = false;
+            if(compound_stmnt!=NULL){
+                compound_stmnt->compile(dst, context);
+                context->stack_counting = false;        
+            }
 
             decl_spec->compile(dst, context);
             decl->compile(dst, context);
@@ -75,15 +77,19 @@ void Function_definition::compile(std::ostream &dst, Context& context) const{
 }
 
 void Compound_statement::compile(std::ostream &dst, Context &context) const{
-    if(context->stack_counting){
-        decl_list->compile(dst, context);
+    if(decl_list!=NULL){
+        if(context->stack_counting){
+            decl_list->compile(dst, context);
+        }
     }
 }
 
 void Declaration_list::compile(std::ostream &dst, Context &context) const{
     if(context->stack_counting){
-        context->delaration_count++;
-        decl_list->compile(dst, context);
+        if(decl_list!=NULL){
+            context->delaration_count++;
+            decl_list->compile(dst, context);
+        }
     }
 }
 
@@ -105,6 +111,43 @@ void Declaration_specifiers::compile(std::ostream &dst, Context& context) const{
 
 }
 
+void Statement::compile(std::ostream &dst, Context& context) const{
+    if(context->stack_counting){
+        if( labeled_stmnt != NULL ) {
+            labeled_stmnt->compile(dst, context);
+            // std::cout<<"Statement if_1"<<std::endl;
+        }
+
+        else if( compound_stmnt != NULL ) {
+            // std::cout<<"Statement if_2"<<std::endl;
+            compound_stmnt->compile(dst, context);
+        }
+
+        else if( expression_stmnt != NULL ) {
+            // std::cout<<"Statement if_3"<<std::endl;
+            expression_stmnt->compile(dst, context);
+        }
+
+        else if( selection_stmnt != NULL ) {
+            // std::cout<<"Statement if_4"<<std::endl;
+            selection_stmnt->compile(dst, context);
+        }
+
+        else if( iteration_stmnt != NULL ) {
+            // std::cout<<"Statement if_5"<<std::endl;
+            iteration_stmnt->compile(dst, context);
+        }
+
+        else if( jump_stmnt != NULL ) {
+            // std::cout<<"Statement if_6"<<std::endl;
+            jump_stmnt->compile(dst, context);
+        }
+    }
+
+
+}
+
+void
 
 void Declarator::compile(std::ostream &dst, Context& context) const{
     if(pointer==NULL){//second rule

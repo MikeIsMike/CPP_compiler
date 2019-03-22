@@ -76,7 +76,7 @@ void Function_definition::compile(std::ostream &dst, Context& context) const{
 }
 
 void Compound_statement::compile(std::ostream &dst, Context& context) const{
-    if(context.stack_counting){
+    if(context.stack_counting&&decl_list!=NULL){
         decl_list->compile(dst, context);
     }
 }

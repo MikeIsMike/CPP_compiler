@@ -21,7 +21,7 @@ protected:
 public:
     virtual ~Declaration_specifiers() {}
     virtual void print_python(std::ostream &dst) const;
-    virtual void compile(std::ostream &dst) const{};
+    virtual void compile(std::ostream &dst, Context& context) const{};
 
     Declaration_specifiers(
         Storage_class_specifier* stor_class_spec_in,

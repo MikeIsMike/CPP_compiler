@@ -18,7 +18,7 @@ private:
 public:
     virtual ~Identifier_list() {}
     virtual void print_python(std::ostream &dst) const{};
-    virtual void compile(std::ostream &dst) const{};
+    virtual void compile(std::ostream &dst, Context& context) const{};
 
     Identifier_list(
         std::string* identifier_in,

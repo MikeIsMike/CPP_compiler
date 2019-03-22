@@ -19,7 +19,7 @@ private:
 public:
     virtual ~Enumerator_list() {}
     virtual void print_python(std::ostream &dst) const{};
-    virtual void compile(std::ostream &dst) const{};
+    virtual void compile(std::ostream &dst, Context& context) const{};
 
     Enumerator_list(
         Enumerator* enumer_in,

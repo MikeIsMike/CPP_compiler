@@ -16,7 +16,7 @@ private:
 public:
     virtual ~Enumeration_constant() {}
     virtual void print_python(std::ostream &dst) const{};
-    virtual void compile(std::ostream &dst) const{};
+    virtual void compile(std::ostream &dst, Context& context) const{};
 
     Enumeration_constant(
         std::string* identifier_in) :

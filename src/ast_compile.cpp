@@ -43,17 +43,72 @@ void function_definition::compile(std::ostream &dst) const{
     }
 }
 
-void Declaration_specifiers::print_python(std::ostream &dst) const{
+
+void Declaration_specifiers::compile(std::ostream &dst) const{
     if(type_spec!=NULL){///only rule 3 and 4 implemented
         if((*type_spec)=="int"){
-            ///
+            ///do something in MIPS that corresponds to int return type
         }
 
-        if(decl_spec!=NULL){
-            std::cout<<"3b"<<std::endl;
-            //nothing to do here
-            // decl_spec->print_python(dst);
-        }
+
+    }
+    else if(type_qual!=NULL){}///to support const and volatile, probably won't implement
+    else if(stor_class_spec!=NULL){}///to suppport static and stuff, probably won't implement
+
+    if(decl_spec!=NULL){
+
+        decl_spec->compile(dst);
     }
 
+}
+
+
+void Declarator::compile(std::ostream &dst) const{
+    if(pointer==NULL){//second rule
+        dir_decl->compile(dst);
+    }
+    ///pointer to be implemented
+}
+
+
+void Direct_declarator::compile(std::ostream &dst) const{ //global and other variebles handeled needed aghhh
+    switch(parse_rule_followed){///only 1 and 7 implemented, need to expand
+        case 1://function name printed as MIPS label
+
+            dst<<*identifier<<":\n";
+            break;
+        // case 2:
+        //     // std::cout<<"Direct_declarator switch_1"<<std::endl;
+        //     dst<<"(";
+        //     decl->print_python(dst);
+        //     dst<<"):"<<"\n";
+        //     function = false;
+        //
+        //     break;
+        // case 5:
+        //     // std::cout<<"Direct_declarator switch_5"<<std::endl;
+        //     direct_decl->print_python(dst);
+        //     dst<<"(";
+        //     param_type_list->print_python(dst);
+        //     dst<<"):"<<"\n";
+        //     function = false;
+        //
+        //     break;
+        // case 6:
+        //     // std::cout<<"Direct_declarator switch_6"<<std::endl;
+        //     direct_decl->print_python(dst);
+        //     dst<<"(";
+        //     identif_list->print_python(dst);
+        //     dst<<"):"<<"\n";
+        //     function = false;
+        //
+        //     break;
+        case 7://funct_abc()
+            // std::cout<<"Direct_declarator switch_7"<<std::endl;
+            direct_decl->compile(dst);
+            ///this is a function now
+            // function = false;
+
+            break;
+    }
 }

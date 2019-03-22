@@ -17,7 +17,7 @@ private:
 public:
     virtual ~Parameter_type_list() {}
     virtual void print_python(std::ostream &dst) const;
-    virtual void compile(std::ostream &dst) const{};
+    virtual void compile(std::ostream &dst, Context& context) const{};
 
     Parameter_type_list(
         Parameter_list* param_list_in,

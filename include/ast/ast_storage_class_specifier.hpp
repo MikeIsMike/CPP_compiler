@@ -16,7 +16,7 @@ private:
 public:
     virtual ~Storage_class_specifier() {}
     virtual void print_python(std::ostream &dst) const{};
-    virtual void compile(std::ostream &dst) const{};
+    virtual void compile(std::ostream &dst, Context& context) const{};
 
     Storage_class_specifier(std::string* stor_class_spec_in) : stor_class_spec(stor_class_spec_in) {}
 };

@@ -28,7 +28,7 @@ private:
 public:
     virtual ~Direct_declarator() {}
     virtual void print_python(std::ostream &dst) const;
-    virtual void compile(std::ostream &dst, Context& context) const{};
+    virtual void compile(std::ostream &dst, Context& context) const
 
     Direct_declarator(
         std::string* identifier_in,

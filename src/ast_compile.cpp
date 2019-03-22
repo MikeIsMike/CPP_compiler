@@ -86,7 +86,7 @@ void Declaration_list::compile(std::ostream &dst, Context &context) const{
     }
 }
 
-void Declaration_specifiers::compile(std::ostream &dst) const{
+void Declaration_specifiers::compile(std::ostream &dst, Context& context) const{
     if(type_spec!=NULL){///only rule 3 and 4 implemented
         if((*type_spec)=="int"){
             ///do something in MIPS that corresponds to int return type

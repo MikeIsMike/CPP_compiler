@@ -18,9 +18,9 @@ struct Context{
     std::vector<bindings> variables;
     int element_position;
     int current_sp;
+    int current_fp;
 
 
-    
     bool stack_counting(false);
     int delaration_count(0);
 };

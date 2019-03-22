@@ -112,3 +112,11 @@ void Direct_declarator::compile(std::ostream &dst) const{ //global and other var
             break;
     }
 }
+
+void Assignment_expression::compile(std::ostream &dst) const{
+    if(cond_expr!=NULL){
+        cond_expr->compile(dst);
+    }
+    else if()
+
+}

@@ -1,6 +1,7 @@
 #ifndef ast_tree_hpp
 #define ast_tree_hpp
 #include <iostream>
+#include "mips_forward_declaration.hpp"
 
 class Tree;
 

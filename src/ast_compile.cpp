@@ -1,5 +1,6 @@
 #include "ast.hpp"
 #include <iostream>
+#include "mips_forward_declaration.hpp"
 
 // "///" for action needed
 // "//" for comment to help understanding
@@ -56,6 +57,8 @@ void Function_definition::compile(std::ostream &dst, Context& context) const{
             dst<<"\tmove\t$sp,$fp\n"
             dst<<"\tlw\t$fp,"<<(context->declaration_count+28)<<"($sp)\n";
             dst<<"\taddiu\t$sp,$sp,"<<(context->declaration_count+32)<<"\n";
+            dst<<"\tj\t$31"<<"\n";
+            dst<<"\tnoop"
 
 
             break;

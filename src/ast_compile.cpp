@@ -32,19 +32,12 @@ void Function_definition::compile(std::ostream &dst, Context& context) const{
         case 2: ///function int abc(){sflkdsjf}
             // function = true;
             //Count minimum number of variables
-<<<<<<< HEAD
             context->declaration_count = 0;
             context->stack_counting = true;
             if(compound_stmnt!=NULL){
                 compound_stmnt->compile(dst, context);
-                context->stack_counting = false;        
+                context->stack_counting = false;
             }
-=======
-            context.declaration_count = 0;
-            context.stack_counting = true;
-            compound_stmnt->compile(dst, context);
-            context.stack_counting = false;
->>>>>>> 95563f31fb812df9f2d6f8a129d309b368774535
 
             decl_spec->compile(dst, context);
             decl->compile(dst, context);
@@ -84,7 +77,6 @@ void Function_definition::compile(std::ostream &dst, Context& context) const{
     }
 }
 
-<<<<<<< HEAD
 void Compound_statement::compile(std::ostream &dst, Context &context) const{
     if(decl_list!=NULL){
         if(context->stack_counting){
@@ -99,18 +91,6 @@ void Declaration_list::compile(std::ostream &dst, Context &context) const{
             context->delaration_count++;
             decl_list->compile(dst, context);
         }
-=======
-void Compound_statement::compile(std::ostream &dst, Context& context) const{
-    if(context.stack_counting&&decl_list!=NULL){
-        decl_list->compile(dst, context);
-    }
-}
-
-void Declaration_list::compile(std::ostream &dst, Context& context) const{
-    if(context.stack_counting){
-        context.declaration_count++;
-        decl_list->compile(dst, context);
->>>>>>> 95563f31fb812df9f2d6f8a129d309b368774535
     }
 }
 

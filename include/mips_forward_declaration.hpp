@@ -15,14 +15,14 @@ struct Bindings{
 };
 
 struct Context{
-    std::vector<bindings> variables;
+    std::vector<Bindings> variables;
     int element_position;
     int current_sp;
     int current_fp;
 
 
-    bool stack_counting(false);
-    int delaration_count(0);
+    bool stack_counting=false;
+    int declaration_count=0;
 };
 
 #endif

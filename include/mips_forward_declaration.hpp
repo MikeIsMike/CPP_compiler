@@ -21,8 +21,8 @@ struct Context{
     int current_fp;
 
 
-    bool stack_counting = false;
-    int delaration_count = 0;
+    bool stack_counting=false;
+    int declaration_count=0;
 };
 
 #endif

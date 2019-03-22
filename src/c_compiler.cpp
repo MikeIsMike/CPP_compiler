@@ -1,6 +1,6 @@
 #include "ast.hpp"
 #include "ast_python.cpp"
-
+#include "ast_compile.cpp"
 #include <fstream>
 
 int gdb_or_not=0;
@@ -36,10 +36,10 @@ int main(int argc, char *argv[])
         outfile.close();
     }
     else if(std::string(argv[1])=="-S"){
-
+        Context context;
         std::ofstream outfile (argv[4]);
 
-        //outfile << "my text here!" << std::endl;
+        ast->compile(outfile, context);
         //pass outfile as an argument to compile function and print MIPS code into it like above
         // Compile(tree, outfile)// run compiler function with tree
 

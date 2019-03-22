@@ -1,6 +1,7 @@
 #include "ast.hpp"
 #include <iostream>
 #include "mips_forward_declaration.hpp"
+#include <string>
 
 // "///" for action needed
 // "//" for comment to help understanding
@@ -31,23 +32,30 @@ void Function_definition::compile(std::ostream &dst, Context& context) const{
         case 2: ///function int abc(){sflkdsjf}
             // function = true;
             //Count minimum number of variables
+<<<<<<< HEAD
             context->declaration_count = 0;
             context->stack_counting = true;
             if(compound_stmnt!=NULL){
                 compound_stmnt->compile(dst, context);
                 context->stack_counting = false;        
             }
+=======
+            context.declaration_count = 0;
+            context.stack_counting = true;
+            compound_stmnt->compile(dst, context);
+            context.stack_counting = false;
+>>>>>>> 95563f31fb812df9f2d6f8a129d309b368774535
 
             decl_spec->compile(dst, context);
             decl->compile(dst, context);
 
-            context->current_sp = context->current_sp - (context->declaration_count+32);
-            dst<<"\taddiu\t$sp,$sp,-"<<(context->declaration_count+32)<<"\n";
+            context.current_sp = context.current_sp - (context.declaration_count+32);
+            dst<<"\taddiu\t$sp,$sp,-"<<(context.declaration_count+32)<<"\n";
 
-            dst<<"\tsw\t$fp,"<<(context->declaration_count+28)<<"($sp)\n";
+            dst<<"\tsw\t$fp,"<<(context.declaration_count+28)<<"($sp)\n";
 
-            context->current_fp = context->current_sp;
-            dst<<"\tmove\t$fp,$sp\n"
+            context.current_fp = context.current_sp;
+            dst<<"\tmove\t$fp,$sp\n";
 
 
 
@@ -56,11 +64,11 @@ void Function_definition::compile(std::ostream &dst, Context& context) const{
 
 
 
-            dst<<"\tmove\t$sp,$fp\n"
-            dst<<"\tlw\t$fp,"<<(context->declaration_count+28)<<"($sp)\n";
-            dst<<"\taddiu\t$sp,$sp,"<<(context->declaration_count+32)<<"\n";
+            dst<<"\tmove\t$sp,$fp\n";
+            dst<<"\tlw\t$fp,"<<(context.declaration_count+28)<<"($sp)\n";
+            dst<<"\taddiu\t$sp,$sp,"<<(context.declaration_count+32)<<"\n";
             dst<<"\tj\t$31"<<"\n";
-            dst<<"\tnoop"
+            dst<<"\tnop\n";
 
 
             break;
@@ -76,6 +84,7 @@ void Function_definition::compile(std::ostream &dst, Context& context) const{
     }
 }
 
+<<<<<<< HEAD
 void Compound_statement::compile(std::ostream &dst, Context &context) const{
     if(decl_list!=NULL){
         if(context->stack_counting){
@@ -90,14 +99,26 @@ void Declaration_list::compile(std::ostream &dst, Context &context) const{
             context->delaration_count++;
             decl_list->compile(dst, context);
         }
+=======
+void Compound_statement::compile(std::ostream &dst, Context& context) const{
+    if(context.stack_counting&&decl_list!=NULL){
+        decl_list->compile(dst, context);
+    }
+}
+
+void Declaration_list::compile(std::ostream &dst, Context& context) const{
+    if(context.stack_counting){
+        context.declaration_count++;
+        decl_list->compile(dst, context);
+>>>>>>> 95563f31fb812df9f2d6f8a129d309b368774535
     }
 }
 
 void Declaration_specifiers::compile(std::ostream &dst, Context& context) const{
     if(type_spec!=NULL){///only rule 3 and 4 implemented
-        if((*type_spec)=="int"){
-            ///do something in MIPS that corresponds to int return type
-        }
+        // if((*type_spec)=="int"){
+        //     ///do something in MIPS that corresponds to int return type
+        // }
 
 
     }
@@ -203,6 +224,6 @@ void Assignment_expression::compile(std::ostream &dst, Context& context) const{
     if(cond_expr!=NULL){
         cond_expr->compile(dst, context);
     }
-    else if()
+    // else if(){}
 
 }

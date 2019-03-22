@@ -25,7 +25,7 @@ void External_declaration::compile(std::ostream &dst) const{
 }
 
 
-void function_definition::compile(std::ostream &dst) const{
+void Function_definition::compile(std::ostream &dst) const{
     switch(parse_rule_followed){///case 1 and 3 support K&R style, not to be implemented
         case 2: ///function int abc(){sflkdsjf}
             // function = true;
@@ -40,6 +40,19 @@ void function_definition::compile(std::ostream &dst) const{
             compound_stmnt->print_python(dst);
             break;
 
+    }
+}
+
+void Compound_statement::(std::ostream &dst, Context &context) const{
+    if(context->stack_counting){
+        decl_list->compile(dst, context);
+    }
+}
+
+void Declaration_list::(std::ostream &dst, Context &context) const{
+    if(context->stack_counting){
+        context->delaration_count++;
+        decl_list->compile(dst, context);
     }
 }
 

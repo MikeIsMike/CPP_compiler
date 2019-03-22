@@ -5,7 +5,7 @@
 #include <string>
 
 
-struct Bindings{
+struct Binding{
     bool is_initialised = false;
     double value = 0;
     std::string name = "";
@@ -15,11 +15,12 @@ struct Bindings{
 };
 
 struct Context{
-    std::vector<Bindings> variables;
+    std::vector<Binding> variables;
     int element_position;
     int current_sp;
     int current_fp;
 
+    Binding tmp;
 
     bool stack_counting=false;
     int declaration_count=0;

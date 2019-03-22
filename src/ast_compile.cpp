@@ -204,6 +204,12 @@ void Assignment_expression::compile(std::ostream &dst, Context& context) const{
     if(cond_expr!=NULL){
         cond_expr->compile(dst, context);
     }
-    // else if(){}
+    else{
+        if(unary_expr!=NULL){
+            unary_expr->compile(dst,context);
+        }
+
+
+    }
 
 }

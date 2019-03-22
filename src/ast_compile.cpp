@@ -4,7 +4,7 @@
 // "///" for action needed
 // "//" for comment to help understanding
 
-void Translation_unit::compile(std::ostream &dst) const{
+void Translation_unit::compile(std::ostream &dst, Context& context) const{
     if(translation_unit!=NULL){
         translation_unit->compile(dst);
         external_decl->compile(dst);
@@ -15,7 +15,7 @@ void Translation_unit::compile(std::ostream &dst) const{
 }
 
 
-void External_declaration::compile(std::ostream &dst) const{
+void External_declaration::compile(std::ostream &dst, Context& context) const{
     if(funct_def!=NULL){
         funct_def->compile(dst);
     }
@@ -25,7 +25,7 @@ void External_declaration::compile(std::ostream &dst) const{
 }
 
 
-void function_definition::compile(std::ostream &dst) const{
+void function_definition::compile(std::ostream &dst, Context& context) const{
     switch(parse_rule_followed){///case 1 and 3 support K&R style, not to be implemented
         case 2: ///function int abc(){sflkdsjf}
             // function = true;
@@ -44,7 +44,7 @@ void function_definition::compile(std::ostream &dst) const{
 }
 
 
-void Declaration_specifiers::compile(std::ostream &dst) const{
+void Declaration_specifiers::compile(std::ostream &dst, Context& context) const{
     if(type_spec!=NULL){///only rule 3 and 4 implemented
         if((*type_spec)=="int"){
             ///do something in MIPS that corresponds to int return type
@@ -63,7 +63,7 @@ void Declaration_specifiers::compile(std::ostream &dst) const{
 }
 
 
-void Declarator::compile(std::ostream &dst) const{
+void Declarator::compile(std::ostream &dst, Context& context) const{
     if(pointer==NULL){//second rule
         dir_decl->compile(dst);
     }
@@ -71,7 +71,7 @@ void Declarator::compile(std::ostream &dst) const{
 }
 
 
-void Direct_declarator::compile(std::ostream &dst) const{ //global and other variebles handeled needed aghhh
+void Direct_declarator::compile(std::ostream &dst, Context& context) const{ //global and other variebles handeled needed aghhh
     switch(parse_rule_followed){///only 1 and 7 implemented, need to expand
         case 1://function name printed as MIPS label
 
@@ -113,7 +113,7 @@ void Direct_declarator::compile(std::ostream &dst) const{ //global and other var
     }
 }
 
-void Assignment_expression::compile(std::ostream &dst) const{
+void Assignment_expression::compile(std::ostream &dst, Context& context) const{
     if(cond_expr!=NULL){
         cond_expr->compile(dst);
     }

@@ -24,7 +24,7 @@ private:
 public:
     virtual ~Function_definition() {}
     virtual void print_python(std::ostream &dst) const;
-    virtual void compile(std::ostream &dst, Context& context) const{};
+    virtual void compile(std::ostream &dst, Context& context) const
 
     Function_definition(
         int parse_rule_followed_in, //Rule parser follows to create this node

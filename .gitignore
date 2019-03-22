@@ -8,3 +8,4 @@ src/c_compiler.o
 bin/c_compiler
 tmp/formative/*
 *.py
+*.s

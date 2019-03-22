@@ -32,11 +32,11 @@ void Function_definition::compile(std::ostream &dst, Context& context) const{
         case 2: ///function int abc(){sflkdsjf}
             // function = true;
             //Count minimum number of variables
-            context.declaration_count = 0;
-            context.stack_counting = true;
+            context->declaration_count = 0;
+            context->stack_counting = true;
             if(compound_stmnt!=NULL){
                 compound_stmnt->compile(dst, context);
-                context.stack_counting = false;
+                context->stack_counting = false;
             }
 
             decl_spec->compile(dst, context);
@@ -79,16 +79,16 @@ void Function_definition::compile(std::ostream &dst, Context& context) const{
 
 void Compound_statement::compile(std::ostream &dst, Context &context) const{
     if(decl_list!=NULL){
-        if(context.stack_counting){
+        if(context->stack_counting){
             decl_list->compile(dst, context);
         }
     }
 }
 
 void Declaration_list::compile(std::ostream &dst, Context &context) const{
-    if(context.stack_counting){
+    if(context->stack_counting){
         if(decl_list!=NULL){
-            context.declaration_count++;
+            context->delaration_count++;
             decl_list->compile(dst, context);
         }
     }
@@ -113,7 +113,7 @@ void Declaration_specifiers::compile(std::ostream &dst, Context& context) const{
 }
 
 void Statement::compile(std::ostream &dst, Context& context) const{
-    if(context.stack_counting){
+    if(context->stack_counting){
         if( labeled_stmnt != NULL ) {
             labeled_stmnt->compile(dst, context);
             // std::cout<<"Statement if_1"<<std::endl;
@@ -148,6 +148,7 @@ void Statement::compile(std::ostream &dst, Context& context) const{
 
 }
 
+void
 
 void Declarator::compile(std::ostream &dst, Context& context) const{
     if(pointer==NULL){//second rule
@@ -204,9 +205,12 @@ void Assignment_expression::compile(std::ostream &dst, Context& context) const{
         cond_expr->compile(dst, context);
     }
     else{
+        
+
         if(unary_expr!=NULL){
             unary_expr->compile(dst,context);
         }
+
 
 
     }

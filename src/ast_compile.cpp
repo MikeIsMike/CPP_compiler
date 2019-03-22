@@ -1,5 +1,6 @@
 #include "ast.hpp"
 #include <iostream>
+#include "mips_forward_declaration.hpp"
 
 // "///" for action needed
 // "//" for comment to help understanding

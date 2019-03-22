@@ -57,3 +57,11 @@ void Declaration_specifiers::print_python(std::ostream &dst) const{
     }
 
 }
+
+void Assignment_expression::compile(std::ostream &dst) const{
+    if(cond_expr!=NULL){
+        cond_expr->compile(dst);
+    }
+    else if()
+
+}

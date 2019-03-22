@@ -88,11 +88,79 @@ void Compound_statement::compile(std::ostream &dst, Context &context) const{
 void Declaration_list::compile(std::ostream &dst, Context &context) const{
     if(context.stack_counting){
         if(decl_list!=NULL){
-            context.declaration_count++;
+            context.delaration_count++;
             decl_list->compile(dst, context);
         }
     }
+    else{
+        if(decl_list!=NULL){
+            decl_list->compile(dst, context);
+            decl->compile(dst, context);
+        }
+        else{
+            decl->compile(dst, context);
+        }
+    }
 }
+
+
+void Declaration::compile(std::ostream &dst, Context& context) const{
+    if(init_decl_list!=NULL){///only the initilised case
+        // decl_spec->compile(dst);///ignore this for now because only int
+
+        init_decl_list->compile(dst, context);
+    }
+    else if(init_decl_list==NULL){
+
+        for( int i = 0; i<indent_count; i++) { dst << "\t"; }
+
+        // decl_spec->print_python(dst);
+        //nothing to do here
+
+    }
+}
+
+
+void Init_declarator_list::compile(std::ostream &dst, Context& context) const{
+    if(init_decl_list==NULL && init_decl!=NULL){
+        init_decl->compile(dst, context);
+    }
+    else if(init_decl_list!=NULL){
+        init_decl_list->compile(dst, context);
+        init_decl->compile(dst, context);
+    }
+}
+
+
+void Init_declarator::compile(std::ostream &dst, Context& context) const{
+    if(declarator!=NULL&&initializer!=NULL){
+        declarator->compile(dst, context);
+        initializer->compile(dst, context);
+    }
+}
+
+
+void Declarator::compile(std::ostream &dst, Context& context) const{
+    if(direct_decl!=NULL){///pointer not implemented yet
+        direct_decl->compile(dst, context);
+    }
+}
+
+
+void Direct_declarator::compile(std::ostream &dst, Context& context) const{
+    if(*identifier!=NULL){//left hand side
+        context.tmp.name=*identifier;
+
+    }
+}
+
+
+void Initializer::compile(std::ostream &dst, Context& context) const{
+    if(assignment_expr!=NULL){
+        assignment_expr->compile(dst, context);
+    }
+}
+
 
 void Declaration_specifiers::compile(std::ostream &dst, Context& context) const{
     if(type_spec!=NULL){///only rule 3 and 4 implemented
@@ -149,6 +217,7 @@ void Statement::compile(std::ostream &dst, Context& context) const{
 }
 
 
+
 void Declarator::compile(std::ostream &dst, Context& context) const{
     if(pointer==NULL){//second rule
         dir_decl->compile(dst, context);
@@ -199,12 +268,15 @@ void Direct_declarator::compile(std::ostream &dst, Context& context) const{ //gl
     }
 }
 
+
 void Assignment_expression::compile(std::ostream &dst, Context& context) const{
     if(cond_expr!=NULL){
         cond_expr->compile(dst, context);
     }
     else{
-
+        if(assignment_expr!=NULL){
+            assignment_expr->compile(dst, context);
+        }
 
         if(unary_expr!=NULL){
             unary_expr->compile(dst,context);
@@ -214,4 +286,92 @@ void Assignment_expression::compile(std::ostream &dst, Context& context) const{
 
     }
 
+}
+
+
+void Conditional_expression::compile(std::ostream &dst, Context& context) const{
+    if(logic_or_expr!=NULL){
+        logic_or_expr->compile(dst,context);
+    }
+    else{
+        ////////////
+    }
+}
+
+
+void Logical_or_expression::compile(std::ostream &dst, Context& context) const{
+    if(logical_and_expr!=NULL){
+        logical_and_expr->compile(dst,context);
+    }
+}
+
+void Logical_and_expression::compile(std::ostream &dst, Context& context) const{
+    if(inclusive_or_expr!=NULL){
+        inclusive_or_expr->compile(dst,context);
+    }
+}
+
+void Inclusive_or_expression::compile(std::ostream &dst, Context& context) const{
+    if(exclusive_or_expr!=NULL){
+        exclusive_or_expr->compile(dst,context);
+    }
+}
+
+void Exclusive_or_expression::compile(std::ostream &dst, Context& context) const{
+    if(and_expr!=NULL){
+        and_expr->compile(dst,context);
+    }
+}
+
+void And_expression::compile(std::ostream &dst, Context& context) const{
+    if(equality_expr!=NULL){
+        equality_expr->compile(dst,context);
+    }
+}
+
+void Equality_expression::compile(std::ostream &dst, Context& context) const{
+    if(relat_expr!=NULL){
+        relat_expr->compile(dst,context);
+    }
+}
+void Relational_expression::compile(std::ostream &dst, Context& context) const{
+    if(shift_expr!=NULL){
+        shift_expr->compile(dst,context);
+    }
+}
+
+void Shift_expression::compile(std::ostream &dst, Context& context) const{
+    if(additive_expr!=NULL){
+        additive_expr->compile(dst,context);
+    }
+}
+
+void Additive_expression::compile(std::ostream &dst, Context& context) const{
+    if(mult_expr!=NULL){
+        mult_expr->compile(dst,context);
+    }
+}
+
+void Multiplicative_expression::compile(std::ostream &dst, Context& context) const{
+    if(cast_expr!=NULL){
+        cast_expr->compile(dst,context);
+    }
+}
+
+void Cast_expression::compile(std::ostream &dst, Context& context) const{
+    if(unary_expr!=NULL){
+        unary_expr->compile(dst,context);
+    }
+}
+
+void Unary_expression::compile(std::ostream &dst, Context& context) const{
+    if(postf_expr!=NULL){
+        postf_expr->compile(dst,context);
+    }
+}
+
+void Postfix_expression::compile(std::ostream &dst, Context& context) const{
+    if(prim_expr!=NULL){
+        prim_expr->compile(dst,context);
+    }
 }

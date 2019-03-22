@@ -4,7 +4,8 @@
 #include <vector>
 #include <string>
 
-struct bindings{
+
+struct Bindings{
     bool is_initialised = false;
     double value = 0;
     std::string name = "";
@@ -13,10 +14,15 @@ struct bindings{
 
 };
 
-struct context{
+struct Context{
     std::vector<bindings> variables;
     int element_position;
     int current_sp;
+    int current_fp;
+
+
+    bool stack_counting(false);
+    int delaration_count(0);
 };
 
 #endif

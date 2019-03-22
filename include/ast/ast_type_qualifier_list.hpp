@@ -18,7 +18,7 @@ private:
 public:
     virtual ~Type_qualifier_list() {}
     virtual void print_python(std::ostream &dst) const{}
-    virtual void compile(std::ostream &dst) const{};
+    virtual void compile(std::ostream &dst, Context& context) const{};
 
     Type_qualifier_list(
         Type_qualifier* type_qual_in,

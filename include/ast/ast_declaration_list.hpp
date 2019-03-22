@@ -18,7 +18,7 @@ private:
 public:
     virtual ~Declaration_list() {}
     virtual void print_python(std::ostream &dst) const;
-    virtual void compile(std::ostream &dst) const{};
+    virtual void compile(std::ostream &dst, Context& context) const{};
 
     Declaration_list(
         Declaration* decl_in,

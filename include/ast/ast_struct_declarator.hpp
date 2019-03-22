@@ -19,7 +19,7 @@ private:
 public:
     virtual ~Struct_declarator() {}
     virtual void print_python(std::ostream &dst) const{}
-    virtual void compile(std::ostream &dst) const{};
+    virtual void compile(std::ostream &dst, Context& context) const{};
 
     Struct_declarator(
         Declarator* decl_in,

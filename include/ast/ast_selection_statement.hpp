@@ -23,7 +23,7 @@ private:
 public:
     virtual ~Selection_statement() {}
     virtual void print_python(std::ostream &dst) const;
-    virtual void compile(std::ostream &dst) const{};
+    virtual void compile(std::ostream &dst, Context& context) const{};
 
     Selection_statement(
         Expression* expr_in,

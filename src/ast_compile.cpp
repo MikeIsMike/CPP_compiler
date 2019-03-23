@@ -347,31 +347,55 @@ void Shift_expression::compile(std::ostream &dst, Context& context) const{
 }
 
 void Additive_expression::compile(std::ostream &dst, Context& context) const{
-    if(mult_expr!=NULL){
+    if(additive_expr!=NULL&&mult_expr!=NULL){//rule 2 and 3
+        additive_expr->compile(dst,context);
+        mult_expr->compile(dst,context);
+    }
+    else if(additive_expr==NULL&&mult_expr!=NULL){// rule 1
         mult_expr->compile(dst,context);
     }
 }
 
 void Multiplicative_expression::compile(std::ostream &dst, Context& context) const{
-    if(cast_expr!=NULL){
+    if(mult_expr==NULL&&cast_expr!=NULL){//value stored in $2
         cast_expr->compile(dst,context);
     }
+    else if(mult_expr!=NULL&&cast_expr!=NULL){
+        if(*op=="/"){
+            ///do divide
+        }
+        else if(*op=="*"){
+            ///to do
+        }
+    }
+
 }
 
 void Cast_expression::compile(std::ostream &dst, Context& context) const{
     if(unary_expr!=NULL){
         unary_expr->compile(dst,context);
     }
+    else if(){}///to do other rules
 }
 
 void Unary_expression::compile(std::ostream &dst, Context& context) const{
     if(postf_expr!=NULL){
         postf_expr->compile(dst,context);
     }
+    else if(){}///to do other rules
 }
 
 void Postfix_expression::compile(std::ostream &dst, Context& context) const{
     if(prim_expr!=NULL){
         prim_expr->compile(dst,context);
+    }
+    else if(){}///to do other rules
+}
+
+
+void Primary_expression::compile(std::ostream &dst, Context& context) const{
+    if(constant!=NULL){
+        dst<<"\tli\t$2,"<<*constant<<"\n";
+        // dst<<"\tsw\t$2,"
     }
 }

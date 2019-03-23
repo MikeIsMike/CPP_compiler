@@ -31,7 +31,8 @@ void Function_definition::compile(std::ostream &dst, Context& context) const{
     switch(parse_rule_followed){///case 1 and 3 support K&R style, not to be implemented
         case 2: ///function int abc(){sflkdsjf}
             // function = true;
-            //Count minimum number of variables
+
+            //Count minimum number of variables for memory allocation
             context.declaration_count = 0;
             context.stack_counting = true;
             if(compound_stmnt!=NULL){
@@ -39,9 +40,12 @@ void Function_definition::compile(std::ostream &dst, Context& context) const{
                 context.stack_counting = false;
             }
 
+            context->function_declaration = true;
             decl_spec->compile(dst, context);
             decl->compile(dst, context);
+            context->function_declaration = false;
 
+            //Setup stack
             context.current_sp = context.current_sp - (context.declaration_count+32);
             dst<<"\taddiu\t$sp,$sp,-"<<(context.declaration_count+32)<<"\n";
 
@@ -49,14 +53,30 @@ void Function_definition::compile(std::ostream &dst, Context& context) const{
 
             context.current_fp = context.current_sp;
             dst<<"\tmove\t$fp,$sp\n";
+            context->current_stack_offset = 8;
 
 
 
+            //Change Context
+            if(context.current_scope.size()<context.last_scope.size()){
+                std::vector<int> tmp = context.current_scope;
+                context.current_scope.push_back(context.last_scope.back() + 1);
+                context.last_scope = tmp;
+            }
+            else{
+                std::vector<int> tmp = context.current_scope;
+                context.current_scope.push_back(1);
+                context.last_scope = tmp;
+            }
 
             compound_stmnt->compile(dst, context);
 
+            //Change Context
+            context.last_scope = context.current_scope;
+            current_scope.pop_back();
 
 
+            //Deallocate stack
             dst<<"\tmove\t$sp,$fp\n";
             dst<<"\tlw\t$fp,"<<(context.declaration_count+28)<<"($sp)\n";
             dst<<"\taddiu\t$sp,$sp,"<<(context.declaration_count+32)<<"\n";
@@ -112,7 +132,6 @@ void Declaration::compile(std::ostream &dst, Context& context) const{
     }
     else if(init_decl_list==NULL){
 
-        for( int i = 0; i<indent_count; i++) { dst << "\t"; }
 
         // decl_spec->print_python(dst);
         //nothing to do here
@@ -133,9 +152,16 @@ void Init_declarator_list::compile(std::ostream &dst, Context& context) const{
 
 
 void Init_declarator::compile(std::ostream &dst, Context& context) const{
+    if(declarator!=NULL && initializer==NULL){
+        declarator->compile(dst, context);
+        context.variables.push_back(tmp);
+    }
     if(declarator!=NULL&&initializer!=NULL){
         declarator->compile(dst, context);
+        context.variables.push_back(tmp);
         initializer->compile(dst, context);
+        dst<<"\tsw\t$2,"<<context.current_stack_offset-4<<"($fp)"<<std::endl;
+
     }
 }
 
@@ -148,14 +174,20 @@ void Declarator::compile(std::ostream &dst, Context& context) const{
 
 
 void Direct_declarator::compile(std::ostream &dst, Context& context) const{
-    if(*identifier!=NULL){//left hand side
-        context.tmp.name=*identifier;
+    if(!function_declaration){
+        if(*identifier!=NULL){//left hand side
+            context.tmp.name=*identifier;
+            context.tmp.scope = context.current_scope;
+            context.tmp.stack_offset = context.current_stack_offset;
+            context.current_stack_offset = context.current_stack_offset + 4; //Change to address different variable types and padding, this only works for int
 
+        }
     }
 }
 
 
 void Initializer::compile(std::ostream &dst, Context& context) const{
+    //returns to $2
     if(assignment_expr!=NULL){
         assignment_expr->compile(dst, context);
     }

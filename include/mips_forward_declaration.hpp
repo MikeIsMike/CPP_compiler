@@ -27,6 +27,7 @@ struct Context{
 
     bool stack_counting=false;
     int declaration_count=0;
+    int largest_decl = 4;
 
     bool function_declaration = false;
 

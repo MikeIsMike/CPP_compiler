@@ -40,20 +40,20 @@ void Function_definition::compile(std::ostream &dst, Context& context) const{
                 context.stack_counting = false;
             }
 
-            context->function_declaration = true;
+            context.function_declaration = true;
             decl_spec->compile(dst, context);
             decl->compile(dst, context);
-            context->function_declaration = false;
+            context.function_declaration = false;
 
             //Setup stack
-            context.current_sp = context.current_sp - (context.declaration_count+32);
-            dst<<"\taddiu\t$sp,$sp,-"<<(context.declaration_count+32)<<"\n";
+            context.current_sp = context.current_sp - (context.declaration_count*context.largest_decl+32);
+            dst<<"\taddiu\t$sp,$sp,-"<<(context.declaration_count*context.largest_decl+32)<<"\n";
 
-            dst<<"\tsw\t$fp,"<<(context.declaration_count+28)<<"($sp)\n";
+            dst<<"\tsw\t$fp,"<<(context.declaration_count*context.largest_decl+28)<<"($sp)\n";
 
             context.current_fp = context.current_sp;
             dst<<"\tmove\t$fp,$sp\n";
-            context->current_stack_offset = 8;
+            context.current_stack_offset = 8;
 
 
 
@@ -73,13 +73,13 @@ void Function_definition::compile(std::ostream &dst, Context& context) const{
 
             //Change Context
             context.last_scope = context.current_scope;
-            current_scope.pop_back();
+            context.current_scope.pop_back();
 
 
             //Deallocate stack
             dst<<"\tmove\t$sp,$fp\n";
-            dst<<"\tlw\t$fp,"<<(context.declaration_count+28)<<"($sp)\n";
-            dst<<"\taddiu\t$sp,$sp,"<<(context.declaration_count+32)<<"\n";
+            dst<<"\tlw\t$fp,"<<(context.declaration_count*context.largest_decl+28)<<"($sp)\n";
+            dst<<"\taddiu\t$sp,$sp,"<<(context.declaration_count*context.largest_decl+32)<<"\n";
             dst<<"\tj\t$31"<<"\n";
             dst<<"\tnop\n";
 
@@ -102,13 +102,16 @@ void Compound_statement::compile(std::ostream &dst, Context &context) const{
         if(context.stack_counting){
             decl_list->compile(dst, context);
         }
+        else{
+            decl_list->compile(dst, context);
+        }
     }
 }
 
 void Declaration_list::compile(std::ostream &dst, Context &context) const{
     if(context.stack_counting){
         if(decl_list!=NULL){
-            context.delaration_count++;
+            context.declaration_count*context.largest_decl++;
             decl_list->compile(dst, context);
         }
     }
@@ -154,11 +157,11 @@ void Init_declarator_list::compile(std::ostream &dst, Context& context) const{
 void Init_declarator::compile(std::ostream &dst, Context& context) const{
     if(declarator!=NULL && initializer==NULL){
         declarator->compile(dst, context);
-        context.variables.push_back(tmp);
+        context.variables.push_back(context.tmp);
     }
     if(declarator!=NULL&&initializer!=NULL){
         declarator->compile(dst, context);
-        context.variables.push_back(tmp);
+        context.variables.push_back(context.tmp);
         initializer->compile(dst, context);
         dst<<"\tsw\t$2,"<<context.current_stack_offset-4<<"($fp)"<<std::endl;
 
@@ -167,23 +170,12 @@ void Init_declarator::compile(std::ostream &dst, Context& context) const{
 
 
 void Declarator::compile(std::ostream &dst, Context& context) const{
-    if(direct_decl!=NULL){///pointer not implemented yet
-        direct_decl->compile(dst, context);
+    if(pointer==NULL&&dir_decl!=NULL){///pointer not implemented yet
+        dir_decl->compile(dst, context);
     }
 }
 
 
-void Direct_declarator::compile(std::ostream &dst, Context& context) const{
-    if(!function_declaration){
-        if(*identifier!=NULL){//left hand side
-            context.tmp.name=*identifier;
-            context.tmp.scope = context.current_scope;
-            context.tmp.stack_offset = context.current_stack_offset;
-            context.current_stack_offset = context.current_stack_offset + 4; //Change to address different variable types and padding, this only works for int
-
-        }
-    }
-}
 
 
 void Initializer::compile(std::ostream &dst, Context& context) const{
@@ -250,18 +242,25 @@ void Statement::compile(std::ostream &dst, Context& context) const{
 
 
 
-void Declarator::compile(std::ostream &dst, Context& context) const{
-    if(pointer==NULL){//second rule
-        dir_decl->compile(dst, context);
-    }
-    ///pointer to be implemented
-}
 
 
 void Direct_declarator::compile(std::ostream &dst, Context& context) const{ //global and other variebles handeled needed aghhh
     switch(parse_rule_followed){///only 1 and 7 implemented, need to expand
         case 1://function name printed as MIPS label
-            dst<<*identifier<<":\n";
+            if(!context.function_declaration){
+                if(identifier!=NULL){//left hand side
+                    context.tmp.name=*identifier;
+                    context.tmp.scope = context.current_scope;
+                    context.tmp.stack_offset = context.current_stack_offset;
+                    context.current_stack_offset = context.current_stack_offset + 4; //Change to address different variable types and padding, this only works for int
+
+                }
+
+            }
+            else{
+                dst<<*identifier<<":\n";
+            }
+
 
             break;
         // case 2:
@@ -306,8 +305,8 @@ void Assignment_expression::compile(std::ostream &dst, Context& context) const{
         cond_expr->compile(dst, context);
     }
     else{
-        if(assignment_expr!=NULL){
-            assignment_expr->compile(dst, context);
+        if(assign_expr!=NULL){
+            assign_expr->compile(dst, context);
         }
 
         if(unary_expr!=NULL){
@@ -407,21 +406,21 @@ void Cast_expression::compile(std::ostream &dst, Context& context) const{
     if(unary_expr!=NULL){
         unary_expr->compile(dst,context);
     }
-    else if(){}///to do other rules
+    // else if(){}///to do other rules
 }
 
 void Unary_expression::compile(std::ostream &dst, Context& context) const{
     if(postf_expr!=NULL){
         postf_expr->compile(dst,context);
     }
-    else if(){}///to do other rules
+    // else if(){}///to do other rules
 }
 
 void Postfix_expression::compile(std::ostream &dst, Context& context) const{
     if(prim_expr!=NULL){
         prim_expr->compile(dst,context);
     }
-    else if(){}///to do other rules
+    // else if(){}///to do other rules
 }
 
 

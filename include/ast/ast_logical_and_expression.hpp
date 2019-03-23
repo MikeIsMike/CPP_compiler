@@ -18,7 +18,7 @@ private:
 public:
     virtual ~Logical_and_expression() {}
     virtual void print_python(std::ostream &dst) const;
-    virtual void compile(std::ostream &dst, Context& context) const{};
+    virtual void compile(std::ostream &dst, Context& context) const;
 
     Logical_and_expression(
         Inclusive_or_expression* inclusive_or_expr_in,

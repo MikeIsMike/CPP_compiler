@@ -644,7 +644,19 @@ void Equality_expression::compile(std::ostream &dst, Context& context) const{
     }
     else if(equality_expr!=NULL&&elat_expr!=NULL){
         if(*op=="=="){
+            dst<<"#Relat_expr_if_2_1\n";
 
+            dst<<"\tlw\t$t0,($sp)\n";
+            dst<<"\taddiu\t$sp,$sp,"<<context.largest_decl<<"\n";
+            // context.element_position-=context.largest_decl;
+            dst<<"\tlw\t$2,($sp)\n";
+            dst<<"\taddiu\t$sp,$sp,"<<context.largest_decl<<"\n";
+            // context.element_position-=context.largest_decl;
+            dst<<"\tslt\t$2,$2,$t0\n";
+            dst<<"\t$2,$2,0x00ff\n";
+            dst<<"\taddiu\t$sp,$sp,-"<<context.largest_decl<<"\n"; ///might need to start pushing at 0 first instead of -4
+            // context.element_position+=context.largest_decl;
+            dst<<"\tsw\t$2,($sp)\n";
         }
         else if(*op=="!="){}
     }

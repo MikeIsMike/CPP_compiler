@@ -16,8 +16,14 @@ struct Binding{
 
 struct Context{
     std::vector<Binding> variables;
+    bool in_assignment_expression = false;
+    int assignment_expression_lvl = 0;
+    int variable_position;
+    bool variable_found = false;
     int element_position;
     int current_fp;
+
+    bool variable_returned;
 
     std::vector<int> current_scope;
     std::vector<int> last_scope;

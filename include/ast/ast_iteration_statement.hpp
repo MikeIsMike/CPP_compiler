@@ -24,7 +24,7 @@ private:
 public:
     virtual ~Iteration_statement() {}
     virtual void print_python(std::ostream &dst) const;
-    virtual void compile(std::ostream &dst, Context& context) const{};
+    virtual void compile(std::ostream &dst, Context& context) const;
 
     Iteration_statement(
         Expression* expr_in,

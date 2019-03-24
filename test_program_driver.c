@@ -1,2 +1,7 @@
+
 int f();
-int main() { return !( 53 == f() ); }
+int main() {
+    int a = f();
+
+    return a;
+}

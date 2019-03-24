@@ -643,7 +643,9 @@ void Equality_expression::compile(std::ostream &dst, Context& context) const{
         relat_expr->compile(dst,context);
     }
     else if(equality_expr!=NULL&&elat_expr!=NULL){
-        if(*op=="=="){}
+        if(*op=="=="){
+
+        }
         else if(*op=="!="){}
     }
 }
@@ -683,7 +685,7 @@ void Relational_expression::compile(std::ostream &dst, Context& context) const{
             dst<<"\tsw\t$2,($sp)\n";
         }
         else if(*op=="<="){
-            dst<<"#Relat_expr_if_2_1\n";
+            dst<<"#Relat_expr_if_2_3\n";
 
             dst<<"\tlw\t$t0,($sp)\n";
             dst<<"\taddiu\t$sp,$sp,"<<context.largest_decl<<"\n";
@@ -699,7 +701,7 @@ void Relational_expression::compile(std::ostream &dst, Context& context) const{
             dst<<"\tsw\t$2,($sp)\n";
         }
         else if(*op==">="){
-            dst<<"#Relat_expr_if_2_1\n";
+            dst<<"#Relat_expr_if_2_4\n";
 
             dst<<"\tlw\t$t0,($sp)\n";
             dst<<"\taddiu\t$sp,$sp,"<<context.largest_decl<<"\n";

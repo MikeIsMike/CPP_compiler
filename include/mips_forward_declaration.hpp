@@ -23,6 +23,8 @@ struct Context{
     int element_position;
     int current_fp;
 
+    bool external_decl = false;
+    bool print_function_identifier = false;
     bool variable_returned;
 
     std::vector<int> current_scope;

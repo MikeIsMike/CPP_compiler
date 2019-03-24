@@ -17,7 +17,6 @@ struct Binding{
 struct Context{
     std::vector<Binding> variables;
     int element_position;
-    int current_sp;
     int current_fp;
 
     std::vector<int> current_scope;
@@ -27,7 +26,7 @@ struct Context{
 
     bool stack_counting=false;
     int declaration_count=0;
-    int largest_decl = 4;
+    int largest_decl = 8;
 
     bool function_declaration = false;
 

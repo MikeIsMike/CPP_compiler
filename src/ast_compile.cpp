@@ -5,6 +5,13 @@
 
 // "///" for action needed
 // "//" for comment to help understanding
+static int makeNameUnq=0;
+
+static std::string makeName(std::string base)
+{
+    return "_"+base+"_"+std::to_string(makeNameUnq++);
+}
+
 
 void Translation_unit::compile(std::ostream &dst, Context& context) const{
     if(translation_unit!=NULL){
@@ -46,12 +53,12 @@ void Function_definition::compile(std::ostream &dst, Context& context) const{
             context.function_declaration = false;
 
             //Setup stack
-            context.current_sp = context.current_sp - (context.declaration_count*context.largest_decl+32);
+            context.element_position = context.element_position - (context.declaration_count*context.largest_decl+32);
             dst<<"\taddiu\t$sp,$sp,-"<<(context.declaration_count*context.largest_decl+32)<<"\n";
 
             dst<<"\tsw\t$fp,"<<(context.declaration_count*context.largest_decl+28)<<"($sp)\n";
 
-            context.current_fp = context.current_sp;
+            context.current_fp = context.element_position;
             dst<<"\tmove\t$fp,$sp\n";
             context.current_stack_offset = 8;
 
@@ -95,6 +102,8 @@ void Function_definition::compile(std::ostream &dst, Context& context) const{
             break;
 
     }
+    // dst<<".end "<<*identifier<<"\n";
+
 }
 
 void Compound_statement::compile(std::ostream &dst, Context &context) const{
@@ -111,7 +120,7 @@ void Compound_statement::compile(std::ostream &dst, Context &context) const{
 void Declaration_list::compile(std::ostream &dst, Context &context) const{
     if(context.stack_counting){
         if(decl_list!=NULL){
-            context.declaration_count*context.largest_decl++;
+            context.declaration_count++;
             decl_list->compile(dst, context);
         }
     }
@@ -163,7 +172,11 @@ void Init_declarator::compile(std::ostream &dst, Context& context) const{
         declarator->compile(dst, context);
         context.variables.push_back(context.tmp);
         initializer->compile(dst, context);
-        dst<<"\tsw\t$2,"<<context.current_stack_offset-4<<"($fp)"<<std::endl;
+
+        dst<<"\tlw\t$2,($sp)\n";
+        dst<<"\taddiu\t$sp,$sp,"<<context.largest_decl<<"\n";
+
+        dst<<"\tsw\t$2,"<<context.current_stack_offset-8<<"($fp)"<<std::endl;
 
     }
 }
@@ -240,8 +253,140 @@ void Statement::compile(std::ostream &dst, Context& context) const{
 
 }
 
+void Jump_statement::compile(std::ostream &dst, Context& context) const{
+if(*keyword=="return"){
+        if(expr!=NULL){
+
+            expr->compile(dst, context);
+
+            dst<<"\tlw\t$2,($sp)\n";
+            dst<<"\taddiu\t$sp,$sp,"<<context.largest_decl<<"\n";
+
+            //Change Context
+            context.last_scope = context.current_scope;
+            context.current_scope.pop_back();
 
 
+            //Deallocate stack
+            dst<<"\tmove\t$sp,$fp\n";
+            dst<<"\tlw\t$fp,"<<(context.declaration_count*context.largest_decl+28)<<"($sp)\n";
+            dst<<"\taddiu\t$sp,$sp,"<<(context.declaration_count*context.largest_decl+32)<<"\n";
+            dst<<"\tj\t$31"<<"\n";
+            dst<<"\tnop\n";
+
+        }
+        else{
+            //Change Context
+            context.last_scope = context.current_scope;
+            context.current_scope.pop_back();
+
+
+            //Deallocate stack
+            dst<<"\tmove\t$sp,$fp\n";
+            dst<<"\tlw\t$fp,"<<(context.declaration_count*context.largest_decl+28)<<"($sp)\n";
+            dst<<"\taddiu\t$sp,$sp,"<<(context.declaration_count*context.largest_decl+32)<<"\n";
+            dst<<"\tj\t$31"<<"\n";
+            dst<<"\tnop\n";
+
+        }
+        }
+    }
+
+}
+
+void Selection_statement::compile(std::ostream &dst, Context& context) const{
+    if(!switch_stmnt){
+        if(else_statement==NULL && expr!=NULL && if_statement!=NULL){
+            std::string branch=makeName("if");
+
+            expr->compile(dst, context);
+            dst<<"\tlw\t$8,($sp)\n";
+            dst<<"\taddiu\t$sp,$sp,"<<"4"<<"\n";
+            dst<<"\tlw\t$9,($sp)\n";
+            dst<<"\taddiu\t$sp,$sp,"<<"4"<<"\n";
+
+            dst<<"\tbneq\t$8,$0,"<<"$FALSE"<<branch<<"\n";
+            dst<<"nop\n";
+            dst<<"\tbneq\t$9,$0,"<<"$FALSE"<<branch<<"\n";
+            dst<<"nop\n";
+
+            if_statement->compile(dst, context);
+
+            dst<<"$FALSE"<<branch<<":\n";
+        }
+        else if(else_statement!=NULL && expr!=NULL && if_statement!=NULL){
+            std::string branch=makeName("if");
+
+            expr->compile(dst, context);
+            dst<<"\tlw\t$8,($sp)\n";
+            dst<<"\taddiu\t$sp,$sp,"<<"4"<<"\n";
+            dst<<"\tlw\t$9,($sp)\n";
+            dst<<"\taddiu\t$sp,$sp,"<<"4"<<"\n";
+
+            dst<<"\tbneq\t$8,$0,"<<"$FALSE"<<branch<<"\n";
+            dst<<"nop\n";
+            dst<<"\tbneq\t$9,$0,"<<"$FALSE"<<branch<<"\n";
+            dst<<"nop\n";
+
+            if_statement->compile(dst, context);
+
+            dst<<"\tj "<<"$END"<<branch<<"\n";
+            dst<<"nop\n";
+            dst<<"$FALSE"<<branch<<":\n";
+            else_statement->compile(dst, context);
+            dst<<"$END"<<branch<<":\n";
+        }
+    }
+
+}
+
+
+void Iteration_statement::compile(std::ostream &dst, Context& context) const{
+if(*keyword=="while"){
+        std::string branch=makeName("while");
+        dst<<"\n\tj "<<"$START"<<branch<<"\n";
+
+        expr->compile(dst, context);
+
+        dst<<"\tlw\t$8,($sp)\n";
+        dst<<"\taddiu\t$sp,$sp,"<<"4"<<"\n";
+        dst<<"\tlw\t$9,($sp)\n";
+        dst<<"\taddiu\t$sp,$sp,"<<"4"<<"\n";
+
+        dst<<"\tbneq\t$8,$0,"<<"$END"<<branch<<"\n";
+        dst<<"nop\n";
+        dst<<"\tbneq\t$9,$0,"<<"$END"<<branch<<"\n";
+        dst<<"nop\n";
+
+        statement->compile(dst, context);
+
+        dst<<"\tj "<<"$START"<<branch<<"\n";
+        dst<<"nop\n";
+
+    }
+    else if(*keyword=="do"){
+        std::string branch=makeName("do");
+        dst<<"\n\tj "<<"$START"<<branch<<"\n";
+
+        statement->compile(dst, context);
+
+        expr->compile(dst, context);
+
+        dst<<"\tlw\t$8,($sp)\n";
+        dst<<"\taddiu\t$sp,$sp,"<<"8"<<"\n";
+
+        dst<<"\tbneq\t$8,$0,"<<"$END"<<branch<<"\n";
+        dst<<"nop\n";
+        dst<<"\tbneq\t$9,$0,"<<"$END"<<branch<<"\n";
+        dst<<"nop\n";
+
+        dst<<"\tj "<<"$START"<<branch<<"\n";
+        dst<<"nop\n";
+
+        dst<<"\n\tj "<<"$END"<<branch<<"\n";
+
+    }
+}
 
 
 void Direct_declarator::compile(std::ostream &dst, Context& context) const{ //global and other variebles handeled needed aghhh
@@ -258,7 +403,14 @@ void Direct_declarator::compile(std::ostream &dst, Context& context) const{ //gl
 
             }
             else{
+                dst<<".text"<<"\n";
+                dst<<".align 2"<<"\n";
+                dst<<".globl "<<*identifier<<"\n";
+                // dst<<".ent "<<*identifier<<"\n";
+                dst<<".type "<<*identifier<<" @function"<<"\n";
+
                 dst<<*identifier<<":\n";
+
             }
 
 
@@ -378,33 +530,85 @@ void Shift_expression::compile(std::ostream &dst, Context& context) const{
 }
 
 void Additive_expression::compile(std::ostream &dst, Context& context) const{
-    if(additive_expr!=NULL&&mult_expr!=NULL){//rule 2 and 3
+    if(additive_expr==NULL&&mult_expr!=NULL){// rule 1
+        mult_expr->compile(dst,context);
+        dst<<"#add_expr_if_1\n";
+
+    }
+    else if(additive_expr!=NULL&&mult_expr!=NULL){//rule 2 and 3
         additive_expr->compile(dst,context);
         mult_expr->compile(dst,context);
+        if(*op=="+"){
+            dst<<"#add_expr_if_2_1\n";
+
+            dst<<"\tlw\t$2,($sp)\n";
+            dst<<"\taddiu\t$sp,$sp,"<<context.largest_decl<<"\n";
+            // context.element_position-=context.largest_decl;
+            dst<<"\tlw\t$t0,($sp)\n";
+            dst<<"\taddiu\t$sp,$sp,"<<context.largest_decl<<"\n";
+            // context.element_position-=context.largest_decl;
+            dst<<"\tadd\t$2,$2,$t0\n";
+            dst<<"\taddiu\t$sp,$sp,-"<<context.largest_decl<<"\n"; ///might need to start pushing at 0 first instead of -4
+            // context.element_position+=context.largest_decl;
+            dst<<"\tsw\t$2,($sp)\n";
+        }
+        else if(*op=="-"){
+            dst<<"#add_expr_if_2_2\n";
+
+            dst<<"\tlw\t$2,($sp)\n";
+            dst<<"\taddiu\t$sp,$sp,"<<context.largest_decl<<"\n";
+            // context.element_position-=context.largest_decl;
+            dst<<"\tlw\t$t0,($sp)\n";
+            dst<<"\taddiu\t$sp,$sp,"<<context.largest_decl<<"\n";
+            // context.element_position-=context.largest_decl;
+            dst<<"\tsub\t$2,$2,$t0\n";
+            dst<<"\taddiu\t$sp,$sp,-"<<context.largest_decl<<"\n"; ///might need to start pushing at 0 first instead of -4
+            // context.element_position+=context.largest_decl;
+            dst<<"\tsw\t$2,($sp)\n";
+
+        }
+
     }
-    else if(additive_expr==NULL&&mult_expr!=NULL){// rule 1
-        mult_expr->compile(dst,context);
-    }
+
 }
 
 void Multiplicative_expression::compile(std::ostream &dst, Context& context) const{
     if(mult_expr==NULL&&cast_expr!=NULL){//value stored in $2
         cast_expr->compile(dst,context);
+        dst<<"#mult_expr_if_1\n";
+
+        ///cast_expr will store to stack
     }
     else if(mult_expr!=NULL&&cast_expr!=NULL){
         if(*op=="/"){
             ///do divide
         }
         else if(*op=="*"){
-            ///to do
+            dst<<"#add_expr_if_2_2\n";
+
+            mult_expr->compile(dst,context);//result will be in the second top of stack
+            cast_expr->compile(dst,context);//result top of stack
+            dst<<"\tlw\t$2,($sp)\n";
+            dst<<"\taddiu\t$sp,$sp,"<<context.largest_decl<<"\n";
+            // context.element_position-=context.largest_decl;
+            dst<<"\tlw\t$t0,($sp)\n";
+            dst<<"\taddiu\t$sp,$sp,"<<context.largest_decl<<"\n";
+            // context.element_position-=context.largest_decl;
+            dst<<"\tmult\t$2,$t0\n";
+            dst<<"\tmflo\t$2\n";
+            dst<<"\taddiu\t$sp,$sp,-"<<context.largest_decl<<"\n"; ///might need to start pushing at 0 first instead of -4
+            // context.element_position+=context.largest_decl;
+            dst<<"\tsw\t$2,($sp)\n";
+
         }
     }
 
 }
 
 void Cast_expression::compile(std::ostream &dst, Context& context) const{
-    if(unary_expr!=NULL){
+    if(type_name==NULL&&unary_expr!=NULL){
         unary_expr->compile(dst,context);
+        //unary_expr will store to stack
     }
     // else if(){}///to do other rules
 }
@@ -412,21 +616,27 @@ void Cast_expression::compile(std::ostream &dst, Context& context) const{
 void Unary_expression::compile(std::ostream &dst, Context& context) const{
     if(postf_expr!=NULL){
         postf_expr->compile(dst,context);
+        //postf_expr will store to stack
     }
     // else if(){}///to do other rules
 }
 
 void Postfix_expression::compile(std::ostream &dst, Context& context) const{
-    if(prim_expr!=NULL){
+    if(prim_expr!=NULL){///rule 3,4,5 to be implemented(function with argument, function object and pointer)
         prim_expr->compile(dst,context);
     }
     // else if(){}///to do other rules
+
 }
 
 
 void Primary_expression::compile(std::ostream &dst, Context& context) const{
     if(constant!=NULL){
         dst<<"\tli\t$2,"<<*constant<<"\n";
-        // dst<<"\tsw\t$2,"
+        dst<<"#primary_expression_if_1\n";
+        // dst<<"\tmove\t,$sp,$fp\n"
+        dst<<"\taddiu\t$sp,$sp,-"<<context.largest_decl<<"\n"; ///might need to start pushing at 0 first instead of -4
+        // context.element_position+=context.largest_decl;
+        dst<<"\tsw\t$2,($sp)\n";
     }
 }

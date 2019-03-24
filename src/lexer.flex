@@ -163,7 +163,7 @@ L?\"(\\.|[^\\"])*\"	{ yylval.string = new std::string(yytext); return STRING_LIT
 "..."           { return PUN_ELLIPSIS;}
 (\#)            { return HASHTAG;}
 (\#\#)          { return DOUBLE_HASHTAG;}
-
+/* implement comments */
 
 
 [ \t\r\n]+		{;}

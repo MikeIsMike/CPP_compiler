@@ -181,7 +181,7 @@ void Init_declarator_list::compile(std::ostream &dst, Context& context) const{
 void Init_declarator::compile(std::ostream &dst, Context& context) const{
 
     if(declarator!=NULL && initializer==NULL){
-        if(external_decl){
+        if(context.external_decl){
             declarator->compile(dst, context);
             dst<<"data\n";
             dst<<context.tmp.name<<": .word 0\n";
@@ -189,29 +189,26 @@ void Init_declarator::compile(std::ostream &dst, Context& context) const{
         else{
             //WRONG
             declarator->compile(dst, context);
-            dst<<"data\n";
-            dst<<context.tmp.name<<": .word 0\n";
+            context.variables.push_back(context.tmp);
         }
     }
     if(declarator!=NULL&&initializer!=NULL){
-        if(external_decl){
-
+        if(context.external_decl){
+            //WRONG
+            declarator->compile(dst, context);
+            dst<<"data\n";
+            dst<<context.tmp.name<<": .word 0\n";
         }
         else{
+            declarator->compile(dst, context);
+            context.variables.push_back(context.tmp);
+            initializer->compile(dst, context);
 
+            dst<<"\tlw\t$2,($sp)\n";
+            dst<<"\taddiu\t$sp,$sp,"<<context.largest_decl<<"\n";
+
+            dst<<"\tsw\t$2,"<<context.current_stack_offset-8<<"($fp)"<<std::endl;
         }
-
-
-
-        declarator->compile(dst, context);
-        context.variables.push_back(context.tmp);
-        initializer->compile(dst, context);
-
-        dst<<"\tlw\t$2,($sp)\n";
-        dst<<"\taddiu\t$sp,$sp,"<<context.largest_decl<<"\n";
-
-        dst<<"\tsw\t$2,"<<context.current_stack_offset-8<<"($fp)"<<std::endl;
-
     }
 }
 
@@ -639,10 +636,10 @@ void And_expression::compile(std::ostream &dst, Context& context) const{
 }
 
 void Equality_expression::compile(std::ostream &dst, Context& context) const{
-    if(equality_expr==NULL&&elat_expr!=NULL){
+    if(equality_expr==NULL&&relat_expr!=NULL){
         relat_expr->compile(dst,context);
     }
-    else if(equality_expr!=NULL&&elat_expr!=NULL){
+    else if(equality_expr!=NULL&&relat_expr!=NULL){
         if(*op=="=="){
             dst<<"#Relat_expr_if_2_1\n";
 

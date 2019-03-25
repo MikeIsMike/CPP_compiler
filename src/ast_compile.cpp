@@ -1159,10 +1159,10 @@ void Unary_expression::compile(std::ostream &dst, Context& context) const{
         if(context.variable_found){
             dst<<"\tsw\t$2,"<<context.variables[context.variable_position].stack_offset<<"($fp)\n";
         }
-        else{
-            dst<<"\taddiu\t$sp,$sp,-"<<context.largest_decl<<"\n"; ///might need to start pushing at 0 first instead of -4
-            // context.element_position+=context.largest_decl;
-            dst<<"\tsw\t$2,($sp)\n";        }
+
+        dst<<"\taddiu\t$sp,$sp,-"<<context.largest_decl<<"\n";
+        // context.element_position+=context.largest_decl;
+        dst<<"\tsw\t$2,($sp)\n";  
     }///to do other rules
 }
 

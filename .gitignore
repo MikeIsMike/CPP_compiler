@@ -1,5 +1,6 @@
 
 *.o
+./test_program
 src/parser.tab.hpp
 src/parser.tab.cpp
 src/parser.output

@@ -32,12 +32,16 @@ struct Context{
     std::vector<int> last_scope;
 
     Binding tmp;
+    bool parameter_declaration = false;
+    int decl_to_reg = 4;
+    int val_to_reg = 4;
 
     bool stack_counting=false;
     int declaration_count=0;
     int largest_decl = 8;
 
     bool function_declaration = false;
+    bool in_argument_expression_list = false;
 
     int current_stack_offset = 24;
 };

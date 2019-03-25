@@ -1249,7 +1249,7 @@ void Unary_expression::compile(std::ostream &dst, Context& context) const{
     else if(unary_expr!=NULL&&oper!=NULL){
         if(*oper=="++"){
             //Increment variable
-            postf_expr->compile(dst,context);
+            unary_expr->compile(dst,context);
             //FOUND?
             if(context.variable_found){
                 dst<<"\tlw\t$2,"<<context.variables[context.variable_position].stack_offset<<"($fp)\n";
@@ -1266,7 +1266,7 @@ void Unary_expression::compile(std::ostream &dst, Context& context) const{
         }
         else if(*oper=="--"){
             //Increment variable
-            postf_expr->compile(dst,context);
+            unary_expr->compile(dst,context);
 
             if(context.variable_found){
                 dst<<"\tlw\t$2,"<<context.variables[context.variable_position].stack_offset<<"($fp)\n";
@@ -1321,7 +1321,7 @@ void Unary_expression::compile(std::ostream &dst, Context& context) const{
 
         dst<<"\taddiu\t$sp,$sp,-"<<context.largest_decl<<"\n";
         // context.element_position+=context.largest_decl;
-        dst<<"\tsw\t$2,($sp)\n";  
+        dst<<"\tsw\t$2,($sp)\n";
     }///to do other rules
 }
 
@@ -1355,6 +1355,9 @@ void Postfix_expression::compile(std::ostream &dst, Context& context) const{
         postf_expr->compile(dst,context);
         context.print_function_identifier = true;
 
+    }
+    else if(postf_expr!=NULL && expr==NULL && arg_expr_list!=NULL && oper==NULL && identifier==NULL){ //f(a,b,c)
+        ///to be implemented function call with parameters
     }
 
 }

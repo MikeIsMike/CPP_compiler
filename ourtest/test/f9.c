@@ -1,5 +1,5 @@
 int f(){
-    int x = 3;
-    x++ + 2;
-    return x;
+    int x = 2;
+
+    return x++ + 2;;
 }

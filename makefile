@@ -23,4 +23,6 @@ clean :
 	rm -f src/*.tab.hpp
 	rm -f src/*.yy.cpp
 	rm -f src/parser.output
-	rm -f tmp/formative/*
+	rm -f tmp/compiler/mips/*.s
+	rm -f tmp/compiler/*.c
+	rm -f tmp/formative/*.c

@@ -13,6 +13,8 @@
   void yyerror(const char *);
 }
 
+%define parse.error verbose
+
 
 
 /* // Represents the value associated with any kind of

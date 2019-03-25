@@ -11,3 +11,6 @@ tmp/formative/*
 *.py
 *.s
 123.c
+tmp/compiler/mips/*
+tmp/compiler/*
+test_program

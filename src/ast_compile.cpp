@@ -106,10 +106,73 @@ void Function_definition::compile(std::ostream &dst, Context& context) const{
 
 
         case 4: ///function abc(){saldkfjsdflk} ///this defaults to return type int!!!!!!!!!
-            // function = true;
-            decl->compile(dst, context);
+        // function = true;
+
+        //Count minimum number of variables for memory allocation
+        context.declaration_count = 0;
+        context.stack_counting = true;
+        if(decl_list!=NULL){
+            decl_list->compile(dst, context);
+        }
+
+        int no_of_inputs = context.declaration_count;
+
+        if(compound_stmnt!=NULL){
             compound_stmnt->compile(dst, context);
-            break;
+        }
+        context.stack_counting = false;
+        context.first_var_in_stack = true;
+
+        context.function_declaration = true;
+        decl_spec->compile(dst, context);
+        decl->compile(dst, context);
+
+        //Setup stack
+        context.element_position = context.element_position - (context.declaration_count*context.largest_decl+32);
+        dst<<"\taddiu\t$sp,$sp,-"<<(context.declaration_count*context.largest_decl+32)<<"\n";
+        dst<<"\tsw\t$31,"<<(context.declaration_count*context.largest_decl+28)<<"($sp)\n";
+        dst<<"\tsw\t$fp,"<<(context.declaration_count*context.largest_decl+24)<<"($sp)\n";
+
+        context.current_fp = context.element_position;
+        dst<<"\tmove\t$fp,$sp\n";
+        context.current_stack_offset = 24;
+
+
+
+        //Change Context
+        if(context.current_scope.size()<context.last_scope.size()){
+            std::vector<int> tmp = context.current_scope;
+            context.current_scope.push_back(context.last_scope.back() + 1);
+            context.last_scope = tmp;
+        }
+        else{
+            std::vector<int> tmp = context.current_scope;
+            context.current_scope.push_back(1);
+            context.last_scope = tmp;
+        }
+
+        ///////////Handle Inputs
+
+        decl_list->compile(dst, context);
+        context.function_declaration = false;
+        //////////Handle function
+        compound_stmnt->compile(dst, context);
+
+        //Change Context
+        context.last_scope = context.current_scope;
+        context.current_scope.pop_back();
+
+
+        //Deallocate stack
+        dst<<"\tmove\t$sp,$fp\n";
+        dst<<"\tlw\t$31,"<<(context.declaration_count*context.largest_decl+28)<<"($sp)\n";
+        dst<<"\tlw\t$fp,"<<(context.declaration_count*context.largest_decl+24)<<"($sp)\n";
+        dst<<"\taddiu\t$sp,$sp,"<<(context.declaration_count*context.largest_decl+32)<<"\n";
+        dst<<"\tjr\t$31"<<"\n";
+        dst<<"\tnop\n";
+
+
+        break;
 
     }
     // dst<<".end "<<*identifier<<"\n";
@@ -126,23 +189,36 @@ void Expression_statement::compile(std::ostream &dst, Context &context) const{
 }
 
 void Compound_statement::compile(std::ostream &dst, Context &context) const{
+    //Change Context
+    if(context.current_scope.size()<context.last_scope.size()){
+        std::vector<int> tmp = context.current_scope;
+        context.current_scope.push_back(context.last_scope.back() + 1);
+        context.last_scope = tmp;
+    }
+    else{
+        std::vector<int> tmp = context.current_scope;
+        context.current_scope.push_back(1);
+        context.last_scope = tmp;
+    }
+
+    //////////////////////////////////////////
     if(decl_list!=NULL){
-        if(context.stack_counting){
-            decl_list->compile(dst, context);
-        }
-        else{
-            decl_list->compile(dst, context);
-        }
+        decl_list->compile(dst, context);
     }
     if(stmnt_list!=NULL){
         stmnt_list->compile(dst, context);
     }
+    /////////////////////////////////////////////
+
+    //Change Context
+    context.last_scope = context.current_scope;
+    context.current_scope.pop_back();
 }
 
 void Declaration_list::compile(std::ostream &dst, Context &context) const{
     if(context.stack_counting){
+        context.declaration_count++;
         if(decl_list!=NULL){
-            context.declaration_count++;
             decl_list->compile(dst, context);
         }
     }
@@ -436,8 +512,24 @@ void Selection_statement::compile(std::ostream &dst, Context& context) const{
                 dst<<"\tbeq\t$8,$0,"<<"$FALSE"<<branch<<"\n";
                 dst<<"\tnop\n";
 
+                //Change Context
+                if(context.current_scope.size()<context.last_scope.size()){
+                    std::vector<int> tmp = context.current_scope;
+                    context.current_scope.push_back(context.last_scope.back() + 1);
+                    context.last_scope = tmp;
+                }
+                else{
+                    std::vector<int> tmp = context.current_scope;
+                    context.current_scope.push_back(1);
+                    context.last_scope = tmp;
+                }
 
                 if_statement->compile(dst, context);
+
+
+                //Change Context
+                context.last_scope = context.current_scope;
+                context.current_scope.pop_back();
 
                 dst<<"$FALSE"<<branch<<":\n";
             }
@@ -451,12 +543,47 @@ void Selection_statement::compile(std::ostream &dst, Context& context) const{
                 dst<<"\tbne\t$8,$0,"<<"$TRUE"<<branch<<"\n";
                 dst<<"nop\n";
 
+                //Change Context
+                if(context.current_scope.size()<context.last_scope.size()){
+                    std::vector<int> tmp = context.current_scope;
+                    context.current_scope.push_back(context.last_scope.back() + 1);
+                    context.last_scope = tmp;
+                }
+                else{
+                    std::vector<int> tmp = context.current_scope;
+                    context.current_scope.push_back(1);
+                    context.last_scope = tmp;
+                }
+
                 else_statement->compile(dst, context);
+
+                //Change Context
+                context.last_scope = context.current_scope;
+                context.current_scope.pop_back();
+
 
                 dst<<"\tj "<<"$END"<<branch<<"\n";
                 dst<<"nop\n";
                 dst<<"$TRUE"<<branch<<":\n";
+
+                //Change Context
+                if(context.current_scope.size()<context.last_scope.size()){
+                    std::vector<int> tmp = context.current_scope;
+                    context.current_scope.push_back(context.last_scope.back() + 1);
+                    context.last_scope = tmp;
+                }
+                else{
+                    std::vector<int> tmp = context.current_scope;
+                    context.current_scope.push_back(1);
+                    context.last_scope = tmp;
+                }
+
                 if_statement->compile(dst, context);
+
+                //Change Context
+                context.last_scope = context.current_scope;
+                context.current_scope.pop_back();
+
                 dst<<"$END"<<branch<<":\n";
             }
         }
@@ -485,7 +612,23 @@ void Iteration_statement::compile(std::ostream &dst, Context& context) const{
             dst<<"\tbeq\t$8,$0,"<<"$END"<<branch<<"\n";
             dst<<"nop\n";
 
+            //Change Context
+            if(context.current_scope.size()<context.last_scope.size()){
+                std::vector<int> tmp = context.current_scope;
+                context.current_scope.push_back(context.last_scope.back() + 1);
+                context.last_scope = tmp;
+            }
+            else{
+                std::vector<int> tmp = context.current_scope;
+                context.current_scope.push_back(1);
+                context.last_scope = tmp;
+            }
+
             statement->compile(dst, context);
+
+            //Change Context
+            context.last_scope = context.current_scope;
+            context.current_scope.pop_back();
 
             dst<<"\tj "<<"$START"<<branch<<"\n";
             dst<<"nop\n";
@@ -496,7 +639,23 @@ void Iteration_statement::compile(std::ostream &dst, Context& context) const{
             std::string branch=makeName("do");
             dst<<"$START"<<branch<<":\n";
 
+            //Change Context
+            if(context.current_scope.size()<context.last_scope.size()){
+                std::vector<int> tmp = context.current_scope;
+                context.current_scope.push_back(context.last_scope.back() + 1);
+                context.last_scope = tmp;
+            }
+            else{
+                std::vector<int> tmp = context.current_scope;
+                context.current_scope.push_back(1);
+                context.last_scope = tmp;
+            }
+
             statement->compile(dst, context);
+
+            //Change Context
+            context.last_scope = context.current_scope;
+            context.current_scope.pop_back();
 
             expr->compile(dst, context);
 
@@ -1230,11 +1389,21 @@ void Primary_expression::compile(std::ostream &dst, Context& context) const{
         }
         else{
             context.variable_found = false;
-            for(int i = 0; i < context.variables.size(); i++){
-                if(context.variables[i].name == *identifier){
-                    context.variable_position = i;
-                    context.variable_found = true;
+            std::vector<int> vect_decr= context.current_scope;
+
+            for(int size = vect_decr.size(); size>0 && !context.variable_found; size--){
+                for(int i = 0; i < context.variables.size() && !context.variable_found; i++){
+                    if(context.variables[i].name == *identifier && context.variables[i].scope == vect_decr){
+                        context.variable_position = i;
+                        context.variable_found = true;
+                    }
                 }
+                vect_decr.pop_back();
+            }
+
+            if(!context.variable_found){
+                ;
+                //Shift through global variables
             }
 
             if(context.variable_found){

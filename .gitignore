@@ -9,3 +9,4 @@ bin/c_compiler
 tmp/formative/*
 *.py
 *.s
+123.c

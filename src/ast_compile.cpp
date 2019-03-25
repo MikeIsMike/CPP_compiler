@@ -1125,22 +1125,44 @@ void Unary_expression::compile(std::ostream &dst, Context& context) const{
         else if(*oper=="sizeof"){;}
     }
     else if(cast_expr!=NULL&&unary_op!=NULL){
+        cast_expr->compile(dst,context);
+        if(context.variable_found){
+            dst<<"\tlw\t$2,"<<context.variables[context.variable_position].stack_offset<<"($fp)\n";//load variable
+        }
+        else{
+            dst<<"\tlw\t$2,($sp)\n";//load from stack a constant when it's not a variable
+            dst<<"\taddiu\t$sp,$sp,"<<context.largest_decl<<"\n";
+        }
+
+
         if(*unary_op=="+"){///value of variable unchanged
+            //nothing to do
         }
         else if(*unary_op=="-"){///value of variable negated
+            dst<<"\tsubu\t$2,$0,$2\n";
         }
         else if(*unary_op=="!"){///value of logical value flipped
-
+            dst<<"\tsltu\t$2,$2,1\n";
+            dst<<"\tandi\t$2,$2,0x00ff\n";
         }
         else if(*unary_op=="~"){///all bits inverted
-
+            dst<<"\tnor\t$2,$0,$2\n";
         }
         else if(*unary_op=="&"){///return address of variable
-
+            ///to be implemented later
         }
         else if(*unary_op=="*"){///operates on pointer and return the value of the memory space that the pointer is pointing to
-
+            ///to be implemented later
         }
+
+
+        if(context.variable_found){
+            dst<<"\tsw\t$2,"<<context.variables[context.variable_position].stack_offset<<"($fp)\n";
+        }
+        else{
+            dst<<"\taddiu\t$sp,$sp,-"<<context.largest_decl<<"\n"; ///might need to start pushing at 0 first instead of -4
+            // context.element_position+=context.largest_decl;
+            dst<<"\tsw\t$2,($sp)\n";        }
     }///to do other rules
 }
 

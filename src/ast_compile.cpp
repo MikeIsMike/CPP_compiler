@@ -46,33 +46,6 @@ void Function_definition::compile(std::ostream &dst, Context& context) const{
     switch(parse_rule_followed){///case 1 and 3 support K&R style, not to be implemented
         case 2: ///function int abc(){sflkdsjf}
             // function = true;
-
-            //Count minimum number of variables for memory allocation
-            context.declaration_count = 0;
-            context.stack_counting = true;
-            if(compound_stmnt!=NULL){
-                compound_stmnt->compile(dst, context);
-            }
-            context.stack_counting = false;
-            context.first_var_in_stack = true;
-
-            context.function_declaration = true;
-            decl_spec->compile(dst, context);
-            decl->compile(dst, context);
-            context.function_declaration = false;
-
-            //Setup stack
-            context.element_position = context.element_position - (context.declaration_count*context.largest_decl+32);
-            dst<<"\taddiu\t$sp,$sp,-"<<(context.declaration_count*context.largest_decl+32)<<"\n";
-            dst<<"\tsw\t$31,"<<(context.declaration_count*context.largest_decl+28)<<"($sp)\n";
-            dst<<"\tsw\t$fp,"<<(context.declaration_count*context.largest_decl+24)<<"($sp)\n";
-
-            context.current_fp = context.element_position;
-            dst<<"\tmove\t$fp,$sp\n";
-            context.current_stack_offset = 24;
-
-
-
             //Change Context
             if(context.current_scope.size()<context.last_scope.size()){
                 std::vector<int> tmp = context.current_scope;
@@ -84,6 +57,35 @@ void Function_definition::compile(std::ostream &dst, Context& context) const{
                 context.current_scope.push_back(1);
                 context.last_scope = tmp;
             }
+
+            //Count minimum number of variables for memory allocation
+            context.declaration_count = 0;
+            context.stack_counting = true;
+            if(compound_stmnt!=NULL){
+                compound_stmnt->compile(dst, context);
+            }
+            decl->compile(dst, context);
+            context.stack_counting = false;
+            context.first_var_in_stack = true;
+
+            context.function_declaration = true;
+            decl_spec->compile(dst, context);
+            context.decl_to_reg = 4;
+            decl->compile(dst, context);
+            context.function_declaration = false;
+            std::cout<<"Declaration Printing Done\n";
+            //Setup stack
+            // context.element_position = context.element_position - (context.declaration_count*context.largest_decl+32);
+            // dst<<"\taddiu\t$sp,$sp,-"<<(context.declaration_count*context.largest_decl+32)<<"\n";
+            // dst<<"\tsw\t$31,"<<(context.declaration_count*context.largest_decl+28)<<"($sp)\n";
+            // dst<<"\tsw\t$fp,"<<(context.declaration_count*context.largest_decl+24)<<"($sp)\n";
+            //
+            // // context.current_fp = context.element_position;
+            // dst<<"\tmove\t$fp,$sp\n";
+            context.current_stack_offset = 24;
+
+
+
 
             compound_stmnt->compile(dst, context);
 
@@ -105,79 +107,47 @@ void Function_definition::compile(std::ostream &dst, Context& context) const{
 
 
 
-        case 4: ///function abc(){saldkfjsdflk} ///this defaults to return type int!!!!!!!!!
+        //case 4: ///function abc(){saldkfjsdflk} ///this defaults to return type int!!!!!!!!!
         // function = true;
 
-        //Count minimum number of variables for memory allocation
-        context.declaration_count = 0;
-        context.stack_counting = true;
-        if(decl_list!=NULL){
-            decl_list->compile(dst, context);
-        }
-
-        int no_of_inputs = context.declaration_count;
-
-        if(compound_stmnt!=NULL){
-            compound_stmnt->compile(dst, context);
-        }
-        context.stack_counting = false;
-        context.first_var_in_stack = true;
-
-        context.function_declaration = true;
-        decl_spec->compile(dst, context);
-        decl->compile(dst, context);
-
-        //Setup stack
-        context.element_position = context.element_position - (context.declaration_count*context.largest_decl+32);
-        dst<<"\taddiu\t$sp,$sp,-"<<(context.declaration_count*context.largest_decl+32)<<"\n";
-        dst<<"\tsw\t$31,"<<(context.declaration_count*context.largest_decl+28)<<"($sp)\n";
-        dst<<"\tsw\t$fp,"<<(context.declaration_count*context.largest_decl+24)<<"($sp)\n";
-
-        context.current_fp = context.element_position;
-        dst<<"\tmove\t$fp,$sp\n";
-        context.current_stack_offset = 24;
-
-
-
-        //Change Context
-        if(context.current_scope.size()<context.last_scope.size()){
-            std::vector<int> tmp = context.current_scope;
-            context.current_scope.push_back(context.last_scope.back() + 1);
-            context.last_scope = tmp;
-        }
-        else{
-            std::vector<int> tmp = context.current_scope;
-            context.current_scope.push_back(1);
-            context.last_scope = tmp;
-        }
-
-        ///////////Handle Inputs
-
-        decl_list->compile(dst, context);
-        context.function_declaration = false;
-        //////////Handle function
-        compound_stmnt->compile(dst, context);
-
-        //Change Context
-        context.last_scope = context.current_scope;
-        context.current_scope.pop_back();
-
-
-        //Deallocate stack
-        dst<<"\tmove\t$sp,$fp\n";
-        dst<<"\tlw\t$31,"<<(context.declaration_count*context.largest_decl+28)<<"($sp)\n";
-        dst<<"\tlw\t$fp,"<<(context.declaration_count*context.largest_decl+24)<<"($sp)\n";
-        dst<<"\taddiu\t$sp,$sp,"<<(context.declaration_count*context.largest_decl+32)<<"\n";
-        dst<<"\tjr\t$31"<<"\n";
-        dst<<"\tnop\n";
-
-
-        break;
 
     }
     // dst<<".end "<<*identifier<<"\n";
 
 }
+
+
+void Parameter_type_list::compile(std::ostream &dst, Context &context) const{
+    if(param_list!=NULL){
+        param_list->compile(dst, context);
+    }
+}
+
+void Parameter_list::compile(std::ostream &dst, Context &context) const{
+    if(context.stack_counting){
+        if(param_list!=NULL){
+            param_list->compile(dst, context);
+        }
+        context.declaration_count++;
+
+    }
+    else{
+        if(param_list!=NULL){
+            param_list->compile(dst, context);
+        }
+        if(param_decl!=NULL){
+            param_decl->compile(dst, context);
+            context.decl_to_reg++;
+        }
+    }
+}
+
+void Parameter_declaration::compile(std::ostream &dst, Context &context) const{
+    if(declarator!=NULL){
+        declarator->compile(dst, context);
+    }
+}
+
 
 void Expression_statement::compile(std::ostream &dst, Context &context) const{
     if(context.stack_counting){;}
@@ -272,7 +242,6 @@ void Init_declarator::compile(std::ostream &dst, Context& context) const{
             dst<<context.tmp.name<<": .word 0\n";
         }
         else{
-            //WRONG
             declarator->compile(dst, context);
             context.variables.push_back(context.tmp);
         }
@@ -283,6 +252,7 @@ void Init_declarator::compile(std::ostream &dst, Context& context) const{
             declarator->compile(dst, context);
             dst<<"data\n";
             dst<<context.tmp.name<<": .word 0\n";
+
         }
         else{
             declarator->compile(dst, context);
@@ -679,24 +649,51 @@ void Iteration_statement::compile(std::ostream &dst, Context& context) const{
 void Direct_declarator::compile(std::ostream &dst, Context& context) const{ //global and other variebles handeled needed aghhh
     switch(parse_rule_followed){///only 1 and 7 implemented, need to expand
         case 1://function name printed as MIPS label
-            if(!context.function_declaration){
-                if(identifier!=NULL){//left hand side
-                    context.tmp.name=*identifier;
-                    context.tmp.scope = context.current_scope;
-                    context.tmp.stack_offset = context.current_stack_offset;
-                    context.current_stack_offset = context.current_stack_offset + 8; //Change to address different variable types and padding, this only works for int
+            if(context.stack_counting){;}
+            else{
+                if(!context.function_declaration){
+                    if(identifier!=NULL){//left hand side
+                        context.tmp.name=*identifier;
+                        context.tmp.scope = context.current_scope;
+                        context.tmp.stack_offset = context.current_stack_offset;
+                        context.current_stack_offset = context.current_stack_offset + 8; //Change to address different variable types and padding, this only works for int
+
+                    }
+
 
                 }
+                else if(context.function_declaration && context.parameter_declaration){
+                    if(identifier!=NULL){//left hand side
+                        context.tmp.name=*identifier;
+                        context.tmp.scope = context.current_scope;
+                        context.tmp.stack_offset = context.current_stack_offset;
+                        context.current_stack_offset = context.current_stack_offset + 8; //Change to address different variable types and padding, this only works for int
+                        if(context.decl_to_reg<8){
+                            dst<<"\tsw\t$"<<context.decl_to_reg<<","<<context.current_stack_offset - 8<<"($fp)\n";
+                        }
 
-            }
-            else{
-                dst<<".text"<<"\n";
-                dst<<".align 2"<<"\n";
-                dst<<".globl "<<*identifier<<"\n";
-                // dst<<".ent "<<*identifier<<"\n";
-                dst<<".type "<<*identifier<<", @function"<<"\n";
+                        context.variables.push_back(context.tmp);
+                    }
 
-                dst<<*identifier<<":\n";
+                }
+                else{
+                    dst<<".text"<<"\n";
+                    dst<<".align 2"<<"\n";
+                    dst<<".globl "<<*identifier<<"\n";
+                    // dst<<".ent "<<*identifier<<"\n";
+                    dst<<".type "<<*identifier<<", @function"<<"\n";
+
+                    dst<<*identifier<<":\n";
+
+                    //Setup stack
+                    context.element_position = context.element_position - (context.declaration_count*context.largest_decl+32);
+                    dst<<"\taddiu\t$sp,$sp,-"<<(context.declaration_count*context.largest_decl+32)<<"\n";
+                    dst<<"\tsw\t$31,"<<(context.declaration_count*context.largest_decl+28)<<"($sp)\n";
+                    dst<<"\tsw\t$fp,"<<(context.declaration_count*context.largest_decl+24)<<"($sp)\n";
+
+                    context.current_fp = context.element_position;
+                    dst<<"\tmove\t$fp,$sp\n";
+                }
 
             }
 
@@ -710,7 +707,19 @@ void Direct_declarator::compile(std::ostream &dst, Context& context) const{ //gl
         //     function = false;
         //
         //     break;
-        // case 5:
+        case 5:
+            if(direct_decl!=NULL){
+                if(context.stack_counting){;}
+                else{
+                    direct_decl->compile(dst, context);
+                }
+            }
+            if(param_type_list!=NULL){
+                context.parameter_declaration = true;
+                param_type_list->compile(dst, context);
+                context.parameter_declaration = false;
+            }
+            break;
         //     // std::cout<<"Direct_declarator switch_5"<<std::endl;
         //     direct_decl->print_python(dst);
         //     dst<<"(";
@@ -743,6 +752,13 @@ void Assignment_expression::compile(std::ostream &dst, Context& context) const{
     context.assignment_expression_lvl++;
     if(cond_expr!=NULL){
         cond_expr->compile(dst, context);
+
+        //IF PASSING VALUE TO A FUNCTION
+        if(context.in_argument_expression_list){
+            dst<<"\tlw\t$2,($sp)\n";//rhs value loaded into register 2
+            dst<<"\taddiu\t$sp,$sp,"<<context.largest_decl<<"\n";
+            dst<<"\taddiu\t$"<<context.val_to_reg<<",$2,0\n";
+        }
     }
     else{
         if(assign_expr!=NULL){
@@ -804,6 +820,11 @@ void Assignment_expression::compile(std::ostream &dst, Context& context) const{
             if(context.assignment_expression_lvl!=1){
                 dst<<"\taddiu\t$sp,$sp,-"<<context.largest_decl<<"\n";
                 dst<<"\tsw\t$2,($sp)\n";
+            }
+
+            //IF PASSING VALUE TO A FUNCTION
+            if(context.in_argument_expression_list){
+                dst<<"\taddiu\t$"<<context.val_to_reg<<",$2,0\n";
             }
 
         }
@@ -1353,13 +1374,35 @@ void Postfix_expression::compile(std::ostream &dst, Context& context) const{
     else if(postf_expr!=NULL && expr==NULL && arg_expr_list==NULL && oper==NULL && identifier==NULL){ //f()
         context.print_function_identifier = true;
         postf_expr->compile(dst,context);
+        context.print_function_identifier = false;
+
+    }
+    else if(postf_expr!=NULL && expr==NULL && arg_expr_list!=NULL && oper==NULL && identifier==NULL){ //f(77, b)
+        context.in_argument_expression_list = true;
+        context.val_to_reg = 4;
+        arg_expr_list->compile(dst,context);
+        context.in_argument_expression_list = false;
         context.print_function_identifier = true;
+        postf_expr->compile(dst,context);
+        context.print_function_identifier = false;
 
     }
     else if(postf_expr!=NULL && expr==NULL && arg_expr_list!=NULL && oper==NULL && identifier==NULL){ //f(a,b,c)
         ///to be implemented function call with parameters
     }
 
+}
+
+void Argument_expression_list::compile(std::ostream &dst, Context& context) const{
+    if(arg_expr_list!=NULL){
+        arg_expr_list->compile(dst,context);
+    }
+    if(assign_expr!=NULL){
+        assign_expr->compile(dst,context);
+    }
+    if(context.val_to_reg<8){
+        context.val_to_reg++;
+    }
 }
 
 
@@ -1393,7 +1436,7 @@ void Primary_expression::compile(std::ostream &dst, Context& context) const{
         else{
             context.variable_found = false;
             std::vector<int> vect_decr= context.current_scope;
-
+            std::cout<<"looking for "<< *identifier <<std::endl;
             for(int size = vect_decr.size(); size>0 && !context.variable_found; size--){
                 for(int i = 0; i < context.variables.size() && !context.variable_found; i++){
                     if(context.variables[i].name == *identifier && context.variables[i].scope == vect_decr){
@@ -1406,6 +1449,8 @@ void Primary_expression::compile(std::ostream &dst, Context& context) const{
 
             if(!context.variable_found){
                 ;
+                std::cout<<"havent found "<< *identifier <<std::endl;
+
                 //Shift through global variables
             }
 

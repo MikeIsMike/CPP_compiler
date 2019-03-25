@@ -1,8 +1,8 @@
 
-int f();
+int f(int a);
+
 int main() {
-    int a = f();
-    printf("%d", a);
-    printf("\n");
+    int a = f(5);
+
     return a;
 }

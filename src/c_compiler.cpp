@@ -37,6 +37,10 @@ int main(int argc, char *argv[])
     }
     else if(std::string(argv[1])=="-S"){
         Context context;
+
+        context.current_scope.push_back(1);
+        context.last_scope.push_back(1);
+        
         std::ofstream outfile (argv[4]);
 
         ast->compile(outfile, context);

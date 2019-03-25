@@ -26,6 +26,7 @@ struct Context{
     bool external_decl = false;
     bool print_function_identifier = false;
     bool variable_returned;
+    bool first_var_in_stack = false;
 
     std::vector<int> current_scope;
     std::vector<int> last_scope;
@@ -38,7 +39,7 @@ struct Context{
 
     bool function_declaration = false;
 
-    int current_stack_offset = 8;
+    int current_stack_offset = 24;
 };
 
 #endif

@@ -14,6 +14,8 @@ static std::string makeName(std::string base)
 
 
 void Translation_unit::compile(std::ostream &dst, Context& context) const{
+    dst<<"#translation_unit\n";
+
     if(translation_unit!=NULL){
         translation_unit->compile(dst, context);
         external_decl->compile(dst, context);
@@ -25,6 +27,7 @@ void Translation_unit::compile(std::ostream &dst, Context& context) const{
 
 
 void External_declaration::compile(std::ostream &dst, Context& context) const{
+    dst<<"#External_declaration\n";
     if(funct_def!=NULL){
         funct_def->compile(dst, context);
     }
@@ -38,6 +41,8 @@ void External_declaration::compile(std::ostream &dst, Context& context) const{
 
 
 void Function_definition::compile(std::ostream &dst, Context& context) const{
+    dst<<"#Function_definition\n";
+
     switch(parse_rule_followed){///case 1 and 3 support K&R style, not to be implemented
         case 2: ///function int abc(){sflkdsjf}
             // function = true;
@@ -49,6 +54,7 @@ void Function_definition::compile(std::ostream &dst, Context& context) const{
                 compound_stmnt->compile(dst, context);
             }
             context.stack_counting = false;
+            context.first_var_in_stack = true;
 
             context.function_declaration = true;
             decl_spec->compile(dst, context);
@@ -58,12 +64,12 @@ void Function_definition::compile(std::ostream &dst, Context& context) const{
             //Setup stack
             context.element_position = context.element_position - (context.declaration_count*context.largest_decl+32);
             dst<<"\taddiu\t$sp,$sp,-"<<(context.declaration_count*context.largest_decl+32)<<"\n";
-
-            dst<<"\tsw\t$fp,"<<(context.declaration_count*context.largest_decl+28)<<"($sp)\n";
+            dst<<"\tsw\t$31,"<<(context.declaration_count*context.largest_decl+28)<<"($sp)\n";
+            dst<<"\tsw\t$fp,"<<(context.declaration_count*context.largest_decl+24)<<"($sp)\n";
 
             context.current_fp = context.element_position;
             dst<<"\tmove\t$fp,$sp\n";
-            context.current_stack_offset = 8;
+            context.current_stack_offset = 24;
 
 
 
@@ -88,7 +94,8 @@ void Function_definition::compile(std::ostream &dst, Context& context) const{
 
             //Deallocate stack
             dst<<"\tmove\t$sp,$fp\n";
-            dst<<"\tlw\t$fp,"<<(context.declaration_count*context.largest_decl+28)<<"($sp)\n";
+            dst<<"\tlw\t$31,"<<(context.declaration_count*context.largest_decl+28)<<"($sp)\n";
+            dst<<"\tlw\t$fp,"<<(context.declaration_count*context.largest_decl+24)<<"($sp)\n";
             dst<<"\taddiu\t$sp,$sp,"<<(context.declaration_count*context.largest_decl+32)<<"\n";
             dst<<"\tjr\t$31"<<"\n";
             dst<<"\tnop\n";
@@ -152,6 +159,8 @@ void Declaration_list::compile(std::ostream &dst, Context &context) const{
 
 
 void Declaration::compile(std::ostream &dst, Context& context) const{
+    dst<<"#Declaration\n";
+
     if(init_decl_list!=NULL){///only the initilised case
         // decl_spec->compile(dst);///ignore this for now because only int
 
@@ -347,51 +356,57 @@ void Statement_list::compile(std::ostream &dst, Context& context) const{
 }
 
 void Jump_statement::compile(std::ostream &dst, Context& context) const{
-if(*keyword=="return"){
+    if(context.stack_counting){;}
+    else{
+        if(*keyword=="return"){
 
-        if(context.stack_counting){
-            if(expr!=NULL){
-                expr->compile(dst, context);
+            if(context.stack_counting){
+                if(expr!=NULL){
+                    expr->compile(dst, context);
+                }
             }
-        }
 
-        else if(expr!=NULL){
-
-
-            expr->compile(dst, context);
-            dst<<"#jump_statement with return value\n";
-
-            dst<<"\tlw\t$2,($sp)\n";
-            dst<<"\taddiu\t$sp,$sp,"<<context.largest_decl<<"\n";
-
-            //Change Context
-            context.last_scope = context.current_scope;
-            context.current_scope.pop_back();
+            else if(expr!=NULL){
 
 
-            //Deallocate stack
-            dst<<"\tmove\t$sp,$fp\n";
-            dst<<"\tlw\t$fp,"<<(context.declaration_count*context.largest_decl+28)<<"($sp)\n";
-            dst<<"\taddiu\t$sp,$sp,"<<(context.declaration_count*context.largest_decl+32)<<"\n";
-            dst<<"\tjr\t$31"<<"\n";
-            dst<<"\tnop\n";
+                expr->compile(dst, context);
+                dst<<"#jump_statement with return value\n";
 
-        }
-        else{
+                dst<<"\tlw\t$2,($sp)\n";
+                dst<<"\taddiu\t$sp,$sp,"<<context.largest_decl<<"\n";
 
-            dst<<"#jump_statement without return value\n";
-
-            //Change Context
-            context.last_scope = context.current_scope;
-            context.current_scope.pop_back();
+                //Change Context
+                context.last_scope = context.current_scope;
+                context.current_scope.pop_back();
 
 
-            //Deallocate stack
-            dst<<"\tmove\t$sp,$fp\n";
-            dst<<"\tlw\t$fp,"<<(context.declaration_count*context.largest_decl+28)<<"($sp)\n";
-            dst<<"\taddiu\t$sp,$sp,"<<(context.declaration_count*context.largest_decl+32)<<"\n";
-            dst<<"\tjr\t$31"<<"\n";
-            dst<<"\tnop\n";
+                //Deallocate stack
+                dst<<"\tmove\t$sp,$fp\n";
+                dst<<"\tlw\t$fp,"<<(context.declaration_count*context.largest_decl+24)<<"($sp)\n";
+                dst<<"\tlw\t$31,"<<(context.declaration_count*context.largest_decl+28)<<"($sp)\n";
+                dst<<"\taddiu\t$sp,$sp,"<<(context.declaration_count*context.largest_decl+32)<<"\n";
+                dst<<"\tjr\t$31"<<"\n";
+                dst<<"\tnop\n";
+
+            }
+            else{
+
+                dst<<"#jump_statement without return value\n";
+
+                //Change Context
+                context.last_scope = context.current_scope;
+                context.current_scope.pop_back();
+
+
+                //Deallocate stack
+                dst<<"\tmove\t$sp,$fp\n";
+                dst<<"\tlw\t$fp,"<<(context.declaration_count*context.largest_decl+24)<<"($sp)\n";
+                dst<<"\tlw\t$31,"<<(context.declaration_count*context.largest_decl+28)<<"($sp)\n";
+                dst<<"\taddiu\t$sp,$sp,"<<(context.declaration_count*context.largest_decl+32)<<"\n";
+                dst<<"\tjr\t$31"<<"\n";
+                dst<<"\tnop\n";
+
+            }
 
         }
 
@@ -419,7 +434,7 @@ void Selection_statement::compile(std::ostream &dst, Context& context) const{
 
 
                 dst<<"\tbeq\t$8,$0,"<<"$FALSE"<<branch<<"\n";
-                dst<<"nop\n";
+                dst<<"\tnop\n";
 
 
                 if_statement->compile(dst, context);
@@ -459,7 +474,7 @@ void Iteration_statement::compile(std::ostream &dst, Context& context) const{
     else{
         if(*keyword=="while"){
             std::string branch=makeName("while");
-            dst<<"$START"<<branch<<"\n";
+            dst<<"$START"<<branch<<":\n";
 
             expr->compile(dst, context);
 
@@ -474,12 +489,12 @@ void Iteration_statement::compile(std::ostream &dst, Context& context) const{
 
             dst<<"\tj "<<"$START"<<branch<<"\n";
             dst<<"nop\n";
-            dst<<"$END"<<branch<<"\n";
+            dst<<"$END"<<branch<<":\n";
 
         }
         else if(*keyword=="do"){
             std::string branch=makeName("do");
-            dst<<"$START"<<branch<<"\n";
+            dst<<"$START"<<branch<<":\n";
 
             statement->compile(dst, context);
 
@@ -494,7 +509,7 @@ void Iteration_statement::compile(std::ostream &dst, Context& context) const{
             dst<<"\tj "<<"$START"<<branch<<"\n";
             dst<<"nop\n";
 
-            dst<<"$END"<<branch<<"\n";
+            dst<<"$END"<<branch<<":\n";
 
         }
 
@@ -977,7 +992,10 @@ void Primary_expression::compile(std::ostream &dst, Context& context) const{
             context.variable_found = false;
         }
         else if(context.print_function_identifier){
-            dst<<"\tjal\t"<<*identifier<<"\n";
+            dst<<"\tjal\t"<<*identifier<<"\nnop\n";
+            dst<<"\taddiu\t$sp,$sp,-"<<context.largest_decl<<"\n"; ///might need to start pushing at 0 first instead of -4
+            // context.element_position+=context.largest_decl;
+            dst<<"\tsw\t$2,($sp)\n";
 
         }
         else{

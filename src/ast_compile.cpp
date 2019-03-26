@@ -41,7 +41,6 @@ void External_declaration::compile(std::ostream &dst, Context& context) const{
 
 
 void Function_definition::compile(std::ostream &dst, Context& context) const{
-    dst<<"#Function_definition\n";
 
     switch(parse_rule_followed){///case 1 and 3 support K&R style, not to be implemented
         case 2: ///function int abc(){sflkdsjf}
@@ -84,10 +83,11 @@ void Function_definition::compile(std::ostream &dst, Context& context) const{
             // dst<<"\tmove\t$fp,$sp\n";
 
 
-
+            context.function_to_compound = true;
 
             compound_stmnt->compile(dst, context);
 
+            context.function_to_compound = false;
             //Change Context
 
             context.last_scope = context.current_scope;
@@ -165,38 +165,69 @@ void Expression_statement::compile(std::ostream &dst, Context &context) const{
 
 void Compound_statement::compile(std::ostream &dst, Context &context) const{
     //Change Context
-    if(context.current_scope.size()<context.last_scope.size()){
-        std::vector<int> tmp = context.current_scope;
-        context.current_scope.push_back(context.last_scope.back() + 1);
-        context.last_scope = tmp;
+
+    if(context.stack_counting){
+        if(decl_list!=NULL){
+            decl_list->compile(dst, context);
+        }
+        if(stmnt_list!=NULL){
+            stmnt_list->compile(dst, context);
+        }
     }
+
+
+
+
     else{
-        std::vector<int> tmp = context.current_scope;
-        context.current_scope.push_back(1);
-        context.last_scope = tmp;
+        //Change context
+        if(!context.function_to_compound){
+            if(context.current_scope.size()<context.last_scope.size()){
+                std::vector<int> tmp = context.current_scope;
+                context.current_scope.push_back(context.last_scope.back() + 1);
+                context.last_scope = tmp;
+            }
+            else{
+                std::vector<int> tmp = context.current_scope;
+                context.current_scope.push_back(1);
+                context.last_scope = tmp;
+            }
+        }
+        bool function_to_compound_for_dealoc = context.function_to_compound;
+        context.function_to_compound = false;
+
+
+        //////////////////////////////////////////
+        if(decl_list!=NULL){
+            decl_list->compile(dst, context);
+        }
+        if(stmnt_list!=NULL){
+            stmnt_list->compile(dst, context);
+        }
+        /////////////////////////////////////////////
+
+        //Change Context
+        if(!function_to_compound_for_dealoc){
+            context.last_scope = context.current_scope;
+            context.current_scope.pop_back();
+        }
+
     }
 
-    //////////////////////////////////////////
-    if(decl_list!=NULL){
-        decl_list->compile(dst, context);
-    }
-    if(stmnt_list!=NULL){
-        stmnt_list->compile(dst, context);
-    }
-    /////////////////////////////////////////////
-
-    //Change Context
-    context.last_scope = context.current_scope;
-    context.current_scope.pop_back();
 }
 
 void Declaration_list::compile(std::ostream &dst, Context &context) const{
+
+
+
     if(context.stack_counting){
-        context.declaration_count++;///change to count elements in array
+        decl->compile(dst, context);
         if(decl_list!=NULL){
             decl_list->compile(dst, context);
         }
     }
+
+
+
     else{
         if(decl_list!=NULL){
             decl_list->compile(dst, context);
@@ -240,43 +271,60 @@ void Init_declarator_list::compile(std::ostream &dst, Context& context) const{
 
 void Init_declarator::compile(std::ostream &dst, Context& context) const{
 
-    if(declarator!=NULL && initializer==NULL){
-        if(context.external_decl){
-            declarator->compile(dst, context);
-            dst<<"\t.globl "<<context.tmp.name<<"\n";
-            dst<<"\t.data\n";
-            dst<<"\t.align  2\n";
-            dst<<"\t.type "<<context.tmp.name<<" @object\n";
-            context.tmp.scope = context.current_scope;
-            context.variables.push_back(context.tmp);
 
-        }
-        else{
+
+    if(context.stack_counting){
+        if(declarator!=NULL){
             declarator->compile(dst, context);
-            context.variables.push_back(context.tmp);
         }
     }
-    if(declarator!=NULL&&initializer!=NULL){
-        if(context.external_decl){
-            declarator->compile(dst, context);
-            dst<<"\t.globl "<<context.tmp.name<<"\n";
-            dst<<"\t.data\n";
-            dst<<"\t.align  2\n";
-            dst<<"\t.type "<<context.tmp.name<<" @object\n";
-            dst<<context.tmp.name<<": \n\t .word "<<initializer->evaluate(context)<<"\n";
-            context.tmp.scope = context.current_scope;
-            context.variables.push_back(context.tmp);
 
+    else{
+        if(declarator!=NULL && initializer==NULL){
+            if(context.external_decl){
+                declarator->compile(dst, context);
+                if(!context.got_to_rule_5){
+                    dst<<"\t.globl "<<context.tmp.name<<"\n";
+                    dst<<"\t.data\n";
+                    dst<<"\t.align  2\n";
+                    dst<<"\t.type "<<context.tmp.name<<" @object\n";
+                    context.tmp.scope = context.current_scope;
+                    context.variables.push_back(context.tmp);
+                }
+                context.got_to_rule_5 = false;
+
+            }
+            else{
+                declarator->compile(dst, context);
+                context.variables.push_back(context.tmp);
+            }
         }
-        else{
-            declarator->compile(dst, context);
-            context.variables.push_back(context.tmp);
-            initializer->compile(dst, context);
+        if(declarator!=NULL&&initializer!=NULL){
+            if(context.external_decl){
+                if(!context.got_to_rule_5){
+                    declarator->compile(dst, context);
+                    dst<<"\t.globl "<<context.tmp.name<<"\n";
+                    dst<<"\t.data\n";
+                    dst<<"\t.align  2\n";
+                    dst<<"\t.type "<<context.tmp.name<<" @object\n";
+                    dst<<context.tmp.name<<": \n\t .word "<<initializer->evaluate(context)<<"\n";
+                    context.tmp.scope = context.current_scope;
+                    context.variables.push_back(context.tmp);
+                }
+                context.got_to_rule_5 = false;
 
-            dst<<"\tlw\t$2,($sp)\n";
-            dst<<"\taddiu\t$sp,$sp,"<<context.largest_decl<<"\n";
 
-            dst<<"\tsw\t$2,"<<context.current_stack_offset-8<<"($fp)"<<std::endl;
+            }
+            else{
+                declarator->compile(dst, context);
+                context.variables.push_back(context.tmp);
+                initializer->compile(dst, context);
+
+                dst<<"\tlw\t$2,($sp)\n";
+                dst<<"\taddiu\t$sp,$sp,"<<context.largest_decl<<"\n";
+
+                dst<<"\tsw\t$2,"<<context.current_stack_offset-8<<"($fp)"<<std::endl;
+            }
         }
     }
 }
@@ -577,6 +625,9 @@ void Selection_statement::compile(std::ostream &dst, Context& context) const{
                 dst<<"$END"<<branch<<":\n";
             }
         }
+        else{
+
+        }
     }
 }
 
@@ -718,8 +769,25 @@ void Iteration_statement::compile(std::ostream &dst, Context& context) const{
 
 
 void Direct_declarator::compile(std::ostream &dst, Context& context) const{ //global and other variebles handeled needed aghhh
-    switch(parse_rule_followed){///only 1 and 7 implemented, need to expand
-        case 1://function name printed as MIPS label
+
+    if(context.stack_counting){
+        if(decl!=NULL){
+            decl->compile(dst, context);
+        }
+        else if(identifier!=NULL){
+            context.declaration_count++;
+        }
+        else if(const_expr!=NULL){
+            context.declaration_count += const_expr->evaluate(context);
+        }
+        else if(param_type_list!=NULL){
+            param_type_list->compile(dst, context);
+        }
+    }
+
+    else{
+        switch(parse_rule_followed){///only 1 and 7 implemented, need to expand
+            case 1://function name printed as MIPS label
             if(context.stack_counting){;}
             else{
                 if(!context.function_declaration){
@@ -775,15 +843,15 @@ void Direct_declarator::compile(std::ostream &dst, Context& context) const{ //gl
 
 
             break;
-        // case 2:
-        //     // std::cout<<"Direct_declarator switch_1"<<std::endl;
-        //     dst<<"(";
-        //     decl->print_python(dst);
-        //     dst<<"):"<<"\n";
-        //     function = false;
-        //
-        //     break;
-        case 3://array with number of elements specified
+            // case 2:
+            //     // std::cout<<"Direct_declarator switch_1"<<std::endl;
+            //     dst<<"(";
+            //     decl->print_python(dst);
+            //     dst<<"):"<<"\n";
+            //     function = false;
+            //
+            //     break;
+            case 3://array with number of elements specified
             if(context.stack_counting){
                 // int result = const_expr->evaluate(context);
 
@@ -791,49 +859,61 @@ void Direct_declarator::compile(std::ostream &dst, Context& context) const{ //gl
 
             }
             break;
-        case 5:
-            if(direct_decl!=NULL){
-                if(context.stack_counting){;}
-                else{
-                    direct_decl->compile(dst, context);
+            case 5:
+            if(!context.external_decl){
+                if(direct_decl!=NULL){
+                    if(context.stack_counting){;}
+                    else{
+                        direct_decl->compile(dst, context);
+                    }
+                }
+                if(param_type_list!=NULL){
+                    context.parameter_declaration = true;
+                    param_type_list->compile(dst, context);
+                    context.parameter_declaration = false;
                 }
             }
-            if(param_type_list!=NULL){
-                context.parameter_declaration = true;
-                param_type_list->compile(dst, context);
-                context.parameter_declaration = false;
+            else{
+                context.got_to_rule_5 = true;
             }
             break;
-        //     // std::cout<<"Direct_declarator switch_5"<<std::endl;
-        //     direct_decl->print_python(dst);
-        //     dst<<"(";
-        //     param_type_list->print_python(dst);
-        //     dst<<"):"<<"\n";
-        //     function = false;
-        //
-        //     break;
-        // case 6:
-        //     // std::cout<<"Direct_declarator switch_6"<<std::endl;
-        //     direct_decl->print_python(dst);
-        //     dst<<"(";
-        //     identif_list->print_python(dst);
-        //     dst<<"):"<<"\n";
-        //     function = false;
-        //
-        //     break;
-        case 7://funct_abc()
+            //     // std::cout<<"Direct_declarator switch_5"<<std::endl;
+            //     direct_decl->print_python(dst);
+            //     dst<<"(";
+            //     param_type_list->print_python(dst);
+            //     dst<<"):"<<"\n";
+            //     function = false;
+            //
+            //     break;
+            // case 6:
+            //     // std::cout<<"Direct_declarator switch_6"<<std::endl;
+            //     direct_decl->print_python(dst);
+            //     dst<<"(";
+            //     identif_list->print_python(dst);
+            //     dst<<"):"<<"\n";
+            //     function = false;
+            //
+            //     break;
+            case 7://funct_abc()
             // std::cout<<"Direct_declarator switch_7"<<std::endl;
             direct_decl->compile(dst, context);
             ///this is a function now
             // function = false;
 
             break;
+        }
     }
 }
 
 
 void Assignment_expression::compile(std::ostream &dst, Context& context) const{
     // context.assignment_expression_lvl++; //not needed, instead always pop from stack at the end of expression_statement;
+
+    if(context.stack_counting){
+        ;
+    }
+
+
     if(cond_expr!=NULL){
         cond_expr->compile(dst, context);
 
@@ -844,6 +924,7 @@ void Assignment_expression::compile(std::ostream &dst, Context& context) const{
             dst<<"\taddiu\t$"<<context.val_to_reg<<",$2,0\n";
         }
     }
+
     else{
         if(assign_expr!=NULL){
             assign_expr->compile(dst, context);
@@ -915,6 +996,68 @@ void Assignment_expression::compile(std::ostream &dst, Context& context) const{
 
             context.variable_found=false;
         }
+
+
+
+        if(context.global_found && assign_op!=NULL){//lefthandside variable, rhs is already evaluated and stored in register 2
+
+            dst<<"\tlui\t$t0,%hi("<<context.variables[context.variable_position].name<<")\n";
+            dst<<"\tlw\t$t0,%lo("<<context.variables[context.variable_position].name<<")($t0)\n"; //lhs value loaded into t0
+
+            if(*assign_op=="="){
+                //do nothing
+            }
+            else if(*assign_op=="*="){
+
+                dst<<"\tmult\t$t0,$2\n";
+                dst<<"\tmflo\t$2\n";
+            }
+            else if(*assign_op=="/="){
+                dst<<"\tdiv\t$t0,$2\n";
+                dst<<"\tmflo\t$2\n";
+            }
+            else if(*assign_op=="%="){
+                dst<<"\tdiv\t$t0,$2\n";
+                dst<<"\tmfhi\t$2\n";
+            }
+            else if(*assign_op=="+="){
+                dst<<"\taddu\t$2,$t0,$2\n";
+            }
+            else if(*assign_op=="-="){
+                dst<<"\tsubu\t$2,$t0,$2\n";
+            }
+            else if(*assign_op=="<<="){
+                dst<<"\tsll\t$2,$t0,$2\n";
+            }
+            else if(*assign_op==">>="){
+                dst<<"\tsrl\t$2,$t0,$2\n";
+            }
+            else if(*assign_op=="&="){
+                dst<<"\tand\t$2,$t0,$2\n";
+            }
+            else if(*assign_op=="^="){
+                dst<<"\txor\t$2,$t0,$2\n";
+            }
+            else if(*assign_op=="|="){
+                dst<<"\tor\t$2,$t0,$2\n";
+            }
+
+            dst<<"\tlui\t$t0,%hi("<<context.variables[context.variable_position].name<<")\n";
+            dst<<"\tsw\t$2,%lo("<<context.variables[context.variable_position].name<<")($t0)\n";
+
+            // if(context.assignment_expression_lvl!=1){
+            dst<<"\taddiu\t$sp,$sp,-"<<context.largest_decl<<"\n";
+            dst<<"\tsw\t$2,($sp)\n";
+            // }
+
+            //IF PASSING VALUE TO A FUNCTION
+            if(context.in_argument_expression_list){
+                dst<<"\taddiu\t$"<<context.val_to_reg<<",$2,0\n";
+            }
+
+            context.global_found=false;
+        }
+
     }
     // context.assignment_expression_lvl--;
 }
@@ -1520,133 +1663,152 @@ void Argument_expression_list::compile(std::ostream &dst, Context& context) cons
 
 
 void Primary_expression::compile(std::ostream &dst, Context& context) const{
-    if(constant!=NULL){
-        dst<<"\tli\t$2,"<<*constant<<"\n";
-        dst<<"#primary_expression_if_1\n";
-        // dst<<"\tmove\t,$sp,$fp\n"
-        dst<<"\taddiu\t$sp,$sp,-"<<context.largest_decl<<"\n"; ///might need to start pushing at 0 first instead of -4
-        // context.element_position+=context.largest_decl;
-        dst<<"\tsw\t$2,($sp)\n";
+    if(context.stack_counting){
+        ;
     }
-    else if(identifier!=NULL){
-        if(context.in_assignment_expression){
-            //only finding the position
-
-            context.variable_found = false;
-            context.enum_found=false;
-            std::vector<int> vect_decr= context.current_scope;
-            for(int size = vect_decr.size(); size>1 && !context.variable_found; size--){
-                for(int i = 0; i < context.variables.size() && !context.variable_found; i++){
-                    if(context.variables[i].name == *identifier && context.variables[i].scope == vect_decr&&!context.variables[i].is_enum){
-                        context.variable_position = i;
-                        context.variable_found = true;
-                        return;
-                    }
-                    // else if(context.variables[i].name == *identifier && context.variables[i].scope == vect_decr&&context.variables[i].is_enum){
-                    //     context.variable_position = i;
-                    //     context.enum_found = true;
-                    //     return;
-                    // } should not do anything because enum can't be assigned
-                }
-                vect_decr.pop_back();
-            }
-
-            // for(int i = 0; i < context.variables.size() && !context.variable_found; i++){
-            //     if(context.variables[i].name == *identifier && context.variables[i].scope == vect_decr){
-            //         context.variable_position = i;
-            //         context.variable_found = true;
-            //         return;
-            //     }
-            // }
-
-            if(!context.variable_found){
-
-                std::cout<<"havent found "<< *identifier <<std::endl;
-
-            }
 
 
-            context.variable_found=false;
-            contexet.enum_found=false;
 
-        }
-        else if(context.print_function_identifier){
-            dst<<"\tjal\t"<<*identifier<<"\nnop\n";
+
+    else{
+        std::cout<<"Prim? "<<context.variables.size()<<std::endl;
+
+        if(constant!=NULL){
+            dst<<"\tli\t$2,"<<*constant<<"\n";
+            dst<<"#primary_expression_if_1\n";
+            // dst<<"\tmove\t,$sp,$fp\n"
             dst<<"\taddiu\t$sp,$sp,-"<<context.largest_decl<<"\n"; ///might need to start pushing at 0 first instead of -4
             // context.element_position+=context.largest_decl;
             dst<<"\tsw\t$2,($sp)\n";
-
         }
-        else{
-            //getting the value
-            context.variable_found = false;
-            context.enum_found=false;
-            std::vector<int> vect_decr= context.current_scope;
-            for(int size = vect_decr.size(); size>1 && !context.variable_found; size--){
-                for(int i = 0; i < context.variables.size() && !context.variable_found; i++){
-                    if(context.variables[i].name == *identifier && context.variables[i].scope == vect_decr&&!context.variables[i].is_enum){
-                        context.variable_position = i;
-                        context.variable_found = true;
-                    }
-                    else if(context.variables[i].name == *identifier && context.variables[i].scope == vect_decr&&context.variables[i].is_enum){
-                        context.variable_position=i;
-                        context.enum_found=true;
+        else if(identifier!=NULL){
+            if(context.in_assignment_expression){
 
-                    }
-                }
-                vect_decr.pop_back();
-            }
-            if(context.variable_found){
-                dst<<"\tlw\t$2,"<<context.variables[context.variable_position].stack_offset<<"($fp)\n";
-
-                dst<<"\taddiu\t$sp,$sp,-"<<context.largest_decl<<"\n";
-                dst<<"\tsw\t$2,($sp)\n";
-                context.variable_found=false;
-            }
-            else if(context.enum_found){
-                dst<<"\taddiu\t$2,$0,"<<context.variables[context.variable_position].enumerator_value<<"\n";
-                dst<<"\taddiu\t$sp,$sp,-"<<context.largest_decl<<"\n";
-                dst<<"\tsw\t$2,($sp)\n";
+                context.variable_found = false;
                 context.enum_found=false;
-            }
-            else{
+                std::vector<int> vect_decr= context.current_scope;
+                for(int size = vect_decr.size(); size>1 && !context.variable_found; size--){
+                    for(int i = 0; i < context.variables.size() && !context.variable_found; i++){
+                        if(context.variables[i].name == *identifier && context.variables[i].scope == vect_decr&&!context.variables[i].is_enum){
+                            context.variable_position = i;
+                            context.variable_found = true;
+                            return;
+                        }
+                        // else if(context.variables[i].name == *identifier && context.variables[i].scope == vect_decr&&context.variables[i].is_enum){
+                        //     context.variable_position = i;
+                        //     context.enum_found = true;
+                        //     return;
+                        // } should not do anything because enum can't be assigned
+                    }
+                    vect_decr.pop_back();
+                }
                 //look for global ones
                 for(int i = 0; i < context.variables.size() && !context.variable_found; i++){
                     if(context.variables[i].name == *identifier && context.variables[i].scope == vect_decr){
                         context.variable_position = i;
-                        context.variable_found = true;
-
-                        dst<<"\tlui\t$2,%hi("<<context.variables[context.variable_position].name<<")\n";
-                        dst<<"\tlw\t$2,%lo("<<context.variables[context.variable_position].name<<")($2)\n";
-                        dst<<"\taddiu\t$sp,$sp,-"<<context.largest_decl<<"\n";
-                        dst<<"\tsw\t$2,($sp)\n";
+                        context.global_found = true;
+                        return;
                     }
                 }
 
-                if(!context.variable_found){
+                if(!context.variable_found && context.global_found){
                     ;
                     std::cout<<"havent found "<< *identifier <<std::endl;
 
-                    //Shift through global variables
                 }
-                if(!context.enum_found){
-                    std::cout<<"havent found enum"<<*identifier<<std::endl;
-                }
-                context.enum_found=false;
 
                 context.variable_found=false;
+                context.global_found = false;
+                context.enum_found=false;
+            }
+
+            else if(context.print_function_identifier){
+                dst<<"\tjal\t"<<*identifier<<"\nnop\n";
+                dst<<"\taddiu\t$sp,$sp,-"<<context.largest_decl<<"\n"; ///might need to start pushing at 0 first instead of -4
+                // context.element_position+=context.largest_decl;
+                dst<<"\tsw\t$2,($sp)\n";
 
             }
 
 
+            else{
+                //getting the value
+                context.variable_found = false;
+                context.enum_found=false;
+                context.global_found = false;
+                std::vector<int> vect_decr= context.current_scope;
+                for(int size = vect_decr.size(); size>1 && !context.variable_found; size--){
+                    for(int i = 0; i < context.variables.size() && !context.variable_found; i++){
+                        if(context.variables[i].name == *identifier && context.variables[i].scope == vect_decr&&!context.variables[i].is_enum){
+                            context.variable_position = i;
+                            context.variable_found = true;
+                            return;
+                        }
+                        else if(context.variables[i].name == *identifier && context.variables[i].scope == vect_decr&&context.variables[i].is_enum){
+                            context.variable_position=i;
+                            context.enum_found=true;
 
+                        }
+                    }
+                    vect_decr.pop_back();
+                }
+                if(context.variable_found){
+                    dst<<"\tlw\t$2,"<<context.variables[context.variable_position].stack_offset<<"($fp)\n";
+
+                    dst<<"\taddiu\t$sp,$sp,-"<<context.largest_decl<<"\n";
+                    dst<<"\tsw\t$2,($sp)\n";
+                    context.variable_found=false;
+                }
+                else if(context.enum_found){
+                    dst<<"\taddiu\t$2,$0,"<<context.variables[context.variable_position].enumerator_value<<"\n";
+                    dst<<"\taddiu\t$sp,$sp,-"<<context.largest_decl<<"\n";
+                    dst<<"\tsw\t$2,($sp)\n";
+                    context.enum_found=false;
+                }
+                else{
+                    //look for global ones
+                    for(int i = 0; i < context.variables.size() && !context.variable_found; i++){
+                        if(context.variables[i].name == *identifier && context.variables[i].scope == vect_decr){
+                            context.variable_position = i;
+                            context.variable_found = true;
+
+                            dst<<"\tlui\t$2,%hi("<<context.variables[context.variable_position].name<<")\n";
+                            dst<<"\tlw\t$2,%lo("<<context.variables[context.variable_position].name<<")($2)\n";
+                            dst<<"\taddiu\t$sp,$sp,-"<<context.largest_decl<<"\n";
+                            dst<<"\tsw\t$2,($sp)\n";
+                        }
+                    }
+
+                    if(!context.variable_found){
+                        ;
+                        std::cout<<"havent found "<< *identifier <<std::endl;
+
+                        //Shift through global variables
+                    }
+                    if(!context.enum_found){
+                        std::cout<<"havent found enum"<<*identifier<<std::endl;
+                    }
+                    context.enum_found=false;
+
+                    context.variable_found=false;
+
+                }
+            }
 
         }
-    }
-    else if(expression!=NULL){
-        expression->compile(dst,context);
+        else if(expression!=NULL){
+            expression->compile(dst,context);
+        }
     }
 }
+
+
+
+
+
+
+
+
 
 
 void Type_specifier::compile(std::ostream &dst, Context& context) const{
@@ -1695,10 +1857,10 @@ void Enumerator::compile(std::ostream &dst, Context& context) const{
     else if(cont_expr!=NULL&&enum_constant!=NULL){
         int result = cont_expr->evaluate(context);
         context.tmp.is_enum=true;
-        context.tmp.name = enum_constant->*identifier;
+        context.tmp.name = *(enum_constant->identifier);
         context.tmp.scope = context.current_scope;
         context.tmp.value = result;
-        variables.push_back(tmp);
+        context.variables.push_back(context.tmp);
 
     }
 }
@@ -1922,6 +2084,14 @@ int Expression::evaluate(Context& context) const{
     //skip for now
     if(assign_expr!=NULL){
         return assign_expr->evaluate(context);
+    }
+    else return 0;
+}
+
+int:: Constant_expression::evaluate(Context& context) const{
+    //skip for now
+    if(cond_expr!=NULL){
+        return cond_expr->evaluate(context);
     }
     else return 0;
 }

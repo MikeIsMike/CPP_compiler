@@ -25,8 +25,13 @@ struct Context{
     int variable_position;
     bool variable_found = false;
     bool enum_found = false;
+
+    bool global_found = false;
+
     int element_position;
     int current_fp;
+
+    bool got_to_rule_5 = false;
 
     bool external_decl = false;
     bool print_function_identifier = false;
@@ -44,6 +49,7 @@ struct Context{
     bool stack_counting=false;
     int declaration_count=0;
     int largest_decl = 8;
+    bool function_to_compound = false;
 
     bool function_declaration = false;
     bool in_argument_expression_list = false;

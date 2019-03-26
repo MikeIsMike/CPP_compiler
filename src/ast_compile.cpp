@@ -58,6 +58,7 @@ void Function_definition::compile(std::ostream &dst, Context& context) const{
                 context.last_scope = tmp;
             }
 
+            context.current_stack_offset = 24;
             //Count minimum number of variables for memory allocation
             context.declaration_count = 0;
             context.stack_counting = true;
@@ -81,7 +82,6 @@ void Function_definition::compile(std::ostream &dst, Context& context) const{
             //
             // // context.current_fp = context.element_position;
             // dst<<"\tmove\t$fp,$sp\n";
-            context.current_stack_offset = 24;
 
 
 
@@ -726,6 +726,10 @@ void Direct_declarator::compile(std::ostream &dst, Context& context) const{ //gl
                             context.tmp.scope = context.current_scope;
                             context.tmp.stack_offset = context.current_stack_offset;
                             context.current_stack_offset = context.current_stack_offset + 8; //Change to address different variable types and padding, this only works for int
+
+                            std::cout<<context.tmp.name<<std::endl;
+                            std::cout<<context.tmp.stack_offset<<std::endl;
+
                         }
 
                     }
@@ -741,6 +745,9 @@ void Direct_declarator::compile(std::ostream &dst, Context& context) const{ //gl
                         if(context.decl_to_reg<8){
                             dst<<"\tsw\t$"<<context.decl_to_reg<<","<<context.current_stack_offset - 8<<"($fp)\n";
                         }
+
+                        std::cout<<context.tmp.name<<std::endl;
+                        std::cout<<context.tmp.stack_offset<<std::endl;
 
                         context.variables.push_back(context.tmp);
                     }

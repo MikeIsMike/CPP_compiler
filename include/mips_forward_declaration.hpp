@@ -33,8 +33,8 @@ struct Context{
 
     Binding tmp;
     bool parameter_declaration = false;
-    int decl_to_reg = 4;
-    int val_to_reg = 4;
+    int decl_to_reg = 4;//function parameter input register index when writing
+    int val_to_reg = 4;//function parameter register index when reading
 
     bool stack_counting=false;
     int declaration_count=0;

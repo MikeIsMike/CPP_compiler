@@ -90,6 +90,9 @@ void Function_definition::compile(std::ostream &dst, Context& context) const{
             compound_stmnt->compile(dst, context);
 
             //Change Context
+            std::cout<<context.current_scope.size()<<std::endl;
+            std::cout<<context.last_scope.size()<<std::endl;
+
             context.last_scope = context.current_scope;
             context.current_scope.pop_back();
 
@@ -154,6 +157,9 @@ void Expression_statement::compile(std::ostream &dst, Context &context) const{
     else{
         if(expr!=NULL){
             expr->compile(dst, context);
+            //popping one from stack after every expression
+            dst<<"\tlw\t$2,($sp)\n";
+            dst<<"\taddiu\t$sp,$sp,"<<context.largest_decl<<"\n";
         }
     }
 }
@@ -187,7 +193,7 @@ void Compound_statement::compile(std::ostream &dst, Context &context) const{
 
 void Declaration_list::compile(std::ostream &dst, Context &context) const{
     if(context.stack_counting){
-        context.declaration_count++;
+        context.declaration_count++;///change to count elements in array
         if(decl_list!=NULL){
             decl_list->compile(dst, context);
         }
@@ -421,9 +427,9 @@ void Jump_statement::compile(std::ostream &dst, Context& context) const{
                 dst<<"\tlw\t$2,($sp)\n";
                 dst<<"\taddiu\t$sp,$sp,"<<context.largest_decl<<"\n";
 
-                //Change Context
-                context.last_scope = context.current_scope;
-                context.current_scope.pop_back();
+                // //Change Context
+                // context.last_scope = context.current_scope;
+                // context.current_scope.pop_back();
 
 
                 //Deallocate stack
@@ -439,9 +445,9 @@ void Jump_statement::compile(std::ostream &dst, Context& context) const{
 
                 dst<<"#jump_statement without return value\n";
 
-                //Change Context
-                context.last_scope = context.current_scope;
-                context.current_scope.pop_back();
+                // // Change Context
+                // context.last_scope = context.current_scope;
+                // context.current_scope.pop_back();
 
 
                 //Deallocate stack
@@ -707,6 +713,13 @@ void Direct_declarator::compile(std::ostream &dst, Context& context) const{ //gl
         //     function = false;
         //
         //     break;
+        case 3://array with number of elements specified
+            if(context.stack_counting){
+                // const_expr->eval(dst,context);///need to eval instead of compile
+
+
+            }
+            break;
         case 5:
             if(direct_decl!=NULL){
                 if(context.stack_counting){;}
@@ -749,7 +762,7 @@ void Direct_declarator::compile(std::ostream &dst, Context& context) const{ //gl
 
 
 void Assignment_expression::compile(std::ostream &dst, Context& context) const{
-    context.assignment_expression_lvl++;
+    // context.assignment_expression_lvl++; //not needed, instead always pop from stack at the end of expression_statement;
     if(cond_expr!=NULL){
         cond_expr->compile(dst, context);
 
@@ -775,7 +788,7 @@ void Assignment_expression::compile(std::ostream &dst, Context& context) const{
         dst<<"\taddiu\t$sp,$sp,"<<context.largest_decl<<"\n";
 
 
-        if(context.variable_found&&assign_op!=NULL){//lefthandside variable, rhs is already evaluated
+        if(context.variable_found&&assign_op!=NULL){//lefthandside variable, rhs is already evaluated and stored in register 2
             dst<<"\tlw\t$t0,"<<context.variables[context.variable_position].stack_offset<<"($fp)\n";//lhs value loaded into t0
 
             if(*assign_op=="="){
@@ -817,19 +830,20 @@ void Assignment_expression::compile(std::ostream &dst, Context& context) const{
             }
 
             dst<<"\tsw\t$2,"<<context.variables[context.variable_position].stack_offset<<"($fp)\n";
-            if(context.assignment_expression_lvl!=1){
-                dst<<"\taddiu\t$sp,$sp,-"<<context.largest_decl<<"\n";
-                dst<<"\tsw\t$2,($sp)\n";
-            }
+            // if(context.assignment_expression_lvl!=1){
+            dst<<"\taddiu\t$sp,$sp,-"<<context.largest_decl<<"\n";
+            dst<<"\tsw\t$2,($sp)\n";
+            // }
 
             //IF PASSING VALUE TO A FUNCTION
             if(context.in_argument_expression_list){
                 dst<<"\taddiu\t$"<<context.val_to_reg<<",$2,0\n";
             }
 
+            context.variable_found=false;
         }
     }
-    context.assignment_expression_lvl--;
+    // context.assignment_expression_lvl--;
 }
 
 void Conditional_expression::compile(std::ostream &dst, Context& context) const{
@@ -1035,7 +1049,7 @@ void Equality_expression::compile(std::ostream &dst, Context& context) const{
             dst<<"\tlw\t$2,($sp)\n";
             dst<<"\taddiu\t$sp,$sp,"<<context.largest_decl<<"\n";
             // context.element_position-=context.largest_decl;
-            dst<<"\txori\t$2,$2,$t0\n";
+            dst<<"\txor\t$2,$2,$t0\n";
             dst<<"\tsltu\t$2,$0,$2\n";
 
             dst<<"\tandi\t$2,$2,0x00ff\n";
@@ -1160,7 +1174,11 @@ void Shift_expression::compile(std::ostream &dst, Context& context) const{
 void Expression::compile(std::ostream &dst, Context& context) const{
     if(expr==NULL && assign_expr!=NULL){
         assign_expr->compile(dst,context);
+        // context.variable_found=false;
     }
+    else if(expr!=NULL&&assign_expr!=NULL){
+        // context.variable_found=false;
+    }///to be implemented for multiple
 }
 
 void Additive_expression::compile(std::ostream &dst, Context& context) const{
@@ -1272,7 +1290,7 @@ void Unary_expression::compile(std::ostream &dst, Context& context) const{
             //Increment variable
             unary_expr->compile(dst,context);
             //FOUND?
-            if(context.variable_found){
+            // if(context.variable_found){
                 dst<<"\tlw\t$2,"<<context.variables[context.variable_position].stack_offset<<"($fp)\n";
                 dst<<"\taddi\t$2,$2,1\n";
                 dst<<"\tsw\t$2,"<<context.variables[context.variable_position].stack_offset<<"($fp)\n";
@@ -1283,13 +1301,15 @@ void Unary_expression::compile(std::ostream &dst, Context& context) const{
 
                 dst<<"\taddiu\t$sp,$sp,-"<<context.largest_decl<<"\n";
                 dst<<"\tsw\t$2,($sp)\n";
-            }
+                context.variable_found=false;
+
+            // }
         }
         else if(*oper=="--"){
             //Increment variable
             unary_expr->compile(dst,context);
 
-            if(context.variable_found){
+            // if(context.variable_found){
                 dst<<"\tlw\t$2,"<<context.variables[context.variable_position].stack_offset<<"($fp)\n";
                 dst<<"\taddi\t$2,$2,-1\n";
                 dst<<"\tsw\t$2,"<<context.variables[context.variable_position].stack_offset<<"($fp)\n";
@@ -1300,14 +1320,19 @@ void Unary_expression::compile(std::ostream &dst, Context& context) const{
 
                 dst<<"\taddiu\t$sp,$sp,-"<<context.largest_decl<<"\n";
                 dst<<"\tsw\t$2,($sp)\n";
-            }
+                context.variable_found=false;
+
+            // }
         }
         else if(*oper=="sizeof"){;}
+
     }
     else if(cast_expr!=NULL&&unary_op!=NULL){
         cast_expr->compile(dst,context);
         if(context.variable_found){
             dst<<"\tlw\t$2,"<<context.variables[context.variable_position].stack_offset<<"($fp)\n";//load variable
+            context.variable_found=false;
+
         }
         else{
             dst<<"\tlw\t$2,($sp)\n";//load from stack a constant when it's not a variable
@@ -1338,6 +1363,7 @@ void Unary_expression::compile(std::ostream &dst, Context& context) const{
 
         if(context.variable_found){
             dst<<"\tsw\t$2,"<<context.variables[context.variable_position].stack_offset<<"($fp)\n";
+            context.variable_found=false;
         }
 
         dst<<"\taddiu\t$sp,$sp,-"<<context.largest_decl<<"\n";
@@ -1352,21 +1378,28 @@ void Postfix_expression::compile(std::ostream &dst, Context& context) const{
     }
     else if(postf_expr!=NULL&&oper!=NULL&&identifier==NULL){
         ///need to retrieve variable value from stack and update its value
+
         if(*oper=="++"){
             postf_expr->compile(dst,context);
             //Increment variable
-            dst<<"\tlw\t$2,"<<context.variables[context.variable_position].stack_offset<<"($fp)\n";
-            dst<<"\taddi\t$2,$2,1\n";
-            dst<<"\tsw\t$2,"<<context.variables[context.variable_position].stack_offset<<"($fp)\n";
-
+            // if(context.variable_found){
+                dst<<"\tlw\t$2,"<<context.variables[context.variable_position].stack_offset<<"($fp)\n";
+                dst<<"\taddi\t$2,$2,1\n";
+                dst<<"\tsw\t$2,"<<context.variables[context.variable_position].stack_offset<<"($fp)\n";
+                context.variable_found=false;
+            // }
 
         }
         else if(*oper=="--"){
             postf_expr->compile(dst,context);
-            dst<<"\tlw\t$2,"<<context.variables[context.variable_position].stack_offset<<"($fp)\n";
-            dst<<"\taddi\t$2,$2,-1\n";
-            dst<<"\tsw\t$2,"<<context.variables[context.variable_position].stack_offset<<"($fp)\n";
+            // if(context.variable_found){
+                dst<<"\tlw\t$2,"<<context.variables[context.variable_position].stack_offset<<"($fp)\n";
+                dst<<"\taddi\t$2,$2,-1\n";
+                dst<<"\tsw\t$2,"<<context.variables[context.variable_position].stack_offset<<"($fp)\n";
+                context.variable_found=false;
+            // }
         }
+
     }
     else if(postf_expr!=NULL&&expr!=NULL){
         ///rule 2, array
@@ -1415,7 +1448,7 @@ void Primary_expression::compile(std::ostream &dst, Context& context) const{
         // context.element_position+=context.largest_decl;
         dst<<"\tsw\t$2,($sp)\n";
     }
-    if(identifier!=NULL){
+    else if(identifier!=NULL){
         if(context.in_assignment_expression){
             for(int i = 0; i < context.variables.size(); i++){
                 if(context.variables[i].name == *identifier){
@@ -1459,8 +1492,12 @@ void Primary_expression::compile(std::ostream &dst, Context& context) const{
 
                 dst<<"\taddiu\t$sp,$sp,-"<<context.largest_decl<<"\n";
                 dst<<"\tsw\t$2,($sp)\n";
+                context.variable_found=false;
             }
 
         }
+    }
+    else if(expression!=NULL){
+        expression->compile(dst,context);
     }
 }

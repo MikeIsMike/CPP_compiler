@@ -12,9 +12,9 @@ if [[ ! -f bin/c_compiler ]] ; then
     have_compiler=1
 fi
 
-input_dir="ourtest/test"
+input_dir="test_deliverable/test_cases"
 
-working="tmp/compiler"
+working="tmp/deliverable"
 mkdir -p ${working}
 
 for i in ${input_dir}/*.c ; do
@@ -22,12 +22,12 @@ for i in ${input_dir}/*.c ; do
         base=$(echo $i | sed -E -e "s|${input_dir}/([^.]+)[.]c|\1|g");
         #| is delimiter here because / is used as directory separater. Replaces ${input_dir}/([^.]+)[.]c with ([^.]+)
 
-        # Compile the reference C version
-        gcc -std=c89 -ansi $i $input_dir/${base}_driver.c -o $working/$base
-
-        # Run the reference C version
-        $working/$base
-        REF_C_OUT=$?
+        # # Compile the reference C version
+        # gcc $i $input_dir/${base}_driver.c -o $working/$base
+        #
+        # # Run the reference C version
+        # $working/$base
+        # REF_C_OUT=$?
 
 
 
@@ -48,7 +48,7 @@ for i in ${input_dir}/*.c ; do
 
         if [[ ${have_compiler} -ne 0 ]] ; then
             echo "$base, Fail, No C compiler/translator"
-        elif [[ $REF_C_OUT -ne $GOT_C_OUT ]] ; then
+        elif [[ 0 -ne $GOT_C_OUT ]] ; then
             echo "$base, Fail, Expected ${REF_C_OUT}, got ${GOT_C_OUT}"
         else
             echo "$base, Pass"

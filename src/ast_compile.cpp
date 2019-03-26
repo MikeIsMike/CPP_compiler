@@ -925,6 +925,10 @@ void Assignment_expression::compile(std::ostream &dst, Context& context) const{
         }
     }
 
+
+
+
+
     else{
         if(assign_expr!=NULL){
             assign_expr->compile(dst, context);
@@ -1635,8 +1639,8 @@ void Postfix_expression::compile(std::ostream &dst, Context& context) const{
         context.print_function_identifier = false;
 
     }
-    else if(postf_expr!=NULL && expr==NULL && arg_expr_list!=NULL && oper==NULL && identifier==NULL){ //f(a,b,c)
-        ///to be implemented function call with parameters
+    else if(postf_expr!=NULL && expr!=NULL && arg_expr_list==NULL && oper==NULL && identifier==NULL){ //f(a,b,c)
+        ;
     }
 
 }
@@ -1675,6 +1679,7 @@ void Primary_expression::compile(std::ostream &dst, Context& context) const{
             // context.element_position+=context.largest_decl;
             dst<<"\tsw\t$2,($sp)\n";
         }
+
         else if(identifier!=NULL){
 
 

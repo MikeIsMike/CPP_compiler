@@ -15,3 +15,4 @@ tmp/compiler/mips/*
 tmp/compiler/*
 test_program
 test_program.o
+*.csv

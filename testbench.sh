@@ -37,11 +37,11 @@ for i in ${input_dir}/*.c ; do
             $compiler -S $i -o ${working}/mips/$base-got.s
 
             # Run the mips code compiled by our own compiler
-            mips-linux-gnu-gcc -mfp32 -o test_program.o -c ${working}/mips/$base-got.s
+            timeout 3 mips-linux-gnu-gcc -mfp32 -o test_program.o -c ${working}/mips/$base-got.s
 
-            mips-linux-gnu-gcc -mfp32 -static -o test_program test_program.o
+            timeout 3 mips-linux-gnu-gcc -mfp32 -static -o test_program test_program.o
 
-            timeout 5 qemu-mips test_program
+            timeout 10 qemu-mips test_program
 
             GOT_C_OUT=$?
         fi

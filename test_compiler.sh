@@ -1,5 +1,17 @@
 #!/bin/bash
 
+
+blk=$'\x1b[90m' # Sets text to black
+red=$'\x1b[31m' # Sets text to red
+grn=$'\x1b[92m' # Sets text to green
+ylw=$'\x1b[93m' # Sets text to yellow
+blu=$'\x1b[94m' # Sets text to blue
+pur=$'\x1b[95m' # Sets text to purple
+cyn=$'\x1b[96m' # Sets text to cyan
+wht=$'\x1b[97m' # Sets text to white
+rst=$'\x1b[0m'  # resets to default terminal color
+
+
 if [[ "$1" != "" ]] ; then
     compiler="$1"
 else
@@ -37,21 +49,21 @@ for i in ${input_dir}/*.c ; do
             $compiler -S $i -o ${working}/mips/$base-got.s
 
             # Run the mips code compiled by our own compiler
-            mips-linux-gnu-gcc -mfp32 -o test_program.o -c ${working}/mips/$base-got.s
+            timeout 3 mips-linux-gnu-gcc -mfp32 -o test_program.o -c ${working}/mips/$base-got.s
 
-            mips-linux-gnu-gcc -mfp32 -static -o test_program test_program.o ${input_dir}/${base}_driver.c
+            timeout 3 mips-linux-gnu-gcc -mfp32 -static -o test_program test_program.o ${input_dir}/${base}_driver.c
 
-            qemu-mips test_program
+            timeout 10 qemu-mips test_program
             GOT_C_OUT=$?
         fi
 
 
         if [[ ${have_compiler} -ne 0 ]] ; then
-            echo "$base, Fail, No C compiler/translator"
+            echo "$base, ${red}Fail, No C compiler/translator"
         elif [[ $REF_C_OUT -ne $GOT_C_OUT ]] ; then
-            echo "$base, Fail, Expected ${REF_C_OUT}, got ${GOT_C_OUT}"
+            echo "$base, ${red}Fail, ${wht}Expected ${REF_C_OUT}, got ${GOT_C_OUT}"
         else
-            echo "$base, Pass"
+            echo "$base, ${grn}Pass, Expected ${REF_C_OUT}, got ${GOT_C_OUT}${wht}"
         fi
     fi
 done

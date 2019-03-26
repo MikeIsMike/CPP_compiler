@@ -34,7 +34,7 @@ void External_declaration::compile(std::ostream &dst, Context& context) const{
     else if(decl!=NULL){
         context.external_decl = true;
         decl->compile(dst, context);
-        context.external_decl = true;
+        context.external_decl = false;
 
     }
 }

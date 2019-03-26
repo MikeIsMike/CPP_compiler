@@ -58,6 +58,7 @@ void Function_definition::compile(std::ostream &dst, Context& context) const{
                 context.last_scope = tmp;
             }
 
+            context.current_stack_offset = 24;
             //Count minimum number of variables for memory allocation
             context.declaration_count = 0;
             context.stack_counting = true;
@@ -81,7 +82,6 @@ void Function_definition::compile(std::ostream &dst, Context& context) const{
             //
             // // context.current_fp = context.element_position;
             // dst<<"\tmove\t$fp,$sp\n";
-            context.current_stack_offset = 24;
 
 
 
@@ -152,9 +152,11 @@ void Parameter_declaration::compile(std::ostream &dst, Context &context) const{
 void Expression_statement::compile(std::ostream &dst, Context &context) const{
     if(context.stack_counting){;}
     else{
+
         if(expr!=NULL){
             expr->compile(dst, context);
             //popping one from stack after every expression
+            dst<<"#expression_statement\n";
             dst<<"\tlw\t$2,($sp)\n";
             dst<<"\taddiu\t$sp,$sp,"<<context.largest_decl<<"\n";
         }
@@ -669,11 +671,7 @@ void Iteration_statement::compile(std::ostream &dst, Context& context) const{
 
             expr_stmnt_2->compile(dst, context);
 
-            dst<<"\tlw\t$8,($sp)\n";
-            dst<<"\taddiu\t$sp,$sp,"<<"8"<<"\n";
-
-
-            dst<<"\tbeq\t$8,$0,"<<"$END"<<branch<<"\n";
+            dst<<"\tbeq\t$2,$0,"<<"$END"<<branch<<"\n";
             dst<<"nop\n";
 
             dst<<"$CONTINUESTART"<<branch<<":\n";
@@ -726,6 +724,10 @@ void Direct_declarator::compile(std::ostream &dst, Context& context) const{ //gl
                             context.tmp.scope = context.current_scope;
                             context.tmp.stack_offset = context.current_stack_offset;
                             context.current_stack_offset = context.current_stack_offset + 8; //Change to address different variable types and padding, this only works for int
+
+                            std::cout<<context.tmp.name<<std::endl;
+                            std::cout<<context.tmp.stack_offset<<std::endl;
+
                         }
 
                     }
@@ -741,6 +743,9 @@ void Direct_declarator::compile(std::ostream &dst, Context& context) const{ //gl
                         if(context.decl_to_reg<8){
                             dst<<"\tsw\t$"<<context.decl_to_reg<<","<<context.current_stack_offset - 8<<"($fp)\n";
                         }
+
+                        std::cout<<context.tmp.name<<std::endl;
+                        std::cout<<context.tmp.stack_offset<<std::endl;
 
                         context.variables.push_back(context.tmp);
                     }
@@ -1237,6 +1242,7 @@ void Shift_expression::compile(std::ostream &dst, Context& context) const{
 
 void Expression::compile(std::ostream &dst, Context& context) const{
     if(expr==NULL && assign_expr!=NULL){
+        dst<<"#expression\n";
         assign_expr->compile(dst,context);
         // context.variable_found=false;
     }

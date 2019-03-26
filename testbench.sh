@@ -41,7 +41,8 @@ for i in ${input_dir}/*.c ; do
 
             mips-linux-gnu-gcc -mfp32 -static -o test_program test_program.o
 
-            qemu-mips test_program
+            timeout 5 qemu-mips test_program
+
             GOT_C_OUT=$?
         fi
 

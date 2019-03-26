@@ -1101,7 +1101,7 @@ void Equality_expression::compile(std::ostream &dst, Context& context) const{
             dst<<"\tlw\t$2,($sp)\n";
             dst<<"\taddiu\t$sp,$sp,"<<context.largest_decl<<"\n";
             // context.element_position-=context.largest_decl;
-            dst<<"\txori\t$2,$2,$t0\n";
+            dst<<"\txor\t$2,$2,$t0\n";
             dst<<"\tsltu\t$2,$2,1\n";
 
             dst<<"\tandi\t$2,$2,0x00ff\n";

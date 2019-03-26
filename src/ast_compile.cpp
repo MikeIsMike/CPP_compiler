@@ -900,7 +900,9 @@ void Assignment_expression::compile(std::ostream &dst, Context& context) const{
                 dst<<"\tor\t$2,$t0,$2\n";
             }
 
-            dst<<"\tsw\t$2,"<<context.variables[context.variable_position].stack_offset<<"($fp)\n";
+            if(!context.enum_found){
+                dst<<"\tsw\t$2,"<<context.variables[context.variable_position].stack_offset<<"($fp)\n";
+            }
             // if(context.assignment_expression_lvl!=1){
             dst<<"\taddiu\t$sp,$sp,-"<<context.largest_decl<<"\n";
             dst<<"\tsw\t$2,($sp)\n";
@@ -1363,6 +1365,7 @@ void Unary_expression::compile(std::ostream &dst, Context& context) const{
             unary_expr->compile(dst,context);
             //FOUND?
             // if(context.variable_found){
+            if(!context.enum_found){
                 dst<<"\tlw\t$2,"<<context.variables[context.variable_position].stack_offset<<"($fp)\n";
                 dst<<"\taddi\t$2,$2,1\n";
                 dst<<"\tsw\t$2,"<<context.variables[context.variable_position].stack_offset<<"($fp)\n";
@@ -1374,7 +1377,7 @@ void Unary_expression::compile(std::ostream &dst, Context& context) const{
                 dst<<"\taddiu\t$sp,$sp,-"<<context.largest_decl<<"\n";
                 dst<<"\tsw\t$2,($sp)\n";
                 context.variable_found=false;
-
+            }
             // }
         }
         else if(*oper=="--"){
@@ -1382,6 +1385,7 @@ void Unary_expression::compile(std::ostream &dst, Context& context) const{
             unary_expr->compile(dst,context);
 
             // if(context.variable_found){
+            if(!context.enum_found){
                 dst<<"\tlw\t$2,"<<context.variables[context.variable_position].stack_offset<<"($fp)\n";
                 dst<<"\taddi\t$2,$2,-1\n";
                 dst<<"\tsw\t$2,"<<context.variables[context.variable_position].stack_offset<<"($fp)\n";
@@ -1393,7 +1397,7 @@ void Unary_expression::compile(std::ostream &dst, Context& context) const{
                 dst<<"\taddiu\t$sp,$sp,-"<<context.largest_decl<<"\n";
                 dst<<"\tsw\t$2,($sp)\n";
                 context.variable_found=false;
-
+            }
             // }
         }
         else if(*oper=="sizeof"){;}
@@ -1455,20 +1459,24 @@ void Postfix_expression::compile(std::ostream &dst, Context& context) const{
             postf_expr->compile(dst,context);
             //Increment variable
             // if(context.variable_found){
+            if(!context.enum_found){
                 dst<<"\tlw\t$2,"<<context.variables[context.variable_position].stack_offset<<"($fp)\n";
                 dst<<"\taddi\t$2,$2,1\n";
                 dst<<"\tsw\t$2,"<<context.variables[context.variable_position].stack_offset<<"($fp)\n";
                 context.variable_found=false;
+            }
             // }
 
         }
         else if(*oper=="--"){
             postf_expr->compile(dst,context);
             // if(context.variable_found){
+            if(!context.enum_found){
                 dst<<"\tlw\t$2,"<<context.variables[context.variable_position].stack_offset<<"($fp)\n";
                 dst<<"\taddi\t$2,$2,-1\n";
                 dst<<"\tsw\t$2,"<<context.variables[context.variable_position].stack_offset<<"($fp)\n";
                 context.variable_found=false;
+            }
             // }
         }
 
@@ -1525,14 +1533,20 @@ void Primary_expression::compile(std::ostream &dst, Context& context) const{
             //only finding the position
 
             context.variable_found = false;
+            context.enum_found=false;
             std::vector<int> vect_decr= context.current_scope;
             for(int size = vect_decr.size(); size>1 && !context.variable_found; size--){
                 for(int i = 0; i < context.variables.size() && !context.variable_found; i++){
-                    if(context.variables[i].name == *identifier && context.variables[i].scope == vect_decr){
+                    if(context.variables[i].name == *identifier && context.variables[i].scope == vect_decr&&!context.variables[i].is_enum){
                         context.variable_position = i;
                         context.variable_found = true;
                         return;
                     }
+                    // else if(context.variables[i].name == *identifier && context.variables[i].scope == vect_decr&&context.variables[i].is_enum){
+                    //     context.variable_position = i;
+                    //     context.enum_found = true;
+                    //     return;
+                    // } should not do anything because enum can't be assigned
                 }
                 vect_decr.pop_back();
             }
@@ -1546,12 +1560,14 @@ void Primary_expression::compile(std::ostream &dst, Context& context) const{
             // }
 
             if(!context.variable_found){
-                ;
+
                 std::cout<<"havent found "<< *identifier <<std::endl;
 
             }
 
+
             context.variable_found=false;
+            contexet.enum_found=false;
 
         }
         else if(context.print_function_identifier){
@@ -1564,12 +1580,18 @@ void Primary_expression::compile(std::ostream &dst, Context& context) const{
         else{
             //getting the value
             context.variable_found = false;
+            context.enum_found=false;
             std::vector<int> vect_decr= context.current_scope;
             for(int size = vect_decr.size(); size>1 && !context.variable_found; size--){
                 for(int i = 0; i < context.variables.size() && !context.variable_found; i++){
-                    if(context.variables[i].name == *identifier && context.variables[i].scope == vect_decr){
+                    if(context.variables[i].name == *identifier && context.variables[i].scope == vect_decr&&!context.variables[i].is_enum){
                         context.variable_position = i;
                         context.variable_found = true;
+                    }
+                    else if(context.variables[i].name == *identifier && context.variables[i].scope == vect_decr&&context.variables[i].is_enum){
+                        context.variable_position=i;
+                        context.enum_found=true;
+
                     }
                 }
                 vect_decr.pop_back();
@@ -1580,6 +1602,12 @@ void Primary_expression::compile(std::ostream &dst, Context& context) const{
                 dst<<"\taddiu\t$sp,$sp,-"<<context.largest_decl<<"\n";
                 dst<<"\tsw\t$2,($sp)\n";
                 context.variable_found=false;
+            }
+            else if(context.enum_found){
+                dst<<"\taddiu\t$2,$0,"<<context.variables[context.variable_position].enumerator_value<<"\n";
+                dst<<"\taddiu\t$sp,$sp,-"<<context.largest_decl<<"\n";
+                dst<<"\tsw\t$2,($sp)\n";
+                context.enum_found=false;
             }
             else{
                 //look for global ones
@@ -1601,6 +1629,10 @@ void Primary_expression::compile(std::ostream &dst, Context& context) const{
 
                     //Shift through global variables
                 }
+                if(!context.enum_found){
+                    std::cout<<"havent found enum"<<*identifier<<std::endl;
+                }
+                context.enum_found=false;
 
                 context.variable_found=false;
 
@@ -1643,23 +1675,30 @@ void Enumerator_list::compile(std::ostream &dst, Context& context) const{
 
 void Enumerator::compile(std::ostream &dst, Context& context) const{
     if(cont_expr==NULL&&enum_constant!=NULL){
-        context.tmp.name = enum_constant->*identifier;
-        int index = enumerators.size()-1;
-        if(index>=0){
-            context.tmp.value = enumerators[index].value+1;
+        context.tmp.name = *(enum_constant->identifier);
+        context.tmp.is_enum=true;
+        if(context.variables.size()>0){
+            int last_enum_value=0;
+            for(int i=0; i<context.variables.size();i++){
+                if(context.variables[i].is_enum){
+                    last_enum_value=context.variables[i].enumerator_value;
+                }
+            }
+            context.tmp.value = last_enum_value+1;
         }
         else{
             context.tmp.value = 0;
         }
         context.tmp.scope = context.current_scope;
-        enumerators.push_back(tmp);
+        context.variables.push_back(context.tmp);
     }
     else if(cont_expr!=NULL&&enum_constant!=NULL){
         int result = cont_expr->evaluate(context);
+        context.tmp.is_enum=true;
         context.tmp.name = enum_constant->*identifier;
         context.tmp.scope = context.current_scope;
         context.tmp.value = result;
-        enumerators.push_back(tmp);
+        variables.push_back(tmp);
 
     }
 }

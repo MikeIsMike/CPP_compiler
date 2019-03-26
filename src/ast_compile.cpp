@@ -247,7 +247,9 @@ void Init_declarator::compile(std::ostream &dst, Context& context) const{
             dst<<"\t.data\n";
             dst<<"\t.align  2\n";
             dst<<"\t.type "<<context.tmp.name<<" @object\n";
-            dst<<context.tmp.name<<": \n\t .word 0\n";
+            context.tmp.scope = context.current_scope;
+            context.variables.push_back(context.tmp);
+
         }
         else{
             declarator->compile(dst, context);
@@ -262,6 +264,8 @@ void Init_declarator::compile(std::ostream &dst, Context& context) const{
             dst<<"\t.align  2\n";
             dst<<"\t.type "<<context.tmp.name<<" @object\n";
             dst<<context.tmp.name<<": \n\t .word "<<initializer->evaluate(context)<<"\n";
+            context.tmp.scope = context.current_scope;
+            context.variables.push_back(context.tmp);
 
         }
         else{
@@ -726,8 +730,6 @@ void Direct_declarator::compile(std::ostream &dst, Context& context) const{ //gl
                             context.tmp.stack_offset = context.current_stack_offset;
                             context.current_stack_offset = context.current_stack_offset + 8; //Change to address different variable types and padding, this only works for int
 
-                            std::cout<<context.tmp.name<<std::endl;
-                            std::cout<<context.tmp.stack_offset<<std::endl;
 
                         }
 
@@ -745,8 +747,6 @@ void Direct_declarator::compile(std::ostream &dst, Context& context) const{ //gl
                             dst<<"\tsw\t$"<<context.decl_to_reg<<","<<context.current_stack_offset - 8<<"($fp)\n";
                         }
 
-                        std::cout<<context.tmp.name<<std::endl;
-                        std::cout<<context.tmp.stack_offset<<std::endl;
 
                         context.variables.push_back(context.tmp);
                     }
@@ -1522,14 +1522,37 @@ void Primary_expression::compile(std::ostream &dst, Context& context) const{
     }
     else if(identifier!=NULL){
         if(context.in_assignment_expression){
-            for(int i = 0; i < context.variables.size(); i++){
-                if(context.variables[i].name == *identifier){
-                    context.variable_position = i;
-                    context.variable_found = true;
-                    return;
-                }
-            }
+            //only finding the position
+
             context.variable_found = false;
+            std::vector<int> vect_decr= context.current_scope;
+            for(int size = vect_decr.size(); size>1 && !context.variable_found; size--){
+                for(int i = 0; i < context.variables.size() && !context.variable_found; i++){
+                    if(context.variables[i].name == *identifier && context.variables[i].scope == vect_decr){
+                        context.variable_position = i;
+                        context.variable_found = true;
+                        return;
+                    }
+                }
+                vect_decr.pop_back();
+            }
+
+            // for(int i = 0; i < context.variables.size() && !context.variable_found; i++){
+            //     if(context.variables[i].name == *identifier && context.variables[i].scope == vect_decr){
+            //         context.variable_position = i;
+            //         context.variable_found = true;
+            //         return;
+            //     }
+            // }
+
+            if(!context.variable_found){
+                ;
+                std::cout<<"havent found "<< *identifier <<std::endl;
+
+            }
+
+            context.variable_found=false;
+
         }
         else if(context.print_function_identifier){
             dst<<"\tjal\t"<<*identifier<<"\nnop\n";
@@ -1539,9 +1562,10 @@ void Primary_expression::compile(std::ostream &dst, Context& context) const{
 
         }
         else{
+            //getting the value
             context.variable_found = false;
             std::vector<int> vect_decr= context.current_scope;
-            for(int size = vect_decr.size(); size>0 && !context.variable_found; size--){
+            for(int size = vect_decr.size(); size>1 && !context.variable_found; size--){
                 for(int i = 0; i < context.variables.size() && !context.variable_found; i++){
                     if(context.variables[i].name == *identifier && context.variables[i].scope == vect_decr){
                         context.variable_position = i;
@@ -1550,14 +1574,6 @@ void Primary_expression::compile(std::ostream &dst, Context& context) const{
                 }
                 vect_decr.pop_back();
             }
-
-            if(!context.variable_found){
-                ;
-                std::cout<<"havent found "<< *identifier <<std::endl;
-
-                //Shift through global variables
-            }
-
             if(context.variable_found){
                 dst<<"\tlw\t$2,"<<context.variables[context.variable_position].stack_offset<<"($fp)\n";
 
@@ -1565,6 +1581,33 @@ void Primary_expression::compile(std::ostream &dst, Context& context) const{
                 dst<<"\tsw\t$2,($sp)\n";
                 context.variable_found=false;
             }
+            else{
+                //look for global ones
+                for(int i = 0; i < context.variables.size() && !context.variable_found; i++){
+                    if(context.variables[i].name == *identifier && context.variables[i].scope == vect_decr){
+                        context.variable_position = i;
+                        context.variable_found = true;
+
+                        dst<<"\tlui\t$2,%hi("<<context.variables[context.variable_position].name<<")\n";
+                        dst<<"\tlw\t$2,%lo("<<context.variables[context.variable_position].name<<")($2)\n";
+                        dst<<"\taddiu\t$sp,$sp,-"<<context.largest_decl<<"\n";
+                        dst<<"\tsw\t$2,($sp)\n";
+                    }
+                }
+
+                if(!context.variable_found){
+                    ;
+                    std::cout<<"havent found "<< *identifier <<std::endl;
+
+                    //Shift through global variables
+                }
+
+                context.variable_found=false;
+
+            }
+
+
+
 
         }
     }

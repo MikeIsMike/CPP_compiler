@@ -89,8 +89,6 @@ void Function_definition::compile(std::ostream &dst, Context& context) const{
             compound_stmnt->compile(dst, context);
 
             //Change Context
-            std::cout<<context.current_scope.size()<<std::endl;
-            std::cout<<context.last_scope.size()<<std::endl;
 
             context.last_scope = context.current_scope;
             context.current_scope.pop_back();
@@ -1611,7 +1609,7 @@ int Logical_or_expression::evaluate(Context& context) const{
 
 int Logical_and_expression::evaluate(Context& context) const{
     if(logical_and_expr==NULL && inclusive_or_expr!=NULL){
-        return logical_and_expr->evaluate(context);
+        return inclusive_or_expr->evaluate(context);
     }
     else if(logical_and_expr!=NULL && inclusive_or_expr!=NULL){
         return (int)(logical_and_expr->evaluate(context) && inclusive_or_expr->evaluate(context));

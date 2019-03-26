@@ -1,6 +1,6 @@
 
 *.o
-./test_program
+test_program
 src/parser.tab.hpp
 src/parser.tab.cpp
 src/parser.output
@@ -16,4 +16,4 @@ tmp/compiler/*
 test_program
 test_program.o
 *.csv
-./ourtest/newtests/*
+ourtest/newtests/*

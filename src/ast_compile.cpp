@@ -300,6 +300,7 @@ void Declaration_specifiers::compile(std::ostream &dst, Context& context) const{
         // if((*type_spec)=="int"){
         //     ///do something in MIPS that corresponds to int return type
         // }
+        type_spec->compile(dst,context);
 
 
     }
@@ -784,7 +785,8 @@ void Direct_declarator::compile(std::ostream &dst, Context& context) const{ //gl
         //     break;
         case 3://array with number of elements specified
             if(context.stack_counting){
-                // const_expr->eval(dst,context);///need to eval instead of compile
+                // int result = const_expr->evaluate(context);
+
 
 
             }
@@ -1572,7 +1574,52 @@ void Primary_expression::compile(std::ostream &dst, Context& context) const{
 }
 
 
+void Type_specifier::compile(std::ostream &dst, Context& context) const{
+    if(enum_spec!=NULL){
+        enum_spec->compile(dst,context);
+    }
+}
 
+
+void Enum_specifier::compile(std::ostream &dst, Context& context) const{
+    if(identifier==NULL&&enum_list!=NULL){
+        enum_list->compile(dst,context);
+    }
+}
+
+
+void Enumerator_list::compile(std::ostream &dst, Context& context) const{
+    if(enum_list!=NULL){
+        enum_list->compile(dst,context);
+    }
+    if(enum_list==NULL && enumer!=NULL){
+        enumer->compile(dst,context);
+    }
+}
+
+
+void Enumerator::compile(std::ostream &dst, Context& context) const{
+    if(cont_expr==NULL&&enum_constant!=NULL){
+        context.tmp.name = enum_constant->*identifier;
+        int index = enumerators.size()-1;
+        if(index>=0){
+            context.tmp.value = enumerators[index].value+1;
+        }
+        else{
+            context.tmp.value = 0;
+        }
+        context.tmp.scope = context.current_scope;
+        enumerators.push_back(tmp);
+    }
+    else if(cont_expr!=NULL&&enum_constant!=NULL){
+        int result = cont_expr->evaluate(context);
+        context.tmp.name = enum_constant->*identifier;
+        context.tmp.scope = context.current_scope;
+        context.tmp.value = result;
+        enumerators.push_back(tmp);
+
+    }
+}
 
 
 

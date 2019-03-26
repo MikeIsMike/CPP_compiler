@@ -11,11 +11,15 @@ struct Binding{
     std::string name = "";
     std::vector<int> scope;
     int stack_offset;
+    int enumerator_value=0;
 
 };
 
 struct Context{
     std::vector<Binding> variables;
+    std::vector<Binding> enumerators;
+
+    bool in_enum = false;
     bool in_assignment_expression = false;
     int assignment_expression_lvl = 0;
     int variable_position;

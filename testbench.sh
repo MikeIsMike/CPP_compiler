@@ -30,7 +30,7 @@ for i in ${input_dir}/*.c ; do
         REF_C_OUT=$?
 
 
-
+        echo $base.c
         if [[ ${have_compiler} -eq 0 ]] ; then
 
             # Create the DUT python version by invoking the compiler with translation flags
@@ -45,7 +45,7 @@ for i in ${input_dir}/*.c ; do
             GOT_C_OUT=$?
         fi
 
-        echo $base
+
         if [[ ${have_compiler} -ne 0 ]] ; then
             echo "$base, Fail, No C compiler/translator" >>output1.csv
         elif [[ $REF_C_OUT -ne $GOT_C_OUT ]] ; then

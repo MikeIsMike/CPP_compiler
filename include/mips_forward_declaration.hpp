@@ -12,6 +12,7 @@ struct Binding{
     std::vector<int> scope;
     int stack_offset;
     int enumerator_value=0;
+    std::vector<int> array_dimentions;
     bool is_enum=false;
 
 };

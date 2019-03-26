@@ -925,6 +925,10 @@ void Assignment_expression::compile(std::ostream &dst, Context& context) const{
         }
     }
 
+
+
+
+
     else{
         if(assign_expr!=NULL){
             assign_expr->compile(dst, context);
@@ -1643,8 +1647,8 @@ void Postfix_expression::compile(std::ostream &dst, Context& context) const{
         context.print_function_identifier = false;
 
     }
-    else if(postf_expr!=NULL && expr==NULL && arg_expr_list!=NULL && oper==NULL && identifier==NULL){ //f(a,b,c)
-        ///to be implemented function call with parameters
+    else if(postf_expr!=NULL && expr!=NULL && arg_expr_list==NULL && oper==NULL && identifier==NULL){ //f(a,b,c)
+        ;
     }
 
 }
@@ -1663,15 +1667,14 @@ void Argument_expression_list::compile(std::ostream &dst, Context& context) cons
 
 
 void Primary_expression::compile(std::ostream &dst, Context& context) const{
+
+
     if(context.stack_counting){
         ;
     }
 
 
-
-
     else{
-        std::cout<<"Prim? "<<context.variables.size()<<std::endl;
 
         if(constant!=NULL){
             dst<<"\tli\t$2,"<<*constant<<"\n";
@@ -1681,6 +1684,7 @@ void Primary_expression::compile(std::ostream &dst, Context& context) const{
             // context.element_position+=context.largest_decl;
             dst<<"\tsw\t$2,($sp)\n";
         }
+
         else if(identifier!=NULL){
             if(context.in_assignment_expression){
 
@@ -1733,6 +1737,7 @@ void Primary_expression::compile(std::ostream &dst, Context& context) const{
 
             else{
                 //getting the value
+                dst<<"#getting the value of "<<*identifier<<"\n";
                 context.variable_found = false;
                 context.enum_found=false;
                 context.global_found = false;
@@ -1742,7 +1747,7 @@ void Primary_expression::compile(std::ostream &dst, Context& context) const{
                         if(context.variables[i].name == *identifier && context.variables[i].scope == vect_decr&&!context.variables[i].is_enum){
                             context.variable_position = i;
                             context.variable_found = true;
-                            // return;
+                            // return; don't you dare returning
                         }
                         else if(context.variables[i].name == *identifier && context.variables[i].scope == vect_decr&&context.variables[i].is_enum){
                             context.variable_position=i;

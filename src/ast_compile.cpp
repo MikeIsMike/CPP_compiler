@@ -1667,15 +1667,14 @@ void Argument_expression_list::compile(std::ostream &dst, Context& context) cons
 
 
 void Primary_expression::compile(std::ostream &dst, Context& context) const{
+
+
     if(context.stack_counting){
         ;
     }
 
 
-
-
     else{
-        std::cout<<"Prim? "<<context.variables.size()<<std::endl;
 
         if(constant!=NULL){
             dst<<"\tli\t$2,"<<*constant<<"\n";
@@ -1738,6 +1737,7 @@ void Primary_expression::compile(std::ostream &dst, Context& context) const{
 
             else{
                 //getting the value
+                dst<<"#getting the value of "<<*identifier<<"\n";
                 context.variable_found = false;
                 context.enum_found=false;
                 context.global_found = false;
@@ -1747,7 +1747,6 @@ void Primary_expression::compile(std::ostream &dst, Context& context) const{
                         if(context.variables[i].name == *identifier && context.variables[i].scope == vect_decr&&!context.variables[i].is_enum){
                             context.variable_position = i;
                             context.variable_found = true;
-                            return;
                         }
                         else if(context.variables[i].name == *identifier && context.variables[i].scope == vect_decr&&context.variables[i].is_enum){
                             context.variable_position=i;

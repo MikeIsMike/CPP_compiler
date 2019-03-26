@@ -16,3 +16,4 @@ tmp/compiler/*
 test_program
 test_program.o
 *.csv
+./ourtest/newtests/*

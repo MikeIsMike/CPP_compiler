@@ -244,12 +244,12 @@ void Declaration::compile(std::ostream &dst, Context& context) const{
     dst<<"#Declaration\n";
 
     if(init_decl_list!=NULL){///only the initilised case
-        // decl_spec->compile(dst);///ignore this for now because only int
+        decl_spec->compile(dst, context);///ignore this for now because only int
 
         init_decl_list->compile(dst, context);
     }
     else if(init_decl_list==NULL){
-
+        decl_spec->compile(dst, context);///ignore this for now because only int
 
         // decl_spec->print_python(dst);
         //nothing to do here
@@ -1712,7 +1712,7 @@ void Primary_expression::compile(std::ostream &dst, Context& context) const{
                 }
 
                 if(!context.variable_found && context.global_found){
-                    ;
+
                     std::cout<<"havent found "<< *identifier <<std::endl;
 
                 }
@@ -1742,7 +1742,7 @@ void Primary_expression::compile(std::ostream &dst, Context& context) const{
                         if(context.variables[i].name == *identifier && context.variables[i].scope == vect_decr&&!context.variables[i].is_enum){
                             context.variable_position = i;
                             context.variable_found = true;
-                            return;
+                            // return;
                         }
                         else if(context.variables[i].name == *identifier && context.variables[i].scope == vect_decr&&context.variables[i].is_enum){
                             context.variable_position=i;
@@ -1812,7 +1812,7 @@ void Primary_expression::compile(std::ostream &dst, Context& context) const{
 
 
 void Type_specifier::compile(std::ostream &dst, Context& context) const{
-    if(enum_spec!=NULL){
+    if(enum_spec!=NULL&&!context.stack_counting){
         enum_spec->compile(dst,context);
     }
 }
@@ -1826,10 +1826,11 @@ void Enum_specifier::compile(std::ostream &dst, Context& context) const{
 
 
 void Enumerator_list::compile(std::ostream &dst, Context& context) const{
-    if(enum_list!=NULL){
+    if(enum_list!=NULL&&enumer!=NULL){
         enum_list->compile(dst,context);
+        enumer->compile(dst,context);
     }
-    if(enum_list==NULL && enumer!=NULL){
+    else if(enum_list==NULL && enumer!=NULL){
         enumer->compile(dst,context);
     }
 }
@@ -1846,21 +1847,26 @@ void Enumerator::compile(std::ostream &dst, Context& context) const{
                     last_enum_value=context.variables[i].enumerator_value;
                 }
             }
-            context.tmp.value = last_enum_value+1;
+            context.tmp.enumerator_value = last_enum_value+1;
         }
         else{
-            context.tmp.value = 0;
+            context.tmp.enumerator_value = 0;
         }
         context.tmp.scope = context.current_scope;
         context.variables.push_back(context.tmp);
+
+
+
     }
     else if(cont_expr!=NULL&&enum_constant!=NULL){
         int result = cont_expr->evaluate(context);
         context.tmp.is_enum=true;
         context.tmp.name = *(enum_constant->identifier);
         context.tmp.scope = context.current_scope;
-        context.tmp.value = result;
+        context.tmp.enumerator_value = result;
         context.variables.push_back(context.tmp);
+
+
 
     }
 }
@@ -2088,7 +2094,7 @@ int Expression::evaluate(Context& context) const{
     else return 0;
 }
 
-int:: Constant_expression::evaluate(Context& context) const{
+int Constant_expression::evaluate(Context& context) const{
     //skip for now
     if(cond_expr!=NULL){
         return cond_expr->evaluate(context);

@@ -23,6 +23,7 @@ public:
     virtual ~Cast_expression() {}
     virtual void print_python(std::ostream &dst) const;
     virtual void compile(std::ostream &dst, Context& context) const;
+    int evaluate(Context& context) const;
 
     Cast_expression(
         Unary_expression* unary_expr_in,

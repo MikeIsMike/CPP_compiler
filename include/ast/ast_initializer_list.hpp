@@ -19,6 +19,7 @@ public:
     virtual void print_python(std::ostream &dst) const{};
     virtual void compile(std::ostream &dst, Context& context) const{};
 
+
     Initializer_list(
         Initializer* init_in,
         Initializer_list* init_list_in) :

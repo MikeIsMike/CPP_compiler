@@ -27,6 +27,7 @@ public:
     virtual ~Unary_expression() {}
     virtual void print_python(std::ostream &dst) const;
     virtual void compile(std::ostream &dst, Context& context) const;
+    int evaluate(Context& context) const;
 
     Unary_expression(
         Postfix_expression* postf_expr_in,

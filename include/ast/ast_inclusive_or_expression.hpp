@@ -19,6 +19,8 @@ public:
     virtual ~Inclusive_or_expression() {}
     virtual void print_python(std::ostream &dst) const;
     virtual void compile(std::ostream &dst, Context& context) const;
+    int evaluate(Context& context) const;
+
 
     Inclusive_or_expression(
         Exclusive_or_expression* exclusive_or_expr_in,

@@ -21,6 +21,8 @@ public:
     virtual ~Multiplicative_expression() {}
     virtual void print_python(std::ostream &dst) const;
     virtual void compile(std::ostream &dst, Context& context) const;
+    int evaluate(Context& context) const;
+
 
     Multiplicative_expression(
         Cast_expression* cast_expr_in,

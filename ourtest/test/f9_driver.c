@@ -1,8 +1,8 @@
 
-int f(int a);
+int f();
 
 int main() {
-    int a = f(6);
+    int a = f();
 
     return a;
 }

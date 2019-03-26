@@ -21,6 +21,7 @@ public:
     virtual ~Initializer() {}
     virtual void print_python(std::ostream &dst) const;
     virtual void compile(std::ostream &dst, Context& context) const;
+    int evaluate(Context& context) const;
 
     Initializer(
         Assignment_expression* assignment_expr_in,

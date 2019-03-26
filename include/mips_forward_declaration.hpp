@@ -44,6 +44,8 @@ struct Context{
     bool in_argument_expression_list = false;
 
     int current_stack_offset = 24;
+
+    std::vector<std::string> break_scope;
 };
 
 #endif

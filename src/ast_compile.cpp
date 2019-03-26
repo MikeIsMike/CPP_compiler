@@ -73,7 +73,6 @@ void Function_definition::compile(std::ostream &dst, Context& context) const{
             context.decl_to_reg = 4;
             decl->compile(dst, context);
             context.function_declaration = false;
-            std::cout<<"Declaration Printing Done\n";
             //Setup stack
             // context.element_position = context.element_position - (context.declaration_count*context.largest_decl+32);
             // dst<<"\taddiu\t$sp,$sp,-"<<(context.declaration_count*context.largest_decl+32)<<"\n";
@@ -238,8 +237,11 @@ void Init_declarator::compile(std::ostream &dst, Context& context) const{
     if(declarator!=NULL && initializer==NULL){
         if(context.external_decl){
             declarator->compile(dst, context);
-            dst<<"data\n";
-            dst<<context.tmp.name<<": .word 0\n";
+            dst<<"\t.globl "<<context.tmp.name<<"\n";
+            dst<<"\t.data\n";
+            dst<<"\t.align  2\n";
+            dst<<"\t.type "<<context.tmp.name<<" @object\n";
+            dst<<context.tmp.name<<": \n\t .word 0\n";
         }
         else{
             declarator->compile(dst, context);
@@ -248,10 +250,12 @@ void Init_declarator::compile(std::ostream &dst, Context& context) const{
     }
     if(declarator!=NULL&&initializer!=NULL){
         if(context.external_decl){
-            //WRONG
             declarator->compile(dst, context);
-            dst<<"data\n";
-            dst<<context.tmp.name<<": .word 0\n";
+            dst<<"\t.globl "<<context.tmp.name<<"\n";
+            dst<<"\t.data\n";
+            dst<<"\t.align  2\n";
+            dst<<"\t.type "<<context.tmp.name<<" @object\n";
+            dst<<context.tmp.name<<": \n\t .word "<<initializer->evaluate(context)<<"\n";
 
         }
         else{
@@ -454,6 +458,11 @@ void Jump_statement::compile(std::ostream &dst, Context& context) const{
 
             }
 
+        }else if (*keyword=="break"){
+             dst<<"\tj "<<"$END"<<context.break_scope.back()<<"\n";
+
+        }else if (*keyword=="continue"){
+            dst<<"\tj "<<"$CONTINUESTART"<<context.break_scope.back()<<"\n";
         }
 
     }
@@ -571,6 +580,7 @@ void Iteration_statement::compile(std::ostream &dst, Context& context) const{
     else{
         if(*keyword=="while"){
             std::string branch=makeName("while");
+            context.break_scope.push_back(branch);
             dst<<"$START"<<branch<<":\n";
 
             expr->compile(dst, context);
@@ -581,6 +591,7 @@ void Iteration_statement::compile(std::ostream &dst, Context& context) const{
 
             dst<<"\tbeq\t$8,$0,"<<"$END"<<branch<<"\n";
             dst<<"nop\n";
+            dst<<"$CONTINUESTART"<<branch<<":\n";
 
             //Change Context
             if(context.current_scope.size()<context.last_scope.size()){
@@ -599,7 +610,7 @@ void Iteration_statement::compile(std::ostream &dst, Context& context) const{
             //Change Context
             context.last_scope = context.current_scope;
             context.current_scope.pop_back();
-
+            context.break_scope.pop_back();
             dst<<"\tj "<<"$START"<<branch<<"\n";
             dst<<"nop\n";
             dst<<"$END"<<branch<<":\n";
@@ -607,7 +618,10 @@ void Iteration_statement::compile(std::ostream &dst, Context& context) const{
         }
         else if(*keyword=="do"){
             std::string branch=makeName("do");
+            context.break_scope.push_back(branch);
+
             dst<<"$START"<<branch<<":\n";
+            dst<<"$CONTINUESTART"<<branch<<":\n";
 
             //Change Context
             if(context.current_scope.size()<context.last_scope.size()){
@@ -626,7 +640,7 @@ void Iteration_statement::compile(std::ostream &dst, Context& context) const{
             //Change Context
             context.last_scope = context.current_scope;
             context.current_scope.pop_back();
-
+            context.break_scope.pop_back();
             expr->compile(dst, context);
 
             dst<<"\tlw\t$8,($sp)\n";
@@ -639,6 +653,56 @@ void Iteration_statement::compile(std::ostream &dst, Context& context) const{
             dst<<"nop\n";
 
             dst<<"$END"<<branch<<":\n";
+
+        }
+        else if(*keyword=="for"){
+            expr_stmnt_1->compile(dst, context);
+
+            std::string branch=makeName("for");
+            context.break_scope.push_back(branch);
+
+            dst<<"$START"<<branch<<":\n";
+
+            expr_stmnt_2->compile(dst, context);
+
+            dst<<"\tlw\t$8,($sp)\n";
+            dst<<"\taddiu\t$sp,$sp,"<<"8"<<"\n";
+
+
+            dst<<"\tbeq\t$8,$0,"<<"$END"<<branch<<"\n";
+            dst<<"nop\n";
+
+            dst<<"$CONTINUESTART"<<branch<<":\n";
+
+            //Change Context
+            if(context.current_scope.size()<context.last_scope.size()){
+                std::vector<int> tmp = context.current_scope;
+                context.current_scope.push_back(context.last_scope.back() + 1);
+                context.last_scope = tmp;
+            }
+            else{
+                std::vector<int> tmp = context.current_scope;
+                context.current_scope.push_back(1);
+                context.last_scope = tmp;
+            }
+
+            statement->compile(dst, context);
+
+            if(expr!=NULL){
+                expr->compile(dst, context);
+            }
+
+            //Change Context
+            context.last_scope = context.current_scope;
+            context.current_scope.pop_back();
+            context.break_scope.pop_back();
+
+            dst<<"\tj "<<"$START"<<branch<<"\n";
+            dst<<"nop\n";
+            dst<<"$END"<<branch<<":\n";
+
+
+
 
         }
 
@@ -654,9 +718,11 @@ void Direct_declarator::compile(std::ostream &dst, Context& context) const{ //gl
                 if(!context.function_declaration){
                     if(identifier!=NULL){//left hand side
                         context.tmp.name=*identifier;
-                        context.tmp.scope = context.current_scope;
-                        context.tmp.stack_offset = context.current_stack_offset;
-                        context.current_stack_offset = context.current_stack_offset + 8; //Change to address different variable types and padding, this only works for int
+                        if(!context.external_decl){
+                            context.tmp.scope = context.current_scope;
+                            context.tmp.stack_offset = context.current_stack_offset;
+                            context.current_stack_offset = context.current_stack_offset + 8; //Change to address different variable types and padding, this only works for int
+                        }
 
                     }
 
@@ -1436,7 +1502,6 @@ void Primary_expression::compile(std::ostream &dst, Context& context) const{
         else{
             context.variable_found = false;
             std::vector<int> vect_decr= context.current_scope;
-            std::cout<<"looking for "<< *identifier <<std::endl;
             for(int size = vect_decr.size(); size>0 && !context.variable_found; size--){
                 for(int i = 0; i < context.variables.size() && !context.variable_found; i++){
                     if(context.variables[i].name == *identifier && context.variables[i].scope == vect_decr){
@@ -1463,4 +1528,230 @@ void Primary_expression::compile(std::ostream &dst, Context& context) const{
 
         }
     }
+}
+
+
+
+
+
+
+
+
+
+
+
+int Initializer::evaluate(Context& context) const{
+    if(assignment_expr!=NULL){
+        return assignment_expr->evaluate(context);
+    }
+    else return 0;
+}
+
+int Assignment_expression::evaluate(Context& context) const{
+    if(cond_expr!=NULL){
+        return cond_expr->evaluate(context);
+    }
+    else return 0;
+}
+
+int Conditional_expression::evaluate(Context& context) const{
+    //skip for now
+    if(logic_or_expr!=NULL){
+        return logic_or_expr->evaluate(context);
+    }
+    else return 0;
+}
+
+int Logical_or_expression::evaluate(Context& context) const{
+    if(logical_or_expr==NULL && logical_and_expr!=NULL){
+        return logical_and_expr->evaluate(context);
+    }
+    else if(logical_or_expr!=NULL && logical_and_expr!=NULL){
+        return (int)(logical_or_expr->evaluate(context)||logical_and_expr->evaluate(context));
+    }
+    else return 0;
+}
+
+int Logical_and_expression::evaluate(Context& context) const{
+    if(logical_and_expr==NULL && inclusive_or_expr!=NULL){
+        return logical_and_expr->evaluate(context);
+    }
+    else if(logical_and_expr!=NULL && inclusive_or_expr!=NULL){
+        return (int)(logical_and_expr->evaluate(context) && inclusive_or_expr->evaluate(context));
+    }
+    else return 0;
+}
+
+int Inclusive_or_expression::evaluate(Context& context) const{
+    if(inclusive_or_expr==NULL && exclusive_or_expr!=NULL){
+        return exclusive_or_expr->evaluate(context);
+    }
+    else if(inclusive_or_expr!=NULL && exclusive_or_expr!=NULL){
+        return (int)(inclusive_or_expr->evaluate(context)|exclusive_or_expr->evaluate(context));
+    }
+    else return 0;
+}
+
+int Exclusive_or_expression::evaluate(Context& context) const{
+    if(exclusive_or_expr==NULL && and_expr!=NULL){
+        return and_expr->evaluate(context);
+    }
+    else if(exclusive_or_expr!=NULL && and_expr!=NULL){
+        return (int)(exclusive_or_expr->evaluate(context)^and_expr->evaluate(context));
+    }
+    else return 0;
+}
+
+int And_expression::evaluate(Context& context) const{
+    if(and_expr==NULL && equality_expr!=NULL){
+        return equality_expr->evaluate(context);
+    }
+    else if(and_expr!=NULL && equality_expr!=NULL){
+        return (int)(and_expr->evaluate(context)&equality_expr->evaluate(context));
+    }
+    else return 0;
+}
+
+int Equality_expression::evaluate(Context& context) const{
+    if(equality_expr==NULL && relat_expr!=NULL){
+        return relat_expr->evaluate(context);
+    }
+    else if(equality_expr!=NULL && relat_expr!=NULL && *op == "=="){
+        return (int)(equality_expr->evaluate(context)==relat_expr->evaluate(context));
+    }
+    else if(equality_expr!=NULL && relat_expr!=NULL && *op == "!="){
+        return (int)(equality_expr->evaluate(context)!=relat_expr->evaluate(context));
+    }
+    else return 0;
+}
+
+int Relational_expression::evaluate(Context& context) const{
+    if(relat_expr==NULL && shift_expr!=NULL){
+        return shift_expr->evaluate(context);
+    }
+    else if(relat_expr!=NULL && shift_expr!=NULL && *op == "<"){
+        return (int)(relat_expr->evaluate(context)<shift_expr->evaluate(context));
+    }
+    else if(relat_expr!=NULL && shift_expr!=NULL && *op == ">"){
+        return (int)(relat_expr->evaluate(context)>shift_expr->evaluate(context));
+    }
+    else if(relat_expr!=NULL && shift_expr!=NULL && *op == "<="){
+        return (int)(relat_expr->evaluate(context),+shift_expr->evaluate(context));
+    }
+    else if(relat_expr!=NULL && shift_expr!=NULL && *op == ">="){
+        return (int)(relat_expr->evaluate(context)>=shift_expr->evaluate(context));
+    }
+    else return 0;
+}
+
+int Shift_expression::evaluate(Context& context) const{
+    if(shift_expr==NULL && additive_expr!=NULL){
+        return additive_expr->evaluate(context);
+    }
+    else if(shift_expr!=NULL && additive_expr!=NULL && *op == "<<"){
+        return (int)(shift_expr->evaluate(context)<<additive_expr->evaluate(context));
+    }
+    else if(shift_expr!=NULL && additive_expr!=NULL && *op == ">>"){
+        return (int)(shift_expr->evaluate(context)>>additive_expr->evaluate(context));
+    }
+    else return 0;
+}
+
+int Additive_expression::evaluate(Context& context) const{
+    if(additive_expr==NULL && mult_expr!=NULL){
+        return mult_expr->evaluate(context);
+    }
+    else if(additive_expr!=NULL && mult_expr!=NULL && *op == "+"){
+        return (int)(additive_expr->evaluate(context)+mult_expr->evaluate(context));
+    }
+    else if(additive_expr!=NULL && mult_expr!=NULL && *op == "-"){
+        return (int)(additive_expr->evaluate(context)-mult_expr->evaluate(context));
+    }
+    else return 0;
+}
+
+int Multiplicative_expression::evaluate(Context& context) const{
+    if(mult_expr==NULL && cast_expr!=NULL){
+        return cast_expr->evaluate(context);
+    }
+    else if(mult_expr!=NULL && cast_expr!=NULL && *op == "*"){
+        return (int)(mult_expr->evaluate(context)*cast_expr->evaluate(context));
+    }
+    else if(mult_expr!=NULL && cast_expr!=NULL && *op == "/"){
+        return (int)(mult_expr->evaluate(context)/cast_expr->evaluate(context));
+    }
+    else if(mult_expr!=NULL && cast_expr!=NULL && *op == "%"){
+        return (int)(mult_expr->evaluate(context)%cast_expr->evaluate(context));
+    }
+    else return 0;
+}
+
+int Cast_expression::evaluate(Context& context) const{
+    //skip for now
+    if(unary_expr!=NULL){
+        return unary_expr->evaluate(context);
+    }
+    else return 0;
+}
+
+
+int Unary_expression::evaluate(Context& context) const{
+    if(postf_expr!=NULL){
+        return postf_expr->evaluate(context);
+    }
+    // else if(*oper=="++" && unary_expr!=NULL){
+    //     return (int)(++(int)(unary_expr->evaluate(context)));
+    // }
+    // else if(*oper=="--" && unary_expr!=NULL){
+    //     return (int)(--(int)(unary_expr->evaluate(context)));
+    // }
+    else if(*unary_op=="+" && cast_expr!=NULL){
+        return (int)(+cast_expr->evaluate(context));
+    }
+    else if(*unary_op=="-" && cast_expr!=NULL){
+        return (int)(-cast_expr->evaluate(context));
+    }
+    else if(*unary_op=="~" && cast_expr!=NULL){
+        return (int)(~cast_expr->evaluate(context));
+    }
+    else if(*unary_op=="!" && cast_expr!=NULL){
+        return (int)(!cast_expr->evaluate(context));
+    }
+    else return 0;
+}
+
+int Postfix_expression::evaluate(Context& context) const{
+    if(postf_expr==NULL && prim_expr!=NULL){
+        return prim_expr->evaluate(context);
+    }
+    else return 0;
+    // else if(postf_expr!=NULL && *oper == "++"){
+    //     return (int)(postf_expr->evaluate(context)++);
+    // }
+    // else if(postf_expr!=NULL && *oper == "--"){
+    //     return (int)(postf_expr->evaluate(context)--);
+    // }
+}
+
+
+int Primary_expression::evaluate(Context& context) const{
+    if(constant!=NULL){
+        return int(*constant);
+    }
+    else if(expression!=NULL){
+        return expression->evaluate(context);
+    }
+    else if(identifier!=NULL){
+        ;
+    }
+    else return 0;
+
+}
+
+int Expression::evaluate(Context& context) const{
+    //skip for now
+    if(assign_expr!=NULL){
+        return assign_expr->evaluate(context);
+    }
+    else return 0;
 }

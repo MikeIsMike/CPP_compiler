@@ -21,6 +21,8 @@ public:
     virtual ~Equality_expression() {}
     virtual void print_python(std::ostream &dst) const;
     virtual void compile(std::ostream &dst, Context& context) const;
+    int evaluate(Context& context) const;
+
 
     Equality_expression(
         Relational_expression* relat_expr_in,

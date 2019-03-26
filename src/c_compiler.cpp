@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
 
         context.current_scope.push_back(1);
         context.last_scope.push_back(1);
-        
+        context.break_scope.push_back(" ");
         std::ofstream outfile (argv[4]);
 
         ast->compile(outfile, context);

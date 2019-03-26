@@ -152,9 +152,11 @@ void Parameter_declaration::compile(std::ostream &dst, Context &context) const{
 void Expression_statement::compile(std::ostream &dst, Context &context) const{
     if(context.stack_counting){;}
     else{
+
         if(expr!=NULL){
             expr->compile(dst, context);
             //popping one from stack after every expression
+            dst<<"#expression_statement\n";
             dst<<"\tlw\t$2,($sp)\n";
             dst<<"\taddiu\t$sp,$sp,"<<context.largest_decl<<"\n";
         }
@@ -669,11 +671,7 @@ void Iteration_statement::compile(std::ostream &dst, Context& context) const{
 
             expr_stmnt_2->compile(dst, context);
 
-            dst<<"\tlw\t$8,($sp)\n";
-            dst<<"\taddiu\t$sp,$sp,"<<"8"<<"\n";
-
-
-            dst<<"\tbeq\t$8,$0,"<<"$END"<<branch<<"\n";
+            dst<<"\tbeq\t$2,$0,"<<"$END"<<branch<<"\n";
             dst<<"nop\n";
 
             dst<<"$CONTINUESTART"<<branch<<":\n";
@@ -1244,6 +1242,7 @@ void Shift_expression::compile(std::ostream &dst, Context& context) const{
 
 void Expression::compile(std::ostream &dst, Context& context) const{
     if(expr==NULL && assign_expr!=NULL){
+        dst<<"#expression\n";
         assign_expr->compile(dst,context);
         // context.variable_found=false;
     }

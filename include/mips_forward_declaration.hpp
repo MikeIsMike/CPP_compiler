@@ -13,6 +13,7 @@ struct Binding{
     int stack_offset;
     int enumerator_value=0;
     std::vector<int> array_dimentions;
+    bool is_enum=false;
 
 };
 
@@ -20,12 +21,14 @@ struct Context{
     std::vector<Binding> variables;
     std::vector<Binding> enumerators;
 
-    bool in_enum = false;
     bool in_assignment_expression = false;
     int assignment_expression_lvl = 0;
     int variable_position;
     bool variable_found = false;
+    bool enum_found = false;
+
     bool global_found = false;
+
     int element_position;
     int current_fp;
 

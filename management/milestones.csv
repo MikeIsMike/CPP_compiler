@@ -26,7 +26,7 @@ CodeGenMIPS,PythonTranslator,100,,70%,"Create a MIPS assembly from the input"
 ,,,,,
 FunctionCalls(basic),4,3,Mike, 100%,"Rough implementation of a function call in MIPS Assembly, fp and sp changing"
 CompilerStackAllocation,,5,Rudolfs, 90%,"Decide how much space is needed for the function stack and allocate the appropiate ammount"
-CompilerStructure,,2,Mike,"Update classes with function definitions, create file structure, incudes"
+CompilerStructure,,2,Mike,100%,"Update classes with function definitions, create file structure, incudes"
 Bindings,CompilerStructure,Rudolfs,-,90%,"Create and maintain file of bindings for variables"
 VariableDeclaration,Bindings,Rudolfs,-,100%,"Support for int i;"
 VariableInitialisation,VariableDeclaration,Rudolfs,-,100%,"Support for int i = 3;"

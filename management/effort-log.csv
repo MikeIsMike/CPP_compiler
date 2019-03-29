@@ -14,3 +14,16 @@ Date,Effort,Developers,Milestones
 19-Mar,10,Rudolfs,"PythonTranslator, PT-Expressions, PT-ScopeTabs, PT-DisableEndlInBrackets, DefineLexerTokens"
 19-Mar,5,Mike,"PT-GlobalVariable"
 20-Mar,10,Mike,"CodeGenMIPS"
+20-Mar,3,Rudolfs,"PT-MakeTestCases"
+21-Mar,5,Mike,“Compiler stack allocation, Functioncalls(basic), Compiler structure”
+21-Mar,1,Rudolfs,"CompilerStackAllocation"
+22-Mar,3,Mike,“Compiler stack allocation,  Compiler structure”
+22-Mar,11,Rudolfs,“Bindings, CompilerStackAllocation, FunctionExit, VariableDeclaration”
+23-Mar,10,Mike,“Compiler stack allocation, Compiler structure, Arithmetic”
+23-Mar,10,Rudolfs,“VariableDeclaration, VariableInitialisation, VariableAccess, CompilerStackAllocation, ReturnValue”
+24-Mar,10,Mike,“Arithmetic”
+24-Mar,10,Rudolfs,"VariableDeclaration, VariableInitialisation, VariableAccess, IfElse, WhileDoLoops, ScopeResolution"
+25-Mar,11,Mike,“Arithmetic, RedoingAssignment, TestbenchPersonal,”
+25-Mar,14,Rudolfs,"FunctionExit, ReturnStatement, WhileDoLoops, 4ParamFunctions, ScopeResolution, EvaluateFunction, GlobalVariables, BreakandContinue"
+26-Mar,11,Mike,“TestDeliverable, Testcases, x++_+2, Debugging, Enum(basic), Shortcircuting”
+26-Mar,10,Rudolfs,"GlobalVariables, CompilerStackAllocation, Debugging, ForLoops, ArrayInitialisation, Debugging, TestHex, Shortcircuting"

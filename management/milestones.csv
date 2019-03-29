@@ -57,8 +57,3 @@ Enum(advanced),-,-,-,0%,"Implement Enum with name"
 FixReturnAndContinue,BreakandContinue,-,4,0%,"Theyre not working and the difficulty is way higher than thought"
 ArrayAccesAndSaving,ArrayInitialisation,-,-,0%,"int arr[6] = 7"
 GlobalArrays,ArrayAccesAndSaving,-,-,0%,"Global arrays"
-
-
-
-
-

@@ -18,7 +18,7 @@ PT-Statements,,3,Rudolfs,100%,"Add support for python translator statements"
 PT-Expressions,,3,Rudolfs,100%,"Add support for python translator expressions"
 PT-ScopeTabs,,2,Rudolfs,100%,"Add support for deifferent scopes"
 PT-FunctionDeclarations,,2,Mike,100%,"Add support for functions"
-PT-DisableEndlInBrackets,,1,Rudolfs,100%"Endline not neede in function declarations"
+PT-DisableEndlInBrackets,,1,Rudolfs,100%,"Endline not neede in function declarations"
 PT-MakeTestCases,PythonTranslator,3,Rudolfs,100%,"Test cases to confirm that the tranlator is correct and fix errors"
 ,,,,,
 ,,,,,

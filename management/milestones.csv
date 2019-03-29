@@ -24,7 +24,7 @@ PT-MakeTestCases,PythonTranslator,3,Rudolfs,100%,"Test cases to confirm that the
 ,,,,,
 CodeGenMIPS,PythonTranslator,100,,70%,"Create a MIPS assembly from the input"
 ,,,,,
-FunctionCalls(basic),4,3,Mike, 100%,"Rough implementation of a function call in MIPS Assembly, fp and sp changing"
+FunctionCalls(basic),,3,Mike, 100%,"Rough implementation of a function call in MIPS Assembly, fp and sp changing"
 CompilerStackAllocation,,5,Rudolfs, 90%,"Decide how much space is needed for the function stack and allocate the appropiate ammount"
 CompilerStructure,,2,Mike,100%,"Update classes with function definitions, create file structure, incudes"
 Bindings,CompilerStructure,-,Rudolfs,90%,"Create and maintain file of bindings for variables"
@@ -54,6 +54,6 @@ x++_+2,Debugging,1,Mike,100%,"x should be x+1 not x+3"
 TestHex,Debugging,1,Rudolfs,100%,"run tests and fix if somethings wrong"
 Shortcircuting,Debugging,2,Both,40%,"Make sure compiler accounts for shortcircuting in x|x++|x++|x++"
 Enum(advanced),-,-,-,0%,"Implement Enum with name"
-FixReturnAndContinue,BreakandContinue,-,4,0%,"Theyre not working and the difficulty is way higher than thought"
+FixReturnAndContinue,BreakandContinue,4,-,0%,"Theyre not working and the difficulty is way higher than thought"
 ArrayAccesAndSaving,ArrayInitialisation,-,-,0%,"int arr[6] = 7"
 GlobalArrays,ArrayAccesAndSaving,-,-,0%,"Global arrays"

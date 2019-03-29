@@ -25,5 +25,5 @@ Date,Effort,Developers,Milestones
 24-Mar,10,Rudolfs,"VariableDeclaration, VariableInitialisation, VariableAccess, IfElse, WhileDoLoops, ScopeResolution"
 25-Mar,11,Mike,"Arithmetic, RedoingAssignment, TestbenchPersonal,"
 25-Mar,14,Rudolfs,"FunctionExit, ReturnStatement, WhileDoLoops, 4ParamFunctions, ScopeResolution, EvaluateFunction, GlobalVariables, BreakandContinue"
-26-Mar,11,Mike,"TestDeliverable, Testcases, x++_+2, Debugging, Enum(basic), Shortcircuting”
+26-Mar,11,Mike,"TestDeliverable, Testcases, x++_+2, Debugging, Enum(basic), Shortcircuting"
 26-Mar,10,Rudolfs,"GlobalVariables, CompilerStackAllocation, Debugging, ForLoops, ArrayInitialisation, Debugging, TestHex, Shortcircuting"

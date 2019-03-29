@@ -37,7 +37,7 @@ Arithmetic,VariableAccess,Mike,7,100%,"Implement functionality of all the arithm
 4ParamFunctions,"FunctionCalls(basic), CompilerStackAllocation",Rudofs,3, 100%,"Function call parameter passing"
 ReturnStatement,FunctionCalls(basic),Rudolfs,0.5,100%,"return;"
 IfElse,,Rudolfs,3,100%,"Selection statements"
-ReturnValue,"ReturnStatement, VariableAccess,"Rudolfs,0.5,100%,"return a + 3;"
+ReturnValue,"ReturnStatement, VariableAccess",Rudolfs,0.5,100%,"return a + 3;"
 ForLoops,WhileDoLoops,Rudolfs,2,100%,"For loops and correct scope resolution"
 TestbenchPersonal,,Mike,4,100%,"Testbench for confirming and debugging"
 Testcases,TestbenchPersonal,Mike,3,70%,"Testcases testing all functionality implemented(thought of)"

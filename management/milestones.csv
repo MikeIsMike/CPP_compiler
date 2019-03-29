@@ -5,11 +5,60 @@ InitialProjectStructuring,FamiliariseWithSpec,,Rudolfs,60%,"Start creating the l
 DefineInitialMilestones,"FamiliariseWithSpec, InitialProjectStructuring",1,Rudolfs,Ongoing Throughout,Come up with initial milestones for getting started
 KeepMilestonesUpToDate,DefineInitialMilestones,0.1*N,Rudolfs,0%,Update the progress on the milestones
 ,,,,,
-DefineLexerTokens,InitialProjectStructuring,6,Rudolfs,80%,Create the lexer to lex the tokens used by the parser
-ParseTreeRules,,6,Mike,90%,Write rules for the parser to use
-ParseTreeAST_Subclasses,ParseTreeRules,,Rudolfs,90%,Write classes to be created once a parse rule is passed
-ParseTreeIntegration,ParseTreeAST_Subclasses,,,0%,Create classes once rule is passed
+DefineLexerTokens,InitialProjectStructuring,6,Rudolfs,100%,Create the lexer to lex the tokens used by the parser
+ParseTreeRules,,6,Mike,100%,Write rules for the parser to use
+ParseTreeAST_Subclasses,ParseTreeRules,,Rudolfs,100%,Write classes to be created once a parse rule is passed
+ParseTreeIntegration,ParseTreeAST_Subclasses,,,100%,Create classes once rule is passed
 ,,,,,
 ,,,,,
-PythonTranslator,ParseTreeIntegration,,,0%,"Create a Python code from the input"
-CodeGenMIPS,PythonTranslator,,,0%,"Create a MIPS assembly from the input, TODO: separate task"
+PythonTranslator,ParseTreeIntegration,20,Both,99%,"Create a Python code from the input"
+PT-FormativeTestSetup,,2,Mike,99%,"Set up formative test environment"
+PT-GlobalVariable,,3,Mike,100%,"Add suport for python global variable"
+PT-Statements,,3,Rudolfs,100%,"Add support for python translator statements"
+PT-Expressions,,3,Rudolfs,100%,"Add support for python translator expressions"
+PT-ScopeTabs,,2,Rudolfs,100%,"Add support for deifferent scopes"
+PT-FunctionDeclarations,,2,Mike,100%,"Add support for functions"
+PT-DisableEndlInBrackets,,1,Rudolfs,100%"Endline not neede in function declarations"
+PT-MakeTestCases,PythonTranslator,3,Rudolfs,100%,"Test cases to confirm that the tranlator is correct and fix errors"
+,,,,,
+,,,,,
+CodeGenMIPS,PythonTranslator,100,,70%,"Create a MIPS assembly from the input"
+,,,,,
+FunctionCalls(basic),,4,3,Mike, 100%,"Rough implementation of a function call in MIPS Assembly, fp and sp changing"
+CompilerStackAllocation,,5,Rudolfs, 90%,"Decide how much space is needed for the function stack and allocate the appropiate ammount"
+CompilerStructure,,2,Mike,"Update classes with function definitions, create file structure, incudes"
+Bindings,CompilerStructure,Rudolfs,-,90%,"Create and maintain file of bindings for variables"
+VariableDeclaration,Bindings,Rudolfs,-,100%,"Support for int i;"
+VariableInitialisation,VariableDeclaration,Rudolfs,-,100%,"Support for int i = 3;"
+VariableAccess,VariableInitialisation,"Rudolfs, afterwards Mike",-,100%, "a = 3; b = a; a = b = 7;"
+FunctionExit,"FunctionCalls(basic), CompilerStackAllocation",Rudolfs,-,100%,"Returning to the adress stored in $31 at the end of the function, saving and loading $31 from the stack"
+WhileDoLoops,,Rudolfs,1,100%, "Implement basic loops"
+Arithmetic,VariableAccess,Mike,7,100%,"Implement functionality of all the arithmetic and logical parse rules assignment expression down"
+4ParamFunctions,"FunctionCalls(basic), CompilerStackAllocation",Rudofs,3, 100%,"Function call parameter passing"
+ReturnStatement,FunctionCalls(basic),Rudolfs,0.5,100%,"return;"
+IfElse,,Rudolfs,3,100%,"Selection statements"
+ReturnValue,"ReturnStatement, VariableAccess,"Rudolfs,0.5,100%,"return a + 3;"
+ForLoops,WhileDoLoops,Rudolfs,2,100%,"For loops and correct scope resolution"
+TestbenchPersonal,,Mike,4,100%,"Testbench for confirming and debugging"
+Testcases,TestbenchPersonal,Mike,3,70%,"Testcases testing all functionality implemented(thought of)"
+ScopeResolution,,Rudolfs,80%,"Update scope resolution wherever it needs to change"
+RedoingAssignment,,Mike,100%,"Update assignment to coorect implementation and operations"
+BreakandContinue,WhileDoLoops,Rudolfs,1,100%,"Implementation for break and Continue"
+EvaluateFunction,,Rudolfs,3,100%,"Function to evaluate the result of an expression at compile time"
+GlobalVariables,EvaluateFunction,Rudolfs,3,100%,"Global variable initialisaton, access and changing"
+TestDeliverable,,Mike,2,100%,"testcases_deliverable.md"
+ArrayInitialisation,,Rudolfs,4,40%,"Understanding and initialising arrays with memory space reserved, requires changes to CompilerStackAllocation"
+Enum(basic),,Mike,3,100%,"Enum functionality"
+Debugging,,Both,50%,"Test and debug over and over"
+x++_+2,Debugging,Mike,1,100%,"x should be x+1 not x+3"
+TestHex,Debugging,Rudolfs,1,100%,"run tests and fix if somethings wrong"
+Shortcircuting,Debugging,Both,2,40%,"Make sure compiler accounts for shortcircuting in x|x++|x++|x++"
+Enum(advanced),-,-,-,0%,"Implement Enum with name"
+FixReturnAndContinue,BreakandContinue,-,4,0%,"Theyre not working and the difficulty is way higher than thought"
+ArrayAccesAndSaving,ArrayInitialisation,-,-,0%,"int arr[6] = 7"
+GlobalArrays,ArrayAccesAndSaving,-,-,0%,"Global arrays"
+
+
+
+
+
